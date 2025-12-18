@@ -1,29 +1,31 @@
-
+<!DOCTYPE html>
 <html lang="sl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malica Manager Pro</title>
+    <title>Malica Manager Pro - Online</title>
     
-    <!-- 1. TAILWIND CSS (Za izgled) -->
+    <!-- 1. TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. IMPORT MAP (Da brskalnik ve, kje dobiti React in Ikone) -->
+    <!-- 2. IMPORT MAP (React, Lucide, Firebase) -->
     <script type="importmap">
     {
       "imports": {
         "react": "https://esm.sh/react@18.2.0",
         "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-        "lucide-react": "https://esm.sh/lucide-react@0.263.1"
+        "lucide-react": "https://esm.sh/lucide-react@0.263.1",
+        "firebase/app": "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"
       }
     }
     </script>
 
-    <!-- 3. BABEL (Prevajalnik za JSX) -->
+    <!-- 3. BABEL -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
-        /* Dodatni stili za tiskanje in scrollbar */
         @media print {
             @page { margin: 1cm; }
             body { background: white; -webkit-print-color-adjust: exact; }
@@ -33,17 +35,13 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        /* Skrijemo scrollbar, a ohranimo funkcionalnost */
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
 
-    <!-- TUKAJ SE BO PRIKAZALA APLIKACIJA -->
     <div id="root"></div>
 
-    <!-- 4. TVOJA APLIKACIJA (Prekopirana in prilagojena React koda) -->
     <script type="text/babel" data-type="module">
         import React, { useState, useEffect, useMemo } from 'react';
         import { createRoot } from 'react-dom/client';
@@ -51,42 +49,122 @@
           Users, History, PlusCircle, Trash2, TrendingDown, 
           CreditCard, UserPlus, ArrowRightCircle, Calendar, 
           Wallet, Calculator, CheckCircle2, Download, 
-          AlertTriangle, FileText, CheckSquare, Square 
+          AlertTriangle, FileText, CheckSquare, Square, 
+          Cloud, LogOut, Loader2 
         } from 'lucide-react';
+        
+        // --- FIREBASE IMPORTS ---
+        import { initializeApp } from 'firebase/app';
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'firebase/auth';
+        import { getFirestore, doc, setDoc, onSnapshot, collection } from 'firebase/firestore';
 
-        // --- POMOŽNA FUNKCIJA ZA DENAR ---
+        // --- FIREBASE CONFIGURATION & INIT ---
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // --- UTILS ---
         const money = (val) => Math.round(val * 100) / 100;
 
         const App = () => {
-          // --- STATE ---
-          const [members, setMembers] = useState(() => {
-            try {
-              const saved = localStorage.getItem('malica_members');
-              // Posodobljena imena
-              return saved ? JSON.parse(saved) : ["Martin", "Mitja", "Pavel", "Matej", "Zala", "Stela"];
-            } catch (e) { return []; }
-          });
+          // --- USER & AUTH STATE ---
+          const [user, setUser] = useState(null);
+          const [loading, setLoading] = useState(true);
+          const [groupId, setGroupId] = useState(() => localStorage.getItem('malica_group_id') || '');
+          const [inputGroupId, setInputGroupId] = useState('');
+          const [dbError, setDbError] = useState(null);
 
-          const [history, setHistory] = useState(() => {
-            try {
-              const saved = localStorage.getItem('malica_history');
-              return saved ? JSON.parse(saved) : [];
-            } catch (e) { return []; }
-          });
-
+          // --- APP DATA STATE ---
+          const [members, setMembers] = useState(["Martin", "Mitja", "Pavel", "Matej", "Zala", "Stela"]);
+          const [history, setHistory] = useState([]);
+          
+          // --- UI STATE ---
           const [activeTab, setActiveTab] = useState('dashboard');
           const [showAddMember, setShowAddMember] = useState(false);
           const [newMemberName, setNewMemberName] = useState('');
           const [memberToDelete, setMemberToDelete] = useState(null);
           const [showResetConfirm, setShowResetConfirm] = useState(false);
 
-          // Form State
+          // --- FORM STATE ---
           const [amount, setAmount] = useState('');
           const [payer, setPayer] = useState('');
           const [selectedParticipants, setSelectedParticipants] = useState([]);
           const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
-          // --- INITIALIZE FORM ---
+          // --- 1. AUTHENTICATION ---
+          useEffect(() => {
+            const initAuth = async () => {
+              try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+              } catch (err) {
+                console.error("Auth error:", err);
+                setDbError("Napaka pri prijavi.");
+              }
+            };
+            initAuth();
+            const unsubscribe = onAuthStateChanged(auth, (u) => {
+                setUser(u);
+                if (u) setLoading(false);
+            });
+            return () => unsubscribe();
+          }, []);
+
+          // --- 2. DATA SYNC (FIRESTORE) ---
+          useEffect(() => {
+            if (!user || !groupId) return;
+
+            setLoading(true);
+            // Referenca na dokument skupine
+            // Uporabljamo 'malica_groups' kolekcijo v javnem prostoru, da lahko različni uporabniki dostopajo do istega dokumenta
+            const groupRef = doc(db, 'artifacts', appId, 'public', 'data', 'malica_groups', groupId);
+
+            const unsubscribe = onSnapshot(groupRef, (docSnap) => {
+                setLoading(false);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.members) setMembers(data.members);
+                    if (data.history) setHistory(data.history);
+                } else {
+                    // Če dokument še ne obstaja, ga ustvarimo s privzetimi vrednostmi
+                    const initialData = {
+                        members: ["Martin", "Mitja", "Pavel", "Matej", "Zala", "Stela"],
+                        history: []
+                    };
+                    setDoc(groupRef, initialData).catch(err => console.error("Create error:", err));
+                    setMembers(initialData.members);
+                    setHistory(initialData.history);
+                }
+            }, (err) => {
+                console.error("Snapshot error:", err);
+                setDbError("Napaka pri sinhronizaciji podatkov.");
+                setLoading(false);
+            });
+
+            return () => unsubscribe();
+          }, [user, groupId]);
+
+          // --- 3. SAVE TO DB HELPER ---
+          const saveToDb = async (newMembers, newHistory) => {
+            if (!user || !groupId) return;
+            try {
+                const groupRef = doc(db, 'artifacts', appId, 'public', 'data', 'malica_groups', groupId);
+                await setDoc(groupRef, {
+                    members: newMembers !== undefined ? newMembers : members,
+                    history: newHistory !== undefined ? newHistory : history
+                }, { merge: true });
+            } catch (err) {
+                console.error("Save error:", err);
+                alert("Napaka pri shranjevanju! Preveri povezavo.");
+            }
+          };
+
+          // --- INITIALIZE FORM DEFAULTS ---
           useEffect(() => {
             if (members.length > 0) {
               if (!payer || !members.includes(payer)) {
@@ -95,23 +173,13 @@
             } else {
               setPayer('');
             }
-            
             setSelectedParticipants(prev => {
                 const valid = prev.filter(p => members.includes(p));
                 return valid.length === 0 ? members : valid;
             });
           }, [members, payer]);
 
-          // --- PERSISTENCE ---
-          useEffect(() => {
-            localStorage.setItem('malica_members', JSON.stringify(members));
-          }, [members]);
-
-          useEffect(() => {
-            localStorage.setItem('malica_history', JSON.stringify(history));
-          }, [history]);
-
-          // --- LOGIC ---
+          // --- LOGIC: BALANCES ---
           const balances = useMemo(() => {
             const b = {};
             members.forEach(m => b[m] = 0);
@@ -138,24 +206,21 @@
             return b;
           }, [history, members]);
 
+          // --- LOGIC: SETTLEMENTS ---
           const settlements = useMemo(() => {
             const debtors = [];
             const creditors = [];
             
             Object.entries(balances).forEach(([name, balance]) => {
-              if (balance < -0.05) { 
-                debtors.push({ name, balance: Math.abs(balance) });
-              } else if (balance > 0.05) {
-                creditors.push({ name, balance });
-              }
+              if (balance < -0.05) debtors.push({ name, balance: Math.abs(balance) });
+              else if (balance > 0.05) creditors.push({ name, balance });
             });
 
             debtors.sort((a, b) => b.balance - a.balance);
             creditors.sort((a, b) => b.balance - a.balance);
 
             const result = [];
-            let dIdx = 0;
-            let cIdx = 0;
+            let dIdx = 0, cIdx = 0;
 
             while (dIdx < debtors.length && cIdx < creditors.length) {
               const debtor = debtors[dIdx];
@@ -177,7 +242,6 @@
             if (members.length === 0) return "Dodaj člana";
             const allZero = Object.values(balances).every(v => Math.abs(v) < 0.1);
             if (allZero && history.length > 0) return "Vsi poravnani";
-            
             let minVal = Infinity;
             let person = members[0];
             members.forEach(m => {
@@ -190,7 +254,25 @@
           }, [balances, members, history]);
 
           // --- ACTIONS ---
-          const addEntry = (e) => {
+          const handleLogin = (e) => {
+              e.preventDefault();
+              const trimmed = inputGroupId.trim().toLowerCase().replace(/\s+/g, '-');
+              if(trimmed) {
+                  localStorage.setItem('malica_group_id', trimmed);
+                  setGroupId(trimmed);
+              }
+          };
+
+          const handleLogout = () => {
+              if(confirm("Ali se želiš odjaviti iz te ekipe?")) {
+                  localStorage.removeItem('malica_group_id');
+                  setGroupId('');
+                  setHistory([]);
+                  setMembers([]);
+              }
+          };
+
+          const addEntry = async (e) => {
             e.preventDefault();
             if (!amount || isNaN(amount) || selectedParticipants.length === 0 || !payer) return;
 
@@ -202,37 +284,45 @@
               participants: [...selectedParticipants]
             };
 
-            setHistory([newEntry, ...history]);
+            const updatedHistory = [newEntry, ...history];
+            // Optimistic update
+            setHistory(updatedHistory);
             setAmount('');
             setActiveTab('history');
+            // Save to DB
+            await saveToDb(undefined, updatedHistory);
           };
 
-          const deleteEntry = (id) => {
-            setHistory(history.filter(e => e.id !== id));
+          const deleteEntry = async (id) => {
+            if(!confirm("Izbrišem ta vnos?")) return;
+            const updatedHistory = history.filter(e => e.id !== id);
+            setHistory(updatedHistory);
+            await saveToDb(undefined, updatedHistory);
           };
 
-          const finalizeSettlement = () => {
+          const finalizeSettlement = async () => {
             setHistory([]);
             setShowResetConfirm(false);
             setActiveTab('dashboard');
+            await saveToDb(undefined, []);
           };
 
-          const exportToPDF = () => {
-            window.print();
-          };
-
-          const addMember = () => {
+          const addMember = async () => {
             const trimmed = newMemberName.trim();
             if (trimmed && !members.includes(trimmed)) {
-              setMembers([...members, trimmed]);
+              const updatedMembers = [...members, trimmed];
+              setMembers(updatedMembers);
               setNewMemberName('');
               setShowAddMember(false);
+              await saveToDb(updatedMembers, undefined);
             }
           };
 
-          const confirmRemoveMember = (name) => {
-            setMembers(members.filter(m => m !== name));
+          const confirmRemoveMember = async (name) => {
+            const updatedMembers = members.filter(m => m !== name);
+            setMembers(updatedMembers);
             setMemberToDelete(null);
+            await saveToDb(updatedMembers, undefined);
           };
 
           const toggleParticipant = (name) => {
@@ -244,12 +334,10 @@
           };
 
           const toggleAllParticipants = () => {
-            if (selectedParticipants.length === members.length) {
-              setSelectedParticipants([]);
-            } else {
-              setSelectedParticipants([...members]);
-            }
+             setSelectedParticipants(selectedParticipants.length === members.length ? [] : [...members]);
           };
+
+          const exportToPDF = () => window.print();
 
           // --- COMPONENTS ---
           const TabButton = ({ id, icon: Icon, label }) => (
@@ -264,6 +352,45 @@
             </button>
           );
 
+          // --- RENDER LOGIN SCREEN ---
+          if (!groupId) {
+              return (
+                <div className="min-h-screen bg-indigo-900 flex items-center justify-center p-6">
+                    <div className="bg-white rounded-3xl p-8 w-full max-w-sm shadow-2xl text-center">
+                        <div className="bg-indigo-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <Cloud size={40} className="text-indigo-600" />
+                        </div>
+                        <h1 className="text-2xl font-black text-slate-800 mb-2">Malica Cloud</h1>
+                        <p className="text-slate-500 mb-8 text-sm">Vpiši ime ekipe, da se povežeš s sodelavci in deliš stroške.</p>
+                        
+                        <form onSubmit={handleLogin} className="space-y-4">
+                            <input 
+                                type="text" 
+                                value={inputGroupId}
+                                onChange={e => setInputGroupId(e.target.value)}
+                                placeholder="Npr. nasa-ekipa"
+                                className="w-full px-4 py-3 bg-slate-50 border-2 border-indigo-100 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-center text-indigo-900 placeholder:font-normal"
+                                autoFocus
+                            />
+                            <button className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
+                                Poveži se
+                            </button>
+                        </form>
+                        <p className="text-xs text-slate-400 mt-6">Vsi, ki vpišejo isto ime, bodo videli iste podatke.</p>
+                    </div>
+                </div>
+              );
+          }
+
+          if (loading) {
+              return (
+                  <div className="min-h-screen flex items-center justify-center bg-slate-50 text-indigo-600">
+                      <Loader2 className="animate-spin" size={48} />
+                  </div>
+              );
+          }
+
+          // --- RENDER MAIN APP ---
           return (
             <div className="min-h-screen bg-slate-50 pb-24 print:bg-white print:pb-0 font-sans">
               
@@ -272,17 +399,30 @@
                 <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
                   <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] rotate-12 bg-[radial-gradient(circle,white,transparent)]" />
                 </div>
-                <h1 className="text-2xl font-bold flex items-center justify-center gap-2 relative z-10">
-                  <Wallet className="text-indigo-200" /> Malica Manager
-                </h1>
-                <p className="text-indigo-200 text-xs mt-1 uppercase tracking-widest opacity-80">Pro Edition</p>
+                <div className="relative z-10 flex justify-between items-start">
+                    <div className="flex-1"></div>
+                    <div>
+                        <h1 className="text-xl font-bold flex items-center justify-center gap-2">
+                        <Wallet className="text-indigo-200" size={20} /> Malica Cloud
+                        </h1>
+                        <div className="flex items-center justify-center gap-1 mt-1 opacity-80 bg-black/20 rounded-full px-3 py-0.5 w-fit mx-auto">
+                            <Cloud size={10} />
+                            <span className="text-[10px] font-mono tracking-wide uppercase">{groupId}</span>
+                        </div>
+                    </div>
+                    <div className="flex-1 flex justify-end">
+                        <button onClick={handleLogout} className="text-indigo-200 hover:text-white p-1" title="Odjava">
+                            <LogOut size={18} />
+                        </button>
+                    </div>
+                </div>
               </header>
 
               {/* PRINT VIEW */}
               <div className="hidden print:block p-10 text-slate-900">
                 <div className="flex justify-between items-end border-b-2 border-slate-800 pb-4 mb-8">
                   <div>
-                    <h1 className="text-4xl font-black uppercase tracking-tight">Poročilo o Malicah</h1>
+                    <h1 className="text-4xl font-black uppercase tracking-tight">Poročilo: {groupId}</h1>
                     <p className="text-slate-500 mt-2">Pripravljeno: {new Date().toLocaleDateString('sl-SI')}</p>
                   </div>
                   <div className="text-right">
@@ -290,7 +430,7 @@
                      <div className="font-bold text-xl">{history.length > 0 ? `${history[history.length-1].date} - ${history[0].date}` : 'Ni podatkov'}</div>
                   </div>
                 </div>
-
+                
                 <div className="grid grid-cols-2 gap-8 mb-10">
                   <div>
                     <h2 className="text-lg font-bold bg-slate-100 p-2 mb-4 border-l-4 border-indigo-600">Končna Stanja</h2>
@@ -307,7 +447,6 @@
                       </tbody>
                     </table>
                   </div>
-
                   <div>
                     <h2 className="text-lg font-bold bg-slate-100 p-2 mb-4 border-l-4 border-rose-500">Predlagan Poračun</h2>
                     <div className="space-y-2 text-sm">
@@ -344,8 +483,13 @@
                 </table>
               </div>
 
-              {/* GLAVNA UI */}
+              {/* MAIN UI */}
               <main className="max-w-md mx-auto px-4 print:hidden">
+                {dbError && (
+                    <div className="mb-4 bg-rose-100 border border-rose-200 text-rose-800 p-3 rounded-xl flex items-center gap-2 text-sm font-bold">
+                        <AlertTriangle size={16} /> {dbError}
+                    </div>
+                )}
                 
                 {activeTab === 'dashboard' && (
                   <div className="space-y-6">
@@ -434,7 +578,7 @@
                             <AlertTriangle className="flex-shrink-0" />
                             <div>
                               <p className="font-bold text-sm">Brisanje zgodovine</p>
-                              <p className="text-xs mt-1 opacity-80">To bo trajno izbrisalo vse vnose. Predlagam, da najprej shraniš PDF.</p>
+                              <p className="text-xs mt-1 opacity-80">To bo trajno izbrisalo vse vnose ZA VSE ČLANE EKIPE. Predlagam, da najprej shraniš PDF.</p>
                             </div>
                           </div>
                           <div className="flex gap-2">
@@ -634,7 +778,7 @@
                       )}
                       
                       <div className="mt-8 pt-6 border-t border-slate-100 text-center">
-                          <p className="text-xs text-slate-300">Malica Manager Pro v1.2</p>
+                          <p className="text-xs text-slate-300">Malica Manager Pro - Cloud Edition</p>
                       </div>
                   </div>
                 )}
