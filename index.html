@@ -1,211 +1,667 @@
-<!DOCTYPE html>
+
 <html lang="sl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pomen imena Mitja</title>
+    <title>Malica Manager Pro</title>
+    
+    <!-- 1. TAILWIND CSS (Za izgled) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. IMPORT MAP (Da brskalnik ve, kje dobiti React in Ikone) -->
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18.2.0",
+        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+        "lucide-react": "https://esm.sh/lucide-react@0.263.1"
+      }
+    }
+    </script>
+
+    <!-- 3. BABEL (Prevajalnik za JSX) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
-
-        * {
-            box-sizing: border-box;
+        /* Dodatni stili za tiskanje in scrollbar */
+        @media print {
+            @page { margin: 1cm; }
+            body { background: white; -webkit-print-color-adjust: exact; }
+            .no-print { display: none !important; }
         }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-            background: radial-gradient(circle at top, #fef6e4 0, #e3f2fd 40%, #f5f5f5 80%);
-            color: #1f2933;
-        }
-
-        .page {
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 28px 20px 40px;
-        }
-
-        .hero {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .tag {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 999px;
-            background: rgba(43, 76, 126, 0.08);
-            color: #2b4c7e;
-            font-size: 13px;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        h1 {
-            margin: 0 0 10px;
-            font-size: 32px;
-            font-weight: 600;
-            color: #1b3255;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.08);
-        }
-
-        .subtitle {
-            font-size: 15px;
-            color: #4b5563;
-            max-width: 560px;
-            margin: 0 auto;
-        }
-
-        .divider {
-            width: 60px;
-            height: 3px;
-            border-radius: 999px;
-            margin: 18px auto 0;
-            background: linear-gradient(90deg, #f59e0b, #ef4444, #3b82f6);
-        }
-
-        .image-row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 22px;
-            margin: 30px 0 26px;
-        }
-
-        .image-card {
-            text-align: center;
-        }
-
-        .image-card img {
-            width: 180px;
-            max-width: 42vw;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2);
-            border: 2px solid rgba(255,255,255,0.9);
-            backdrop-filter: blur(4px);
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-        }
-
-        .image-card img:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 16px 35px rgba(15, 23, 42, 0.28);
-        }
-
-        .image-label {
-            font-size: 14px;
-            color: #4b5563;
-            margin-top: 8px;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 18px;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.88);
-            padding: 20px 20px 18px;
-            border-radius: 18px;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
-            border: 1px solid rgba(255,255,255,0.9);
-            backdrop-filter: blur(8px);
-            transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            background: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.25);
-        }
-
-        .lang {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #1f2937;
-            font-size: 16px;
-        }
-
-        p {
-            margin: 0;
-            font-size: 14px;
-            color: #374151;
-        }
-
-        .footer-note {
-            text-align: center;
-            font-size: 12px;
-            color: #6b7280;
-            margin-top: 28px;
-        }
-
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 26px;
-            }
-            .page {
-                padding: 20px 14px 30px;
-            }
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Skrijemo scrollbar, a ohranimo funkcionalnost */
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
     </style>
 </head>
-<body>
-    <div class="page">
-        <header class="hero">
-            <div class="tag">Ime Mitja – pomen in izvor</div>
-            <h1>Pomen imena Mitja</h1>
-            <p class="subtitle">
-                Kratek opis izvora in pomena imena Mitja v različnih jezikih ter povezava z boginjo Demetro in svetim Demetrijem.
-            </p>
-            <div class="divider"></div>
-        </header>
+<body class="bg-slate-50 text-slate-900">
 
-        <section class="image-row">
-            <div class="image-card">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/0/0d/Saint_Demetrios_icon.png" alt="Sveti Demetrij">
-                <div class="image-label">Sveti Demetrij – krščanski mučenik</div>
+    <!-- TUKAJ SE BO PRIKAZALA APLIKACIJA -->
+    <div id="root"></div>
+
+    <!-- 4. TVOJA APLIKACIJA (Prekopirana in prilagojena React koda) -->
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect, useMemo } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { 
+          Users, History, PlusCircle, Trash2, TrendingDown, 
+          CreditCard, UserPlus, ArrowRightCircle, Calendar, 
+          Wallet, Calculator, CheckCircle2, Download, 
+          AlertTriangle, FileText, CheckSquare, Square 
+        } from 'lucide-react';
+
+        // --- POMOŽNA FUNKCIJA ZA DENAR ---
+        const money = (val) => Math.round(val * 100) / 100;
+
+        const App = () => {
+          // --- STATE ---
+          const [members, setMembers] = useState(() => {
+            try {
+              const saved = localStorage.getItem('malica_members');
+              // Posodobljena imena
+              return saved ? JSON.parse(saved) : ["Martin", "Mitja", "Pavel", "Matej", "Zala", "Stela"];
+            } catch (e) { return []; }
+          });
+
+          const [history, setHistory] = useState(() => {
+            try {
+              const saved = localStorage.getItem('malica_history');
+              return saved ? JSON.parse(saved) : [];
+            } catch (e) { return []; }
+          });
+
+          const [activeTab, setActiveTab] = useState('dashboard');
+          const [showAddMember, setShowAddMember] = useState(false);
+          const [newMemberName, setNewMemberName] = useState('');
+          const [memberToDelete, setMemberToDelete] = useState(null);
+          const [showResetConfirm, setShowResetConfirm] = useState(false);
+
+          // Form State
+          const [amount, setAmount] = useState('');
+          const [payer, setPayer] = useState('');
+          const [selectedParticipants, setSelectedParticipants] = useState([]);
+          const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+
+          // --- INITIALIZE FORM ---
+          useEffect(() => {
+            if (members.length > 0) {
+              if (!payer || !members.includes(payer)) {
+                setPayer(members[0]);
+              }
+            } else {
+              setPayer('');
+            }
+            
+            setSelectedParticipants(prev => {
+                const valid = prev.filter(p => members.includes(p));
+                return valid.length === 0 ? members : valid;
+            });
+          }, [members, payer]);
+
+          // --- PERSISTENCE ---
+          useEffect(() => {
+            localStorage.setItem('malica_members', JSON.stringify(members));
+          }, [members]);
+
+          useEffect(() => {
+            localStorage.setItem('malica_history', JSON.stringify(history));
+          }, [history]);
+
+          // --- LOGIC ---
+          const balances = useMemo(() => {
+            const b = {};
+            members.forEach(m => b[m] = 0);
+
+            history.forEach(entry => {
+              const { payer, amount, participants } = entry;
+              const numAmount = parseFloat(amount);
+              
+              if (b.hasOwnProperty(payer)) {
+                b[payer] = money(b[payer] + numAmount);
+              }
+
+              const originalParticipantCount = participants.length;
+              if (originalParticipantCount > 0) {
+                const costPerPerson = money(numAmount / originalParticipantCount);
+                participants.forEach(p => {
+                  if (b.hasOwnProperty(p)) {
+                    b[p] = money(b[p] - costPerPerson);
+                  }
+                });
+              }
+            });
+
+            return b;
+          }, [history, members]);
+
+          const settlements = useMemo(() => {
+            const debtors = [];
+            const creditors = [];
+            
+            Object.entries(balances).forEach(([name, balance]) => {
+              if (balance < -0.05) { 
+                debtors.push({ name, balance: Math.abs(balance) });
+              } else if (balance > 0.05) {
+                creditors.push({ name, balance });
+              }
+            });
+
+            debtors.sort((a, b) => b.balance - a.balance);
+            creditors.sort((a, b) => b.balance - a.balance);
+
+            const result = [];
+            let dIdx = 0;
+            let cIdx = 0;
+
+            while (dIdx < debtors.length && cIdx < creditors.length) {
+              const debtor = debtors[dIdx];
+              const creditor = creditors[cIdx];
+              const amount = money(Math.min(debtor.balance, creditor.balance));
+
+              if (amount > 0) {
+                result.push({ from: debtor.name, to: creditor.name, amount: amount });
+                debtor.balance = money(debtor.balance - amount);
+                creditor.balance = money(creditor.balance - amount);
+              }
+              if (debtor.balance < 0.01) dIdx++;
+              if (creditor.balance < 0.01) cIdx++;
+            }
+            return result;
+          }, [balances]);
+
+          const nextPayer = useMemo(() => {
+            if (members.length === 0) return "Dodaj člana";
+            const allZero = Object.values(balances).every(v => Math.abs(v) < 0.1);
+            if (allZero && history.length > 0) return "Vsi poravnani";
+            
+            let minVal = Infinity;
+            let person = members[0];
+            members.forEach(m => {
+              if (balances[m] < minVal) {
+                minVal = balances[m];
+                person = m;
+              }
+            });
+            return person;
+          }, [balances, members, history]);
+
+          // --- ACTIONS ---
+          const addEntry = (e) => {
+            e.preventDefault();
+            if (!amount || isNaN(amount) || selectedParticipants.length === 0 || !payer) return;
+
+            const newEntry = {
+              id: Date.now(),
+              date,
+              payer,
+              amount: parseFloat(amount),
+              participants: [...selectedParticipants]
+            };
+
+            setHistory([newEntry, ...history]);
+            setAmount('');
+            setActiveTab('history');
+          };
+
+          const deleteEntry = (id) => {
+            setHistory(history.filter(e => e.id !== id));
+          };
+
+          const finalizeSettlement = () => {
+            setHistory([]);
+            setShowResetConfirm(false);
+            setActiveTab('dashboard');
+          };
+
+          const exportToPDF = () => {
+            window.print();
+          };
+
+          const addMember = () => {
+            const trimmed = newMemberName.trim();
+            if (trimmed && !members.includes(trimmed)) {
+              setMembers([...members, trimmed]);
+              setNewMemberName('');
+              setShowAddMember(false);
+            }
+          };
+
+          const confirmRemoveMember = (name) => {
+            setMembers(members.filter(m => m !== name));
+            setMemberToDelete(null);
+          };
+
+          const toggleParticipant = (name) => {
+            if (selectedParticipants.includes(name)) {
+              setSelectedParticipants(selectedParticipants.filter(p => p !== name));
+            } else {
+              setSelectedParticipants([...selectedParticipants, name]);
+            }
+          };
+
+          const toggleAllParticipants = () => {
+            if (selectedParticipants.length === members.length) {
+              setSelectedParticipants([]);
+            } else {
+              setSelectedParticipants([...members]);
+            }
+          };
+
+          // --- COMPONENTS ---
+          const TabButton = ({ id, icon: Icon, label }) => (
+            <button
+              onClick={() => setActiveTab(id)}
+              className={`flex flex-col items-center justify-center py-2 px-3 rounded-xl transition-all ${
+                activeTab === id ? 'bg-indigo-600 text-white shadow-lg scale-105' : 'text-gray-500 hover:bg-gray-100'
+              }`}
+            >
+              <Icon size={20} />
+              <span className="text-[10px] mt-1 font-medium">{label}</span>
+            </button>
+          );
+
+          return (
+            <div className="min-h-screen bg-slate-50 pb-24 print:bg-white print:pb-0 font-sans">
+              
+              {/* HEADER (Zaslon) */}
+              <header className="bg-gradient-to-br from-indigo-700 to-indigo-900 text-white p-6 rounded-b-[2.5rem] shadow-xl mb-6 print:hidden text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                  <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] rotate-12 bg-[radial-gradient(circle,white,transparent)]" />
+                </div>
+                <h1 className="text-2xl font-bold flex items-center justify-center gap-2 relative z-10">
+                  <Wallet className="text-indigo-200" /> Malica Manager
+                </h1>
+                <p className="text-indigo-200 text-xs mt-1 uppercase tracking-widest opacity-80">Pro Edition</p>
+              </header>
+
+              {/* PRINT VIEW */}
+              <div className="hidden print:block p-10 text-slate-900">
+                <div className="flex justify-between items-end border-b-2 border-slate-800 pb-4 mb-8">
+                  <div>
+                    <h1 className="text-4xl font-black uppercase tracking-tight">Poročilo o Malicah</h1>
+                    <p className="text-slate-500 mt-2">Pripravljeno: {new Date().toLocaleDateString('sl-SI')}</p>
+                  </div>
+                  <div className="text-right">
+                     <div className="text-sm text-slate-400">Obdobje</div>
+                     <div className="font-bold text-xl">{history.length > 0 ? `${history[history.length-1].date} - ${history[0].date}` : 'Ni podatkov'}</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-8 mb-10">
+                  <div>
+                    <h2 className="text-lg font-bold bg-slate-100 p-2 mb-4 border-l-4 border-indigo-600">Končna Stanja</h2>
+                    <table className="w-full text-sm">
+                      <tbody>
+                      {members.map(m => (
+                        <tr key={m} className="border-b border-slate-100">
+                          <td className="py-2 font-medium">{m}</td>
+                          <td className={`py-2 text-right font-bold ${balances[m] >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                            {balances[m] >= 0 ? '+' : ''}{balances[m].toFixed(2)} €
+                          </td>
+                        </tr>
+                      ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div>
+                    <h2 className="text-lg font-bold bg-slate-100 p-2 mb-4 border-l-4 border-rose-500">Predlagan Poračun</h2>
+                    <div className="space-y-2 text-sm">
+                      {settlements.length > 0 ? settlements.map((s, idx) => (
+                        <div key={idx} className="flex justify-between items-center border p-2 rounded bg-slate-50">
+                          <span>{s.from} <span className="text-slate-400">→</span> {s.to}</span>
+                          <span className="font-bold">{s.amount.toFixed(2)} €</span>
+                        </div>
+                      )) : <p className="italic text-slate-400 p-2">Vse poravnano.</p>}
+                    </div>
+                  </div>
+                </div>
+
+                <h2 className="text-lg font-bold bg-slate-100 p-2 mb-4 border-l-4 border-slate-600">Podrobna Zgodovina</h2>
+                <table className="w-full text-sm border-collapse border border-slate-200">
+                  <thead className="bg-slate-50">
+                    <tr>
+                      <th className="p-2 border border-slate-200 text-left">Datum</th>
+                      <th className="p-2 border border-slate-200 text-left">Plačnik</th>
+                      <th className="p-2 border border-slate-200 text-right">Znesek</th>
+                      <th className="p-2 border border-slate-200 text-left w-1/2">Udeleženci</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {history.map(entry => (
+                      <tr key={entry.id}>
+                        <td className="p-2 border border-slate-200">{entry.date}</td>
+                        <td className="p-2 border border-slate-200 font-bold">{entry.payer}</td>
+                        <td className="p-2 border border-slate-200 text-right">{entry.amount.toFixed(2)} €</td>
+                        <td className="p-2 border border-slate-200 text-xs text-slate-500">{entry.participants.join(', ')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* GLAVNA UI */}
+              <main className="max-w-md mx-auto px-4 print:hidden">
+                
+                {activeTab === 'dashboard' && (
+                  <div className="space-y-6">
+                    <div className="bg-white p-6 rounded-3xl shadow-lg shadow-indigo-100 border border-white relative overflow-hidden text-center group transition-all hover:scale-[1.02]">
+                      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                        <CreditCard size={100} className="rotate-12" />
+                      </div>
+                      <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Naslednji plača</p>
+                      <h2 className="text-3xl font-black text-slate-800 mb-2 leading-tight">{nextPayer}</h2>
+                      {nextPayer !== "Vsi poravnani" && nextPayer !== "Dodaj člana" && (
+                        <div className="inline-flex items-center gap-2 bg-slate-100 px-4 py-1.5 rounded-full text-sm font-bold text-slate-600">
+                          <TrendingDown size={14} className={balances[nextPayer] < 0 ? 'text-rose-500' : 'text-emerald-500'} /> 
+                          Stanje: {balances[nextPayer]?.toFixed(2)} €
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                      <div className="p-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+                        <h3 className="font-bold text-slate-700 flex items-center gap-2">
+                          <Users size={18} className="text-indigo-500" /> Trenutno stanje
+                        </h3>
+                        <button onClick={exportToPDF} className="text-indigo-600 bg-indigo-50 hover:bg-indigo-100 p-2 rounded-xl transition-colors" title="Prenesi PDF">
+                          <Download size={18} />
+                        </button>
+                      </div>
+                      <div className="divide-y divide-slate-50">
+                        {members.length > 0 ? members.map(m => (
+                          <div key={m} className="p-4 flex justify-between items-center hover:bg-slate-50 transition-colors">
+                            <span className="font-medium text-slate-600">{m}</span>
+                            <span className={`font-bold tabular-nums ${balances[m] >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
+                              {balances[m] >= 0 ? '+' : ''}{balances[m].toFixed(2)} €
+                            </span>
+                          </div>
+                        )) : <div className="p-6 text-center text-slate-400 text-sm">Dodaj člane v zavihku Ekipa</div>}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'settle' && (
+                  <div className="space-y-6">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <Calculator className="text-indigo-600" /> Obračun
+                      </h3>
+                      <button onClick={exportToPDF} className="flex items-center gap-2 bg-indigo-50 px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition-colors">
+                        <FileText size={14} /> Natisni PDF
+                      </button>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-3xl shadow-sm border-2 border-slate-100">
+                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6 text-center">Plan poravnave</h4>
+                      <div className="space-y-4">
+                        {settlements.length > 0 ? settlements.map((s, idx) => (
+                          <div key={idx} className="flex items-center gap-3 relative">
+                            {idx !== settlements.length - 1 && <div className="absolute left-[50%] top-10 bottom-[-16px] w-px bg-slate-100 -z-10"></div>}
+                            <div className="flex-1 text-center bg-rose-50 rounded-xl p-2 border border-rose-100">
+                              <p className="font-bold text-slate-700 text-sm">{s.from}</p>
+                            </div>
+                            <div className="flex flex-col items-center justify-center min-w-[80px]">
+                              <span className="text-xs text-slate-400 mb-1">dolguje</span>
+                              <div className="bg-slate-800 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                                {s.amount.toFixed(2)} €
+                              </div>
+                              <ArrowRightCircle size={14} className="text-slate-300 mt-1" />
+                            </div>
+                            <div className="flex-1 text-center bg-emerald-50 rounded-xl p-2 border border-emerald-100">
+                              <p className="font-bold text-slate-700 text-sm">{s.to}</p>
+                            </div>
+                          </div>
+                        )) : (
+                          <div className="text-center py-10 text-slate-400 flex flex-col items-center">
+                            <CheckCircle2 size={48} className="text-emerald-200 mb-3" />
+                            <p className="font-medium text-slate-500">Računi so čisti!</p>
+                            <p className="text-xs mt-1">Nihče nikomur nič ne dolguje.</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      {showResetConfirm ? (
+                        <div className="bg-rose-50 border border-rose-100 p-5 rounded-3xl animate-in zoom-in-95 duration-200 shadow-lg shadow-rose-100/50">
+                          <div className="flex items-start gap-3 text-rose-800 mb-4">
+                            <AlertTriangle className="flex-shrink-0" />
+                            <div>
+                              <p className="font-bold text-sm">Brisanje zgodovine</p>
+                              <p className="text-xs mt-1 opacity-80">To bo trajno izbrisalo vse vnose. Predlagam, da najprej shraniš PDF.</p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <button onClick={() => setShowResetConfirm(false)} className="flex-1 bg-white border border-rose-200 py-3 rounded-xl font-bold text-slate-600 text-sm">Prekliči</button>
+                            <button onClick={finalizeSettlement} className="flex-1 bg-rose-600 text-white py-3 rounded-xl font-bold text-sm shadow-md shadow-rose-200">Da, ponastavi</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button 
+                          disabled={history.length === 0}
+                          onClick={() => setShowResetConfirm(true)} 
+                          className="w-full bg-white border border-slate-200 text-slate-600 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                        >
+                          <CheckCircle2 size={20} className={history.length > 0 ? "text-emerald-500" : "text-slate-300"} /> 
+                          Zaključi obdobje
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'add' && (
+                  <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                    <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                      <PlusCircle className="text-indigo-600" /> Nov račun
+                    </h3>
+                    
+                    <form onSubmit={addEntry} className="space-y-6">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Datum</label>
+                          <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full p-3 bg-slate-50 rounded-xl font-medium text-slate-700 outline-none focus:ring-2 focus:ring-indigo-100 transition-all" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Plačal</label>
+                          <select value={payer} onChange={e => setPayer(e.target.value)} className="w-full p-3 bg-slate-50 rounded-xl font-bold text-indigo-900 outline-none focus:ring-2 focus:ring-indigo-100 appearance-none transition-all">
+                            {members.map(m => <option key={m} value={m}>{m}</option>)}
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Znesek</label>
+                        <div className="relative">
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xl">€</span>
+                          <input 
+                            type="number" 
+                            step="0.01" 
+                            value={amount} 
+                            onChange={e => setAmount(e.target.value)} 
+                            placeholder="0.00" 
+                            className="w-full pl-10 pr-4 py-4 bg-slate-50 rounded-2xl text-3xl font-black text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all placeholder:text-slate-200" 
+                            autoFocus
+                          />
+                        </div>
+                      </div>
+
+                      <div className="pt-2">
+                        <div className="flex justify-between items-end mb-3">
+                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Kdo je jedel?</label>
+                            <button type="button" onClick={toggleAllParticipants} className="text-xs font-bold text-indigo-600 flex items-center gap-1 hover:bg-indigo-50 px-2 py-1 rounded">
+                                {selectedParticipants.length === members.length ? <CheckSquare size={14}/> : <Square size={14}/>}
+                                {selectedParticipants.length === members.length ? 'Odkljukaj vse' : 'Izberi vse'}
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
+                          {members.map(m => {
+                            const isSelected = selectedParticipants.includes(m);
+                            return (
+                              <button
+                                key={m}
+                                type="button"
+                                onClick={() => toggleParticipant(m)}
+                                className={`py-3 px-4 rounded-xl text-sm font-bold transition-all border flex items-center justify-between group ${
+                                  isSelected 
+                                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-200' 
+                                    : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300'
+                                }`}
+                              >
+                                {m}
+                                {isSelected && <CheckCircle2 size={16} className="text-indigo-200" />}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+
+                      <button 
+                        type="submit" 
+                        disabled={!amount || selectedParticipants.length === 0}
+                        className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-indigo-200 active:scale-95 transition-all disabled:opacity-50 disabled:shadow-none"
+                      >
+                        Shrani račun
+                      </button>
+                    </form>
+                  </div>
+                )}
+
+                {activeTab === 'history' && (
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center px-2">
+                      <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <History className="text-indigo-600" /> Zgodovina
+                      </h3>
+                      <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-full">{history.length} vnosov</span>
+                    </div>
+                    
+                    <div className="space-y-3 pb-4">
+                      {history.length > 0 ? history.map(entry => (
+                        <div key={entry.id} className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 relative group transition-all hover:shadow-md">
+                          <div className="flex justify-between items-start">
+                            <div className="flex gap-3">
+                                <div className="bg-indigo-50 w-12 h-12 rounded-xl flex items-center justify-center flex-col text-indigo-700 font-bold leading-none shrink-0">
+                                    <span className="text-[10px] opacity-60 uppercase">{new Date(entry.date).toLocaleString('default', { month: 'short' })}</span>
+                                    <span className="text-lg">{new Date(entry.date).getDate()}</span>
+                                </div>
+                                <div>
+                                    <p className="font-bold text-slate-700 text-sm">{entry.payer}</p>
+                                    <div className="flex flex-wrap gap-1 mt-1">
+                                        {entry.participants.map(p => (
+                                            <span key={p} className="text-[9px] bg-slate-50 text-slate-400 px-1.5 py-0.5 rounded border border-slate-100">
+                                                {p}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-lg font-black text-slate-800">{entry.amount.toFixed(2)} €</p>
+                            </div>
+                          </div>
+                          <button onClick={() => deleteEntry(entry.id)} className="absolute -top-2 -right-2 bg-white text-rose-500 p-2 rounded-full shadow-md border border-rose-50 opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-50 hover:scale-110">
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      )) : (
+                          <div className="text-center py-20 opacity-50">
+                              <div className="bg-slate-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
+                                  <History size={40} />
+                              </div>
+                              <p>Zgodovina je prazna.</p>
+                          </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'settings' && (
+                  <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                    <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2"><UserPlus className="text-indigo-600" /> Ekipa</h3>
+                    
+                    <div className="space-y-3 mb-6">
+                      {members.map(m => (
+                        <div key={m} className="flex justify-between items-center p-3 bg-slate-50 rounded-xl transition-all border border-transparent hover:border-slate-200">
+                          {memberToDelete === m ? (
+                            <div className="flex items-center justify-between w-full animate-in slide-in-from-right-5 duration-200">
+                              <span className="text-xs font-bold text-rose-600 uppercase tracking-wide ml-2">Izbrišem?</span>
+                              <div className="flex gap-2">
+                                <button onClick={() => setMemberToDelete(null)} className="bg-white border border-slate-200 text-slate-500 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-50">Ne</button>
+                                <button onClick={() => confirmRemoveMember(m)} className="bg-rose-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg shadow-rose-200 hover:bg-rose-600">Da</button>
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xs">
+                                      {m.charAt(0)}
+                                  </div>
+                                  <span className="font-bold text-slate-700">{m}</span>
+                              </div>
+                              <button onClick={() => setMemberToDelete(m)} className="text-slate-300 p-2 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors">
+                                <Trash2 size={18} />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {!showAddMember ? (
+                        <button onClick={() => setShowAddMember(true)} className="w-full py-4 border-2 border-dashed border-slate-200 text-slate-400 rounded-2xl flex items-center justify-center gap-2 hover:bg-slate-50 hover:border-indigo-200 hover:text-indigo-400 transition-all font-bold text-sm uppercase tracking-wide">
+                          <PlusCircle size={20} /> Dodaj sodelavca
+                        </button>
+                      ) : (
+                        <div className="flex gap-2 animate-in fade-in duration-200">
+                          <input 
+                            autoFocus 
+                            type="text" 
+                            value={newMemberName} 
+                            onChange={e => setNewMemberName(e.target.value)} 
+                            placeholder="Vpiši ime..." 
+                            className="flex-1 px-4 py-3 bg-slate-50 border-2 border-indigo-100 rounded-xl focus:ring-0 focus:border-indigo-500 font-medium outline-none" 
+                            onKeyDown={e => e.key === 'Enter' && addMember()} 
+                          />
+                          <button onClick={addMember} className="bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold hover:bg-indigo-700 transition-colors">OK</button>
+                        </div>
+                      )}
+                      
+                      <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+                          <p className="text-xs text-slate-300">Malica Manager Pro v1.2</p>
+                      </div>
+                  </div>
+                )}
+
+              </main>
+
+              {/* BOTTOM NAV */}
+              <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-6 py-2 pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.1)] print:hidden z-50">
+                <div className="max-w-md mx-auto flex justify-between items-center">
+                  <TabButton id="dashboard" icon={TrendingDown} label="Stanje" />
+                  <TabButton id="history" icon={History} label="Zgodovina" />
+                  <div className="relative -top-8 group">
+                     <div className="absolute inset-0 bg-indigo-500 rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
+                     <button onClick={() => setActiveTab('add')} className={`relative w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all ${activeTab === 'add' ? 'bg-indigo-700 scale-105' : 'bg-indigo-600 hover:bg-indigo-700 hover:scale-105'} text-white border-4 border-white`}>
+                      <PlusCircle size={32} />
+                    </button>
+                  </div>
+                  <TabButton id="settle" icon={Calculator} label="Obračun" />
+                  <TabButton id="settings" icon={Users} label="Ekipa" />
+                </div>
+              </nav>
             </div>
-            <div class="image-card">
-                <img src="https://commons.wikimedia.org/wiki/Category:Demeter#/media/File:(Venice)_Demeter_in_the_Museo_archeologico_nazionale.jpg" alt="Boginja Demetra">
-                <div class="image-label">Boginja Demetra – Mati Zemlja</div>
-            </div>
-            <div class="image-card">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Man_Silhouette.png/480px-Man_Silhouette.png" alt="Mitja – simbolična podoba">
-                <div class="image-label">Simbolična podoba imena Mitja</div>
-            </div>
-        </section>
+          );
+        };
 
-        <section class="cards">
-            <article class="card">
-                <div class="lang">Slovenščina</div>
-                <p>Ime <b>Mitja</b> izhaja iz grškega imena <i>Demetrios</i>, ki pomeni »posvečen Demetri«, starogrški boginji rodovitnosti in Mati Zemlji. Krščanski pomen dobiva prek svetega Demetrija, grškega mučenca iz Soluna, rimskega vojaka, usmrčenega zaradi vere. Njegovo čaščenje se je razširilo med Slovani, zato je ime Dimitrij in njegova slovenska oblika Mitja postalo priljubljeno.</p>
-            </article>
-
-            <article class="card">
-                <div class="lang">Hrvaščina</div>
-                <p>Ime <b>Mitja</b> potječe od grčkog imena <i>Demetrios</i>, što znači „posvećen Demetri“, starogrčkoj božici plodnosti i Majci Zemlji. Kršćanski značaj ime dobiva preko svetog Dimitrija, grčkog mučenika iz Soluna, rimskog vojnika pogubljenog zbog vjere. Njegov kult proširio se među Slavenima, pa je ime Dimitrije i njegova varijanta Mitja postalo rašireno.</p>
-            </article>
-
-            <article class="card">
-                <div class="lang">Nemščina</div>
-                <p>Der Name <b>Mitja</b> stammt vom griechischen <i>Demetrios</i> und bedeutet „der der Demeter Geweihte“, der altgriechischen Göttin der Fruchtbarkeit und Mutter Erde. Eine christliche Bedeutung erhält der Name durch den heiligen Demetrios, einen griechischen Märtyrer aus Thessaloniki, römischen Soldaten, der wegen seines Glaubens hingerichtet wurde. Sein Kult verbreitete sich unter den Slawen, weshalb der Name Dimitrij und seine Form Mitja beliebt wurden.</p>
-            </article>
-
-            <article class="card">
-                <div class="lang">Angleščina</div>
-                <p>The name <b>Mitja</b> comes from the Greek <i>Demetrios</i>, meaning “dedicated to Demeter”, the ancient Greek goddess of fertility and Mother Earth. Its Christian significance comes from Saint Demetrius, a Greek martyr from Thessaloniki, a Roman soldier executed for his faith. His veneration spread among the Slavs, making Dimitrij and its form Mitja popular.</p>
-            </article>
-
-            <article class="card">
-                <div class="lang">Italijanščina</div>
-                <p>Il nome <b>Mitja</b> deriva dal greco <i>Demetrios</i>, che significa “dedicato a Demetra”, l’antica dea greca della fertilità e Madre Terra. Il nome assume un valore cristiano attraverso San Demetrio, martire greco di Salonicco, soldato romano ucciso per la sua fede. Il suo culto si diffuse tra gli Slavi, rendendo popolari il nome Dimitrij e la sua forma Mitja.</p>
-            </article>
-        </section>
-
-        <div class="footer-note">
-            Stran je pripravljena za deljenje na spletu – preprosto kopiraj HTML-kodo in jo objavi kot lastno mini predstavitev imena Mitja.
-        </div>
-    </div>
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
