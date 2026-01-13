@@ -26,7 +26,7 @@
         import { 
             Check, Minus, BarChart2, User, Scroll, Calendar, Shield, Crown, 
             Sword, Feather, Grid, HelpCircle, Hammer, Anchor, Flame, Book, 
-            Star, Sun, Cloud, Loader, AlertTriangle 
+            Star, Sun, Cloud, Loader, AlertTriangle, Link, Save 
         } from 'https://esm.sh/lucide-react@0.292.0';
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -37,24 +37,20 @@
         // --- 1. KONFIGURACIJA (TUKAJ VPIŠI SVOJE PODATKE ZA GITHUB) ---
         // =================================================================
         
-        // Če nalagaš na GitHub, te podatke zamenjaj s svojimi iz Firebase Console.
-        // Če testiraš tukaj v predogledu, pusti tako kot je (uporabilo bo samodejne podatke).
-        
         const manualConfig = {
-          apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
-          authDomain: "delo-ae21b.firebaseapp.com",
-          projectId: "delo-ae21b",
-          storageBucket: "delo-ae21b.firebasestorage.app",
-          messagingSenderId: "721173225350",
-          appId: "1:721173225350:web:83926980686c6f4ec11607",
-          measurementId: "G-4STZTWDQ1X"
+  apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
+  authDomain: "delo-ae21b.firebaseapp.com",
+  projectId: "delo-ae21b",
+  storageBucket: "delo-ae21b.firebasestorage.app",
+  messagingSenderId: "721173225350",
+  appId: "1:721173225350:web:83926980686c6f4ec11607",
+  measurementId: "G-4STZTWDQ1X"
         };
 
         // --- Logika inicializacije (Ne tikaj) ---
         let firebaseConfig = null;
         let isAutoConfig = false;
 
-        // 1. Preveri, če smo v predogledu (Canvas)
         if (typeof __firebase_config !== 'undefined') {
             try {
                 firebaseConfig = JSON.parse(__firebase_config);
@@ -62,7 +58,6 @@
             } catch (e) { console.error("Napaka pri branju auto-configa"); }
         } 
         
-        // 2. Če nismo v predogledu, uporabi ročne podatke (za GitHub)
         if (!firebaseConfig) {
             firebaseConfig = manualConfig;
         }
@@ -70,11 +65,12 @@
         // Inicializacija Firebase
         let app, auth, db;
         let firebaseInitialized = false;
+        let configError = false;
 
-        // Preveri, če so podatki veljavni (niso placeholderji)
-        const isValidConfig = firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== "TUKAJ_VPIŠI_API_KEY";
-
-        if (isValidConfig) {
+        // Preverimo, če so placeholderji še vedno prisotni
+        if (firebaseConfig.apiKey === "TUKAJ_VPIŠI_API_KEY" && !isAutoConfig) {
+            configError = true;
+        } else {
             try {
                 app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
@@ -85,79 +81,23 @@
             }
         }
 
-        // Globalne spremenljivke okolja
         const envAppId = typeof __app_id !== 'undefined' ? __app_id : 'deepfocus-medieval';
         const envInitialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // =================================================================
-        // --- 2. KODA APLIKACIJE (DeepFocus Medieval) ---
+        // --- 2. KODA APLIKACIJE ---
         // =================================================================
 
         const CILJ_DEL = 3;
         const XP_PER_BLOCK = 100;
 
-        // --- SISTEM RANGOV ---
         const RANK_SYSTEM = [
-            {
-                minLevel: 1,
-                title: "Služabnik",
-                saint: "Sv. Jožef Delavec",
-                saintDesc: "Zavetnik tihega in vztrajnega dela. Uči nas discipline.",
-                icon: Hammer,
-                theme: {
-                    paper: "#f3e9d2", paperDark: "#eaddcf", ink: "#2c1810", inkLight: "rgba(44, 24, 16, 0.6)", accent: "#854d0e", accentDim: "rgba(133, 77, 14, 0.1)"
-                }
-            },
-            {
-                minLevel: 5,
-                title: "Oproda",
-                saint: "Sv. Krištof",
-                saintDesc: "Zavetnik popotnikov. Nese te čez težke začetke.",
-                icon: Anchor,
-                theme: {
-                    paper: "#e5e7eb", paperDark: "#d1d5db", ink: "#111827", inkLight: "rgba(17, 24, 39, 0.6)", accent: "#374151", accentDim: "rgba(55, 65, 81, 0.1)"
-                }
-            },
-            {
-                minLevel: 10,
-                title: "Vitez",
-                saint: "Sv. Jurij",
-                saintDesc: "Premagovalec zmaja. Simbol zmage nad lenobo.",
-                icon: Sword,
-                theme: {
-                    paper: "#fff1f2", paperDark: "#ffe4e6", ink: "#450a0a", inkLight: "rgba(69, 10, 10, 0.6)", accent: "#be123c", accentDim: "rgba(190, 18, 60, 0.1)"
-                }
-            },
-            {
-                minLevel: 15,
-                title: "Baron",
-                saint: "Sv. Benedikt",
-                saintDesc: "Oče 'Ora et Labora'. Mojster ravnovesja.",
-                icon: Shield,
-                theme: {
-                    paper: "#eff6ff", paperDark: "#dbeafe", ink: "#172554", inkLight: "rgba(23, 37, 84, 0.6)", accent: "#2563eb", accentDim: "rgba(37, 99, 235, 0.1)"
-                }
-            },
-            {
-                minLevel: 20,
-                title: "Vojvoda",
-                saint: "Sv. Hieronim",
-                saintDesc: "Velik učenjak. Predstavlja globok intelektualni fokus.",
-                icon: Book,
-                theme: {
-                    paper: "#faf5ff", paperDark: "#f3e8ff", ink: "#3b0764", inkLight: "rgba(59, 7, 100, 0.6)", accent: "#7e22ce", accentDim: "rgba(126, 34, 206, 0.1)"
-                }
-            },
-            {
-                minLevel: 25,
-                title: "Kralj",
-                saint: "Sv. Tomaž Akvinski",
-                saintDesc: "Angelski učitelj. Vrhunec modrosti in dosežka.",
-                icon: Crown,
-                theme: {
-                    paper: "#fffbeb", paperDark: "#fef3c7", ink: "#000000", inkLight: "rgba(0, 0, 0, 0.6)", accent: "#d97706", accentDim: "rgba(217, 119, 6, 0.1)"
-                }
-            }
+            { minLevel: 1, title: "Služabnik", saint: "Sv. Jožef Delavec", saintDesc: "Zavetnik tihega dela.", icon: Hammer, theme: { paper: "#f3e9d2", paperDark: "#eaddcf", ink: "#2c1810", inkLight: "rgba(44, 24, 16, 0.6)", accent: "#854d0e", accentDim: "rgba(133, 77, 14, 0.1)" } },
+            { minLevel: 5, title: "Oproda", saint: "Sv. Krištof", saintDesc: "Zavetnik popotnikov.", icon: Anchor, theme: { paper: "#e5e7eb", paperDark: "#d1d5db", ink: "#111827", inkLight: "rgba(17, 24, 39, 0.6)", accent: "#374151", accentDim: "rgba(55, 65, 81, 0.1)" } },
+            { minLevel: 10, title: "Vitez", saint: "Sv. Jurij", saintDesc: "Premagovalec zmaja.", icon: Sword, theme: { paper: "#fff1f2", paperDark: "#ffe4e6", ink: "#450a0a", inkLight: "rgba(69, 10, 10, 0.6)", accent: "#be123c", accentDim: "rgba(190, 18, 60, 0.1)" } },
+            { minLevel: 15, title: "Baron", saint: "Sv. Benedikt", saintDesc: "Oče 'Ora et Labora'.", icon: Shield, theme: { paper: "#eff6ff", paperDark: "#dbeafe", ink: "#172554", inkLight: "rgba(23, 37, 84, 0.6)", accent: "#2563eb", accentDim: "rgba(37, 99, 235, 0.1)" } },
+            { minLevel: 20, title: "Vojvoda", saint: "Sv. Hieronim", saintDesc: "Velik učenjak.", icon: Book, theme: { paper: "#faf5ff", paperDark: "#f3e8ff", ink: "#3b0764", inkLight: "rgba(59, 7, 100, 0.6)", accent: "#7e22ce", accentDim: "rgba(126, 34, 206, 0.1)" } },
+            { minLevel: 25, title: "Kralj", saint: "Sv. Tomaž Akvinski", saintDesc: "Angelski učitelj.", icon: Crown, theme: { paper: "#fffbeb", paperDark: "#fef3c7", ink: "#000000", inkLight: "rgba(0, 0, 0, 0.6)", accent: "#d97706", accentDim: "rgba(217, 119, 6, 0.1)" } }
         ];
 
         const getCurrentRankInfo = (level) => {
@@ -190,7 +130,6 @@
             return dates;
         };
 
-        // --- GLAVNA KOMPONENTA ---
         function DeepFocusMedieval() {
             const [user, setUser] = useState(null);
             const [authLoading, setAuthLoading] = useState(true);
@@ -198,53 +137,36 @@
             const [selectedDate, setSelectedDate] = useState(getTodayString());
             const [history, setHistory] = useState({}); 
             
-            // Auth & Sync Logic
-            useEffect(() => {
-                // Če Firebase ni inicializiran (npr. manjkajoči podatki), preskoči
-                if (!firebaseInitialized) {
-                    console.log("Offline način: Firebase ni konfiguriran.");
-                    setAuthLoading(false);
-                    return;
-                }
+            // NOVO: Custom ID za sinhronizacijo med napravami
+            const [syncId, setSyncId] = useState(localStorage.getItem('deepfocus_sync_id') || '');
+            const [tempSyncId, setTempSyncId] = useState('');
 
+            // Auth Logic
+            useEffect(() => {
+                if (!firebaseInitialized) { setAuthLoading(false); return; }
                 const initAuth = async () => {
                     try {
-                        if (envInitialToken) {
-                            await signInWithCustomToken(auth, envInitialToken);
-                        } else {
-                            await signInAnonymously(auth);
-                        }
-                    } catch (error) {
-                        console.error("Auth error:", error);
-                    } finally {
-                        setAuthLoading(false);
-                    }
+                        if (envInitialToken) await signInWithCustomToken(auth, envInitialToken);
+                        else await signInAnonymously(auth);
+                    } catch (error) { console.error("Auth error:", error); } 
+                    finally { setAuthLoading(false); }
                 };
                 initAuth();
-                
-                // Spremljaj stanje uporabnika
-                const unsubscribe = onAuthStateChanged(auth, setUser);
-                return () => unsubscribe();
+                return onAuthStateChanged(auth, setUser);
             }, []);
 
-            // Sinhronizacija podatkov
+            // Data Sync Logic
             useEffect(() => {
                 if (!user || !db) return;
                 
-                // Uporabimo envAppId za path (ali 'deepfocus-medieval' če smo v GitHubu brez env variable)
-                const collectionPath = isAutoConfig 
-                    ? `artifacts/${envAppId}/users/${user.uid}/daily_logs` // Canvas path
-                    : `users/${user.uid}/daily_logs`; // Standard path za tvojo bazo
-
-                // Ustvari referenco na kolekcijo - pazimo na način klica za v10 modular
-                // Če smo v Canvasu, je path kompleksen, če je tvoja baza, je preprost
-                // Uporabimo split logiko
+                // Uporabimo syncId če obstaja, sicer user.uid
+                const userIdToUse = syncId && syncId.length > 3 ? `vitez_${syncId}` : user.uid;
                 
                 let q;
                 if (isAutoConfig) {
-                     q = collection(db, 'artifacts', envAppId, 'users', user.uid, 'daily_logs');
+                     q = collection(db, 'artifacts', envAppId, 'users', userIdToUse, 'daily_logs');
                 } else {
-                     q = collection(db, 'users', user.uid, 'daily_logs');
+                     q = collection(db, 'users', userIdToUse, 'daily_logs');
                 }
 
                 const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -253,21 +175,31 @@
                         newHistory[doc.id] = doc.data().count;
                     });
                     setHistory(newHistory);
-                }, (err) => {
-                    // Ignoriraj permission errors na začetku, dokler se auth ne stabilizira
-                    if (err.code !== 'permission-denied') console.error("Sync error:", err);
-                });
+                }, (err) => { if (err.code !== 'permission-denied') console.error("Sync error:", err); });
                 return () => unsubscribe();
-            }, [user]);
+            }, [user, syncId]);
+
+            // Save Sync ID
+            const saveSyncId = () => {
+                if(tempSyncId.trim().length > 0) {
+                    setSyncId(tempSyncId.trim());
+                    localStorage.setItem('deepfocus_sync_id', tempSyncId.trim());
+                    alert("Povezava uspešna! Podatki se bodo naložili.");
+                }
+            };
+
+            const clearSyncId = () => {
+                setSyncId('');
+                setTempSyncId('');
+                localStorage.removeItem('deepfocus_sync_id');
+            }
 
             const blocksCompleted = history[selectedDate] || 0;
             const isVictory = blocksCompleted >= CILJ_DEL;
             const dateStrip = generateDateRange(30, 2);
             const scrollRef = useRef(null);
 
-            useEffect(() => {
-                if (scrollRef.current) scrollRef.current.scrollLeft = scrollRef.current.scrollWidth - 150; 
-            }, []);
+            useEffect(() => { if (scrollRef.current) scrollRef.current.scrollLeft = scrollRef.current.scrollWidth - 150; }, []);
 
             const totalBlocks = Object.values(history).reduce((a, b) => a + b, 0);
             const totalXP = totalBlocks * XP_PER_BLOCK;
@@ -284,18 +216,14 @@
             const updateBlocks = async (change) => {
                 const currentVal = history[selectedDate] || 0;
                 const newVal = Math.max(0, currentVal + change);
-                
-                // Lokalni update
                 setHistory(prev => ({...prev, [selectedDate]: newVal}));
 
                 if (user && db) {
+                    const userIdToUse = syncId && syncId.length > 3 ? `vitez_${syncId}` : user.uid;
                     try {
                         let docRef;
-                        if (isAutoConfig) {
-                            docRef = doc(db, 'artifacts', envAppId, 'users', user.uid, 'daily_logs', selectedDate);
-                        } else {
-                            docRef = doc(db, 'users', user.uid, 'daily_logs', selectedDate);
-                        }
+                        if (isAutoConfig) docRef = doc(db, 'artifacts', envAppId, 'users', userIdToUse, 'daily_logs', selectedDate);
+                        else docRef = doc(db, 'users', userIdToUse, 'daily_logs', selectedDate);
                         await setDoc(docRef, { count: newVal }, { merge: true });
                     } catch (err) { console.error("Save error:", err); }
                 }
@@ -305,48 +233,36 @@
             const resetDay = async () => {
                 setHistory(prev => ({...prev, [selectedDate]: 0}));
                 if (user && db) {
+                    const userIdToUse = syncId && syncId.length > 3 ? `vitez_${syncId}` : user.uid;
                     let docRef;
-                    if (isAutoConfig) {
-                        docRef = doc(db, 'artifacts', envAppId, 'users', user.uid, 'daily_logs', selectedDate);
-                    } else {
-                        docRef = doc(db, 'users', user.uid, 'daily_logs', selectedDate);
-                    }
+                    if (isAutoConfig) docRef = doc(db, 'artifacts', envAppId, 'users', userIdToUse, 'daily_logs', selectedDate);
+                    else docRef = doc(db, 'users', userIdToUse, 'daily_logs', selectedDate);
                     await setDoc(docRef, { count: 0 }, { merge: true });
                 }
             };
 
             const appStyle = {
-                '--bg-paper': theme.paper,
-                '--bg-paper-dark': theme.paperDark,
-                '--text-ink': theme.ink,
-                '--text-ink-light': theme.inkLight,
-                '--color-accent': theme.accent,
-                '--color-accent-dim': theme.accentDim,
+                '--bg-paper': theme.paper, '--bg-paper-dark': theme.paperDark,
+                '--text-ink': theme.ink, '--text-ink-light': theme.inkLight,
+                '--color-accent': theme.accent, '--color-accent-dim': theme.accentDim,
             };
 
-            if (authLoading) {
-                return React.createElement('div', { className: "h-screen w-full flex items-center justify-center bg-[#f3e9d2] text-[#2c1810]" },
-                    React.createElement('div', { className: "flex flex-col items-center gap-4" },
-                        React.createElement(Loader, { className: "animate-spin", size: 32 }),
-                        React.createElement('span', { className: "font-serif italic text-sm" }, "Povezovanje s kroniko...")
-                    )
-                );
-            }
+            if (authLoading) return React.createElement('div', { className: "h-screen w-full flex items-center justify-center" }, React.createElement(Loader, { className: "animate-spin" }));
 
             return (
                 React.createElement('div', { 
                     className: "h-screen w-full flex flex-col font-serif overflow-hidden relative transition-colors duration-1000",
                     style: { backgroundColor: 'var(--bg-paper)', color: 'var(--text-ink)', ...appStyle }
                 },
-                    // Background Texture
-                    React.createElement('div', { 
-                        className: "absolute inset-0 opacity-10 pointer-events-none mix-blend-multiply",
-                        style: { backgroundImage: `url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")` } 
-                    }),
+                    // Background & Warnings
+                    React.createElement('div', { className: "absolute inset-0 opacity-10 pointer-events-none mix-blend-multiply", style: { backgroundImage: `url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")` } }),
+                    
+                    configError && React.createElement('div', { className: "absolute top-0 left-0 w-full bg-red-600 text-white text-xs p-2 text-center z-50 font-sans" }, 
+                        "NAPAKA: V index.html vpiši svoje Firebase podatke! (Glej vrstico 35)"
+                    ),
 
                     // Main Content
                     React.createElement('div', { className: "flex-1 flex flex-col z-10 relative overflow-hidden" },
-                        
                         // Header
                         React.createElement('div', { 
                             className: "h-28 flex-none border-b-2 pt-2 pb-2 z-20 flex flex-col justify-between transition-colors duration-500",
@@ -354,8 +270,8 @@
                         },
                             React.createElement('div', { className: "flex items-center justify-between px-6 py-2" },
                                 React.createElement('div', { className: "text-xs font-bold uppercase tracking-widest flex items-center gap-2", style: { color: 'var(--text-ink-light)' } },
-                                    user ? React.createElement(Cloud, { size: 14, className: "text-green-600" }) : React.createElement(Cloud, { size: 14, className: "text-red-400" }),
-                                    " Dnevnik"
+                                    (user && firebaseInitialized) ? React.createElement(Cloud, { size: 14, className: "text-green-600" }) : React.createElement(AlertTriangle, { size: 14, className: "text-red-500" }),
+                                    syncId ? `Povezan: ${syncId}` : "Lokalno / Brez povezave"
                                 ),
                                 React.createElement('div', { className: "flex flex-col items-end w-32" },
                                     React.createElement('div', { className: "text-xs font-bold flex justify-between w-full mb-1", style: { color: 'var(--text-ink-light)' } },
@@ -367,20 +283,13 @@
                                     )
                                 )
                             ),
-                            
-                            // WARNING BANNER (Če ni firebase configa)
-                            !firebaseInitialized && React.createElement('div', { className: "px-4 text-[10px] text-center text-red-500 font-bold" }, 
-                                "OPOZORILO: Podatki se ne shranjujejo trajno. Vpiši Firebase config v kodo."
-                            ),
-
                             React.createElement('div', { ref: scrollRef, className: "flex gap-2 overflow-x-auto px-6 pb-2 hide-scrollbar scroll-smooth", style: { scrollbarWidth: 'none', msOverflowStyle: 'none' } },
                                 dateStrip.map((d, i) => {
                                     const isSelected = selectedDate === d.full;
                                     const blocks = history[d.full] || 0;
                                     const goalMet = blocks >= CILJ_DEL;
                                     return React.createElement('button', {
-                                        key: i,
-                                        onClick: () => setSelectedDate(d.full),
+                                        key: i, onClick: () => setSelectedDate(d.full),
                                         className: "flex-none w-12 h-14 rounded border-2 transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden",
                                         style: {
                                             backgroundColor: isSelected ? 'var(--text-ink)' : 'var(--bg-paper)',
@@ -392,10 +301,7 @@
                                     },
                                         React.createElement('span', { className: "text-[9px] uppercase font-bold" }, d.weekday),
                                         React.createElement('span', { className: "text-lg leading-none" }, d.day),
-                                        blocks > 0 && !isSelected && React.createElement('div', { 
-                                            className: "mt-1 w-1.5 h-1.5 rounded-full",
-                                            style: { backgroundColor: goalMet ? 'var(--color-accent)' : 'var(--text-ink-light)' }
-                                        })
+                                        blocks > 0 && !isSelected && React.createElement('div', { className: "mt-1 w-1.5 h-1.5 rounded-full", style: { backgroundColor: goalMet ? 'var(--color-accent)' : 'var(--text-ink-light)' } })
                                     );
                                 })
                             )
@@ -407,7 +313,8 @@
                             activeTab === 'vault' && React.createElement(Kronika, { history }),
                             activeTab === 'barracks' && React.createElement(Vitez, { 
                                 history, resetDay, selectedDate, currentLevel, totalXP, 
-                                xpNeededForNextLevel, xpProgressInLevel, currentRank 
+                                xpNeededForNextLevel, xpProgressInLevel, currentRank,
+                                syncId, tempSyncId, setTempSyncId, saveSyncId, clearSyncId 
                             })
                         )
                     ),
@@ -426,18 +333,11 @@
         }
 
         // --- SUB-COMPONENTS ---
-
         function NavBtn({ active, onClick, icon, label }) {
             const IconComp = icon;
             return React.createElement('button', { onClick, className: "flex flex-col items-center justify-center w-20 group" },
-                React.createElement('div', { 
-                    className: `transition-all duration-300 transform ${active ? 'scale-110' : 'opacity-50 group-hover:opacity-70'}`,
-                    style: { color: active ? 'var(--color-accent)' : 'var(--text-ink)' }
-                }, React.createElement(IconComp, { size: 24, strokeWidth: 1.5 })),
-                React.createElement('span', { 
-                    className: `text-[10px] font-bold uppercase mt-1 tracking-wider ${active ? '' : 'opacity-50'}`,
-                    style: { color: active ? 'var(--color-accent)' : 'var(--text-ink)' }
-                }, label)
+                React.createElement('div', { className: `transition-all duration-300 transform ${active ? 'scale-110' : 'opacity-50 group-hover:opacity-70'}`, style: { color: active ? 'var(--color-accent)' : 'var(--text-ink)' } }, React.createElement(IconComp, { size: 24, strokeWidth: 1.5 })),
+                React.createElement('span', { className: `text-[10px] font-bold uppercase mt-1 tracking-wider ${active ? '' : 'opacity-50'}`, style: { color: active ? 'var(--color-accent)' : 'var(--text-ink)' } }, label)
             );
         }
 
@@ -446,11 +346,7 @@
                 React.createElement('div', { className: "flex flex-col items-center gap-2" },
                     React.createElement('div', { 
                         className: "px-4 py-1 border-2 text-xs font-bold uppercase tracking-[0.2em] rounded-full transition-colors",
-                        style: {
-                            borderColor: isVictory ? 'var(--color-accent)' : 'var(--color-accent-dim)',
-                            color: isVictory ? 'var(--color-accent)' : 'var(--text-ink-light)',
-                            backgroundColor: isVictory ? 'var(--color-accent-dim)' : 'transparent'
-                        }
+                        style: { borderColor: isVictory ? 'var(--color-accent)' : 'var(--color-accent-dim)', color: isVictory ? 'var(--color-accent)' : 'var(--text-ink-light)', backgroundColor: isVictory ? 'var(--color-accent-dim)' : 'transparent' }
                     }, isVictory ? 'Zmaga dneva' : 'V službi kraljestva')
                 ),
                 React.createElement('div', { className: "relative w-64 h-64 flex items-center justify-center" },
@@ -464,36 +360,24 @@
                     )
                 ),
                 React.createElement('div', { className: "w-full max-w-xs flex flex-col gap-4" },
-                    React.createElement('button', { 
-                        onClick: onAdd,
-                        className: "w-full h-16 rounded border-2 flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-transform",
-                        style: { backgroundColor: 'var(--text-ink)', color: 'var(--bg-paper)', borderColor: 'var(--text-ink)' }
-                    }, React.createElement(Feather, { size: 20 }), React.createElement('span', { className: "text-lg font-bold tracking-widest uppercase" }, "Zapiši Delo")),
-                    React.createElement('button', { 
-                        onClick: onRemove, disabled: blocks === 0,
-                        className: "h-12 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest disabled:opacity-0 transition-colors",
-                        style: { color: 'var(--text-ink-light)' }
-                    }, React.createElement(Minus, { size: 14 }), "Prekliči zadnjega")
+                    React.createElement('button', { onClick: onAdd, className: "w-full h-16 rounded border-2 flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-transform", style: { backgroundColor: 'var(--text-ink)', color: 'var(--bg-paper)', borderColor: 'var(--text-ink)' } }, React.createElement(Feather, { size: 20 }), React.createElement('span', { className: "text-lg font-bold tracking-widest uppercase" }, "Zapiši Delo")),
+                    React.createElement('button', { onClick: onRemove, disabled: blocks === 0, className: "h-12 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest disabled:opacity-0 transition-colors", style: { color: 'var(--text-ink-light)' } }, React.createElement(Minus, { size: 14 }), "Prekliči zadnjega")
                 )
             );
         }
 
         function Kronika({ history }) {
-            // Helper functions and render logic mostly identical to JSX version
-            // ... (Included in full implementation below)
             const daysToShow = 7;
             const dataPoints = [];
             const today = new Date();
             let maxBlocks = 4;
             for (let i = daysToShow - 1; i >= 0; i--) {
-                const d = new Date();
-                d.setDate(today.getDate() - i);
+                const d = new Date(); d.setDate(today.getDate() - i);
                 const dateStr = d.toISOString().split('T')[0];
                 const val = history[dateStr] || 0;
                 if (val > maxBlocks) maxBlocks = val;
                 dataPoints.push({ label: getDayName(dateStr), value: val, date: dateStr });
             }
-
             const generateGridData = () => {
                 const historyDates = Object.keys(history).sort();
                 const firstHistoryDate = historyDates.length > 0 ? new Date(historyDates[0]) : new Date();
@@ -541,10 +425,7 @@
                     )
                 ),
                 React.createElement('div', { className: "flex-1 flex flex-col min-h-0" },
-                    React.createElement('div', { className: "flex items-center gap-2 mb-2" },
-                        React.createElement(Grid, { size: 14, className: "opacity-50" }),
-                        React.createElement('div', { className: "text-[10px] font-bold uppercase tracking-widest opacity-50" }, `Pregled Leta ${new Date().getFullYear()}`)
-                    ),
+                    React.createElement('div', { className: "flex items-center gap-2 mb-2" }, React.createElement(Grid, { size: 14, className: "opacity-50" }), React.createElement('div', { className: "text-[10px] font-bold uppercase tracking-widest opacity-50" }, `Pregled Leta ${new Date().getFullYear()}`) ),
                     React.createElement('div', { className: "flex-1 overflow-x-auto border rounded p-4 scrollbar-thin", style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' } },
                         React.createElement('div', { className: "flex gap-1 h-full" },
                             weeks.map((week, wIndex) => {
@@ -557,12 +438,7 @@
                                         if (day.value >= 1) bgColor = 'var(--text-ink-light)';
                                         if (day.value >= 3) bgColor = 'var(--color-accent)';
                                         const isEmpty = day.value === 0;
-                                        return React.createElement('div', {
-                                            key: dIndex,
-                                            className: "w-3 h-3 rounded-[1px] transition-colors",
-                                            style: { backgroundColor: isEmpty ? 'transparent' : bgColor, border: isEmpty ? '1px solid var(--color-accent-dim)' : 'none' },
-                                            title: `${day.date}: ${day.value}`
-                                        });
+                                        return React.createElement('div', { key: dIndex, className: "w-3 h-3 rounded-[1px] transition-colors", style: { backgroundColor: isEmpty ? 'transparent' : bgColor, border: isEmpty ? '1px solid var(--color-accent-dim)' : 'none' }, title: `${day.date}: ${day.value}` });
                                     })
                                 );
                             })
@@ -572,7 +448,7 @@
             );
         }
 
-        function Vitez({ history, resetDay, selectedDate, currentLevel, totalXP, xpNeededForNextLevel, xpProgressInLevel, currentRank }) {
+        function Vitez({ history, resetDay, selectedDate, currentLevel, totalXP, xpNeededForNextLevel, xpProgressInLevel, currentRank, syncId, tempSyncId, setTempSyncId, saveSyncId, clearSyncId }) {
             const percent = Math.floor((xpProgressInLevel / xpNeededForNextLevel) * 100);
             const IconComp = currentRank.icon;
 
@@ -597,6 +473,45 @@
                         React.createElement('div', { className: "text-center text-[10px] mt-1 opacity-50" }, `Do naslednje stopnje: ${xpNeededForNextLevel - xpProgressInLevel} XP`)
                     )
                 ),
+                
+                // SYNC SECTION
+                React.createElement('div', { className: "mb-8 p-4 rounded border", style: { borderColor: 'var(--color-accent-dim)', backgroundColor: 'var(--bg-paper-dark)' } },
+                    React.createElement('div', { className: "flex items-center gap-2 mb-3" },
+                        React.createElement(Link, { size: 16, style: { color: 'var(--color-accent)' } }),
+                        React.createElement('h3', { className: "text-xs font-bold uppercase tracking-widest opacity-80" }, "Povezava Naprav")
+                    ),
+                    
+                    !syncId ? (
+                        React.createElement('div', { className: "flex gap-2" },
+                            React.createElement('input', { 
+                                type: "text", 
+                                placeholder: "Vnesi poljubno ime...", 
+                                value: tempSyncId,
+                                onChange: (e) => setTempSyncId(e.target.value),
+                                className: "flex-1 p-2 rounded text-sm border bg-white/50 focus:outline-none focus:border-opacity-100",
+                                style: { borderColor: 'var(--color-accent-dim)' }
+                            }),
+                            React.createElement('button', { 
+                                onClick: saveSyncId,
+                                className: "p-2 rounded text-white shadow-sm",
+                                style: { backgroundColor: 'var(--color-accent)' }
+                            }, React.createElement(Save, { size: 16 }))
+                        )
+                    ) : (
+                        React.createElement('div', { className: "flex justify-between items-center bg-white/20 p-2 rounded" },
+                            React.createElement('div', { className: "text-sm" }, 
+                                React.createElement('span', { className: "opacity-50 text-xs block" }, "Povezan kot:"),
+                                React.createElement('strong', { style: { color: 'var(--color-accent)' } }, syncId)
+                            ),
+                            React.createElement('button', { 
+                                onClick: clearSyncId,
+                                className: "text-xs underline opacity-50 hover:opacity-100"
+                            }, "Odjavi")
+                        )
+                    ),
+                    React.createElement('p', { className: "text-[10px] opacity-50 mt-2 leading-tight" }, "Vpiši isto ime na telefonu in računalniku za sinhronizacijo podatkov.")
+                ),
+
                 React.createElement('div', { className: "mb-8" },
                     React.createElement('div', { className: "flex items-center gap-2 mb-2 px-2" },
                         React.createElement(Star, { size: 14, className: "opacity-50" }),
