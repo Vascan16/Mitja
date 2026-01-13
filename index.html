@@ -2,7 +2,7 @@
 <html lang="sl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DeepFocus Medieval</title>
     
     <!-- 1. TAILWIND CSS (Stili) -->
@@ -25,6 +25,8 @@
             opacity: 0;
             cursor: pointer;
         }
+        /* Prepreči zoom na inputih na iOS */
+        input { font-size: 16px; }
     </style>
 </head>
 <body class="bg-[#f3e9d2] text-[#2c1810]">
@@ -50,13 +52,12 @@
         // =================================================================
         
         const manualConfig = {
-  apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
-  authDomain: "delo-ae21b.firebaseapp.com",
-  projectId: "delo-ae21b",
-  storageBucket: "delo-ae21b.firebasestorage.app",
-  messagingSenderId: "721173225350",
-  appId: "1:721173225350:web:83926980686c6f4ec11607",
-  measurementId: "G-4STZTWDQ1X"
+            apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
+            authDomain: "delo-ae21b.firebaseapp.com",
+            projectId: "delo-ae21b",
+            storageBucket: "delo-ae21b.firebasestorage.app",
+            messagingSenderId: "721173225350",
+            appId: "1:721173225350:web:83926980686c6f4ec11607"
         };
 
         // --- Logika inicializacije (Ne tikaj) ---
@@ -116,26 +117,42 @@
             return rank || RANK_SYSTEM[0];
         };
 
-        const getTodayString = () => new Date().toISOString().split('T')[0];
+        // --- POPRAVLJENA LOGIKA DATUMOV (Lokalni čas) ---
+        // Uporabljamo lokalni čas za stringe YYYY-MM-DD, da preprečimo težave z UTC zamiki na telefonu
+        const getLocalDateString = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        const parseLocalDate = (dateStr) => {
+            if (!dateStr) return new Date();
+            const [y, m, d] = dateStr.split('-').map(Number);
+            return new Date(y, m - 1, d); // Meseci so 0-indeksirani
+        };
+
+        const getTodayString = () => getLocalDateString(new Date());
+
         const formatDateShort = (dateStr) => {
-            const d = new Date(dateStr);
+            const d = parseLocalDate(dateStr);
             return d.toLocaleDateString('sl-SI', { day: 'numeric', month: 'short' });
         };
         const getDayName = (dateStr) => {
-            const d = new Date(dateStr);
+            const d = parseLocalDate(dateStr);
             return d.toLocaleDateString('sl-SI', { weekday: 'short' }).toUpperCase();
         };
         
-        // Generiranje traku glede na sidrni datum
+        // Generiranje traku glede na sidrni datum (Popravljeno za lokalni čas)
         const generateDateRange = (daysBack, daysForward, referenceDateStr) => {
             const dates = [];
-            const refDate = referenceDateStr ? new Date(referenceDateStr) : new Date();
+            const refDate = parseLocalDate(referenceDateStr);
             
             for (let i = -daysBack; i <= daysForward; i++) {
                 const d = new Date(refDate);
                 d.setDate(refDate.getDate() + i);
                 dates.push({
-                    full: d.toISOString().split('T')[0],
+                    full: getLocalDateString(d),
                     day: d.getDate(),
                     weekday: d.toLocaleDateString('sl-SI', { weekday: 'short' }).toUpperCase(),
                     isToday: i === 0 
@@ -289,11 +306,11 @@
                     React.createElement('div', { className: "flex-1 flex flex-col z-10 relative overflow-hidden" },
                         // Header
                         React.createElement('div', { 
-                            className: "h-34 flex-none border-b-2 pt-1 pb-2 z-20 flex flex-col justify-between transition-colors duration-500 shadow-sm",
+                            className: "h-36 flex-none border-b-2 pt-1 pb-2 z-20 flex flex-col justify-between transition-colors duration-500 shadow-sm",
                             style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' }
                         },
                             
-                            // 1. STATUS VRSTICA (POVRNJENO)
+                            // 1. STATUS VRSTICA
                             React.createElement('div', { className: "flex justify-center items-center pb-1 pt-1 opacity-80" },
                                 React.createElement('div', { className: "text-[10px] font-bold uppercase tracking-widest flex items-center gap-2", style: { color: 'var(--text-ink-light)' } },
                                     (user && firebaseInitialized) ? React.createElement(Cloud, { size: 12, className: "text-green-600" }) : React.createElement(AlertTriangle, { size: 12, className: "text-red-500" }),
@@ -330,13 +347,13 @@
                                         React.createElement('span', { className: "text-[10px]" }, `Lvl ${currentLevel}`),
                                         React.createElement('span', { className: "opacity-50 text-[10px]" }, `${Math.floor(progressPercent)}%`)
                                     ),
-                                    React.createElement('div', { className: "w-full h-1 rounded-full overflow-hidden", style: { backgroundColor: 'var(--color-accent-dim)' } },
+                                    React.createElement('div', { className: "w-full h-1.5 rounded-full overflow-hidden", style: { backgroundColor: 'var(--color-accent-dim)' } },
                                         React.createElement('div', { className: "h-full transition-all duration-500", style: { width: `${progressPercent}%`, backgroundColor: 'var(--color-accent)' } })
                                     )
                                 )
                             ),
                             
-                            // Trak datumov
+                            // Trak datumov - VEČJI ZA MOBILE
                             React.createElement('div', { ref: scrollRef, className: "flex gap-3 overflow-x-auto px-6 pb-2 hide-scrollbar scroll-smooth items-center justify-center h-full", style: { scrollbarWidth: 'none', msOverflowStyle: 'none' } },
                                 dateStrip.map((d, i) => {
                                     const isSelected = selectedDate === d.full;
@@ -345,30 +362,18 @@
                                     
                                     return React.createElement('button', {
                                         key: i, onClick: () => setSelectedDate(d.full),
-                                        className: `flex-none rounded-lg border-2 transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden group ${isSelected ? 'w-14 h-16 shadow-lg transform -translate-y-1 z-10' : 'w-12 h-14 opacity-70 hover:opacity-100'}`,
+                                        className: `flex-none rounded-lg border-2 transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden group ${isSelected ? 'w-16 h-20 shadow-lg transform -translate-y-1 z-10' : 'w-14 h-16 opacity-70 hover:opacity-100'}`,
                                         style: {
                                             backgroundColor: isSelected ? 'var(--text-ink)' : 'var(--bg-paper)',
                                             borderColor: isSelected ? 'var(--text-ink)' : 'var(--color-accent-dim)',
                                             color: isSelected ? 'var(--bg-paper)' : 'var(--text-ink-light)',
                                         }
                                     },
-                                        // Highlight overlay for selected
                                         isSelected && React.createElement('div', { className: "absolute inset-0 opacity-10 bg-white" }),
-                                        
                                         React.createElement('span', { className: "text-[9px] uppercase font-bold tracking-wider mb-0.5" }, d.weekday),
-                                        React.createElement('span', { className: `leading-none font-serif ${isSelected ? 'text-xl' : 'text-lg'}` }, d.day),
-                                        
-                                        // Pika za aktivnost
-                                        blocks > 0 && !isSelected && React.createElement('div', { 
-                                            className: "mt-1 w-1.5 h-1.5 rounded-full", 
-                                            style: { backgroundColor: goalMet ? 'var(--color-accent)' : 'var(--text-ink-light)' } 
-                                        }),
-                                        
-                                        // Zlata črta spodaj za izbranega
-                                        isSelected && React.createElement('div', { 
-                                            className: "absolute bottom-0 left-0 w-full h-1", 
-                                            style: { backgroundColor: 'var(--color-accent)' } 
-                                        })
+                                        React.createElement('span', { className: `leading-none font-serif ${isSelected ? 'text-2xl' : 'text-xl'}` }, d.day),
+                                        blocks > 0 && !isSelected && React.createElement('div', { className: "mt-1 w-2 h-2 rounded-full", style: { backgroundColor: goalMet ? 'var(--color-accent)' : 'var(--text-ink-light)' } }),
+                                        isSelected && React.createElement('div', { className: "absolute bottom-0 left-0 w-full h-1.5", style: { backgroundColor: 'var(--color-accent)' } })
                                     );
                                 })
                             )
@@ -377,18 +382,18 @@
                         // Tab Content
                         React.createElement('div', { className: "flex-1 overflow-y-auto relative p-6" },
                             activeTab === 'cockpit' && React.createElement(Delavnica, { blocks: blocksCompleted, onAdd: () => updateBlocks(1), onRemove: () => updateBlocks(-1), isVictory }),
-                            activeTab === 'vault' && React.createElement(Kronika, { history }),
+                            activeTab === 'vault' && React.createElement(Kronika, { history, selectedDate }), // DODANO: selectedDate se prenaša v Kroniko
                             activeTab === 'barracks' && React.createElement(Vitez, { 
                                 history, resetDay, selectedDate, currentLevel, totalXP, 
                                 xpNeededForNextLevel, xpProgressInLevel, currentRank,
-                                syncId, tempSyncId, setTempSyncId, saveSyncId, clearSyncId, generateRandomCode // Passano naprej
+                                syncId, tempSyncId, setTempSyncId, saveSyncId, clearSyncId, generateRandomCode 
                             })
                         )
                     ),
 
                     // Navigation
                     React.createElement('nav', { 
-                        className: "h-20 flex-none border-t-2 flex justify-around items-center z-30 pb-2 transition-colors duration-500",
+                        className: "h-24 flex-none border-t-2 flex justify-around items-center z-30 pb-4 transition-colors duration-500",
                         style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' }
                     },
                         React.createElement(NavBtn, { active: activeTab === 'cockpit', onClick: () => setActiveTab('cockpit'), icon: Sword, label: "Delo" }),
@@ -402,9 +407,9 @@
         // --- SUB-COMPONENTS ---
         function NavBtn({ active, onClick, icon, label }) {
             const IconComp = icon;
-            return React.createElement('button', { onClick, className: "flex flex-col items-center justify-center w-20 group" },
-                React.createElement('div', { className: `transition-all duration-300 transform ${active ? 'scale-110' : 'opacity-50 group-hover:opacity-70'}`, style: { color: active ? 'var(--color-accent)' : 'var(--text-ink)' } }, React.createElement(IconComp, { size: 24, strokeWidth: 1.5 })),
-                React.createElement('span', { className: `text-[10px] font-bold uppercase mt-1 tracking-wider ${active ? '' : 'opacity-50'}`, style: { color: active ? 'var(--color-accent)' : 'var(--text-ink)' } }, label)
+            return React.createElement('button', { onClick, className: "flex flex-col items-center justify-center w-24 group p-2" },
+                React.createElement('div', { className: `transition-all duration-300 transform ${active ? 'scale-110' : 'opacity-50 group-hover:opacity-70'}`, style: { color: active ? 'var(--color-accent)' : 'var(--text-ink)' } }, React.createElement(IconComp, { size: 28, strokeWidth: 1.5 })),
+                React.createElement('span', { className: `text-xs font-bold uppercase mt-1 tracking-wider ${active ? '' : 'opacity-50'}`, style: { color: active ? 'var(--color-accent)' : 'var(--text-ink)' } }, label)
             );
         }
 
@@ -412,64 +417,101 @@
             return React.createElement('div', { className: "h-full flex flex-col items-center justify-between py-4" },
                 React.createElement('div', { className: "flex flex-col items-center gap-2" },
                     React.createElement('div', { 
-                        className: "px-4 py-1 border-2 text-xs font-bold uppercase tracking-[0.2em] rounded-full transition-colors",
+                        className: "px-6 py-2 border-2 text-sm font-bold uppercase tracking-[0.2em] rounded-full transition-colors",
                         style: { borderColor: isVictory ? 'var(--color-accent)' : 'var(--color-accent-dim)', color: isVictory ? 'var(--color-accent)' : 'var(--text-ink-light)', backgroundColor: isVictory ? 'var(--color-accent-dim)' : 'transparent' }
                     }, isVictory ? 'Zmaga dneva' : 'V službi kraljestva')
                 ),
-                React.createElement('div', { className: "relative w-64 h-64 flex items-center justify-center" },
+                React.createElement('div', { className: "relative w-72 h-72 flex items-center justify-center" },
                     React.createElement('div', { className: "absolute inset-0 rounded-full border opacity-20", style: { borderColor: 'var(--text-ink)' } }),
                     React.createElement('div', { className: "absolute inset-4 rounded-full border opacity-20", style: { borderColor: 'var(--text-ink)' } }),
                     React.createElement('div', { className: "flex flex-col items-center z-10" },
-                        React.createElement('span', { className: "text-9xl font-serif leading-none", style: { color: 'var(--text-ink)' } }, blocks),
-                        React.createElement('div', { className: "h-px w-16 mt-4 mb-2 opacity-30", style: { backgroundColor: 'var(--text-ink)' } }),
-                        React.createElement('span', { className: "text-sm font-bold uppercase tracking-[0.2em]", style: { color: 'var(--color-accent)' } }, `${blocks} / ${CILJ_DEL}`),
-                        React.createElement('span', { className: "text-[10px] uppercase tracking-widest opacity-50 mt-1", style: { color: 'var(--text-ink)' } }, "Dnevni Cilj")
+                        React.createElement('span', { className: "text-[8rem] font-serif leading-none", style: { color: 'var(--text-ink)' } }, blocks),
+                        React.createElement('div', { className: "h-px w-20 mt-4 mb-2 opacity-30", style: { backgroundColor: 'var(--text-ink)' } }),
+                        React.createElement('span', { className: "text-base font-bold uppercase tracking-[0.2em]", style: { color: 'var(--color-accent)' } }, `${blocks} / ${CILJ_DEL}`),
+                        React.createElement('span', { className: "text-xs uppercase tracking-widest opacity-50 mt-1", style: { color: 'var(--text-ink)' } }, "Dnevni Cilj")
                     )
                 ),
-                React.createElement('div', { className: "w-full max-w-xs flex flex-col gap-4" },
-                    React.createElement('button', { onClick: onAdd, className: "w-full h-16 rounded border-2 flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-transform", style: { backgroundColor: 'var(--text-ink)', color: 'var(--bg-paper)', borderColor: 'var(--text-ink)' } }, React.createElement(Feather, { size: 20 }), React.createElement('span', { className: "text-lg font-bold tracking-widest uppercase" }, "Zapiši Delo")),
-                    React.createElement('button', { onClick: onRemove, disabled: blocks === 0, className: "h-12 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest disabled:opacity-0 transition-colors", style: { color: 'var(--text-ink-light)' } }, React.createElement(Minus, { size: 14 }), "Prekliči zadnjega")
+                React.createElement('div', { className: "w-full max-w-sm flex flex-col gap-4" },
+                    React.createElement('button', { onClick: onAdd, className: "w-full h-20 rounded border-2 flex items-center justify-center gap-4 shadow-lg active:scale-[0.98] transition-transform", style: { backgroundColor: 'var(--text-ink)', color: 'var(--bg-paper)', borderColor: 'var(--text-ink)' } }, React.createElement(Feather, { size: 24 }), React.createElement('span', { className: "text-xl font-bold tracking-widest uppercase" }, "Zapiši Delo")),
+                    React.createElement('button', { onClick: onRemove, disabled: blocks === 0, className: "h-14 flex items-center justify-center gap-2 text-sm font-bold uppercase tracking-widest disabled:opacity-0 transition-colors", style: { color: 'var(--text-ink-light)' } }, React.createElement(Minus, { size: 16 }), "Prekliči zadnjega")
                 )
             );
         }
 
-        function Kronika({ history }) {
+        function Kronika({ history, selectedDate }) {
+            // POPRAVEK: Uporaba selectedDate za določitev konca grafa tedna
+            const today = parseLocalDate(selectedDate); // Uporabimo izbran datum namesto "danes"
             const daysToShow = 7;
             const dataPoints = [];
-            const today = new Date();
             let maxBlocks = 4;
+            
+            // Generiranje grafa za teden okoli izbranega dne (3 nazaj, 3 naprej ali 6 nazaj?)
+            // Najbolje: Zadnjih 7 dni do vključno selectedDate
             for (let i = daysToShow - 1; i >= 0; i--) {
-                const d = new Date(); d.setDate(today.getDate() - i);
-                const dateStr = d.toISOString().split('T')[0];
+                const d = new Date(today); 
+                d.setDate(today.getDate() - i);
+                const dateStr = getLocalDateString(d);
                 const val = history[dateStr] || 0;
                 if (val > maxBlocks) maxBlocks = val;
                 dataPoints.push({ label: getDayName(dateStr), value: val, date: dateStr });
             }
+
             const generateGridData = () => {
                 const historyDates = Object.keys(history).sort();
-                const firstHistoryDate = historyDates.length > 0 ? new Date(historyDates[0]) : new Date();
-                const fixedStart = new Date('2026-01-01');
-                let startDate = firstHistoryDate < fixedStart ? firstHistoryDate : fixedStart;
+                const now = new Date();
+                const sel = parseLocalDate(selectedDate);
+                
+                // Določi meje mreže: Da vključuje zgodovino IN izbran datum
+                let minDate = new Date('2026-01-01'); // Fiksen začetek
+                // Če je zgodovina starejša, uporabi to
+                if (historyDates.length > 0 && parseLocalDate(historyDates[0]) < minDate) minDate = parseLocalDate(historyDates[0]);
+                // Če je izbran datum starejši, uporabi to (da se vidi npr. dec 2025)
+                if (sel < minDate) minDate = new Date(sel);
+
+                // Konec: Danes ali zadnji vpis ali izbran datum
+                let maxDate = now;
+                if (historyDates.length > 0 && parseLocalDate(historyDates[historyDates.length-1]) > maxDate) maxDate = parseLocalDate(historyDates[historyDates.length-1]);
+                if (sel > maxDate) maxDate = new Date(sel);
+
+                // Poravnava na ponedeljek
+                const startDate = new Date(minDate);
                 const dayOfWeek = startDate.getDay();
-                const diffToMon = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+                const diffToMon = dayOfWeek === 0 ? 6 : dayOfWeek - 1; 
                 startDate.setDate(startDate.getDate() - diffToMon);
-                const endDate = new Date();
+
+                // Poravnava na nedeljo
+                const endDate = new Date(maxDate);
                 const endDayOfWeek = endDate.getDay();
                 const diffToSun = endDayOfWeek === 0 ? 0 : 7 - endDayOfWeek;
                 endDate.setDate(endDate.getDate() + diffToSun);
+
                 const grid = [];
                 let current = new Date(startDate);
+                
+                // Uporaba LOKALNEGA časa za iteracijo
                 while (current <= endDate) {
-                    const dateStr = current.toISOString().split('T')[0];
-                    grid.push({ date: dateStr, value: history[dateStr] || 0, month: current.getMonth(), day: current.getDate(), year: current.getFullYear() });
+                    const dateStr = getLocalDateString(current);
+                    grid.push({ 
+                        date: dateStr, 
+                        value: history[dateStr] || 0, 
+                        month: current.getMonth(), 
+                        day: current.getDate(), 
+                        year: current.getFullYear() 
+                    });
                     current.setDate(current.getDate() + 1);
                 }
                 return grid;
             };
+            
             const gridData = generateGridData();
             const weeks = [];
             for (let i = 0; i < gridData.length; i += 7) weeks.push(gridData.slice(i, i + 7));
             const monthNames = ["JAN", "FEB", "MAR", "APR", "MAJ", "JUN", "JUL", "AVG", "SEP", "OKT", "NOV", "DEC"];
+            
+            // Naslov leta
+            const startYear = gridData[0].year;
+            const endYear = gridData[gridData.length-1].year;
+            const yearLabel = startYear === endYear ? `Leto ${startYear}` : `Leta ${startYear} - ${endYear}`;
 
             return React.createElement('div', { className: "h-full flex flex-col gap-6" },
                 React.createElement('div', { className: "border-b-2 pb-4", style: { borderColor: 'var(--color-accent-dim)' } },
@@ -477,22 +519,22 @@
                     React.createElement('p', { className: "text-sm opacity-60 mt-1 italic" }, "Tvoja pot skozi čas.")
                 ),
                 React.createElement('div', { className: "p-4 rounded border flex-none", style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' } },
-                    React.createElement('div', { className: "text-[10px] font-bold uppercase tracking-widest opacity-50 mb-2" }, "Zadnji Teden"),
-                    React.createElement('div', { className: "flex items-end justify-between h-24 gap-2" },
+                    React.createElement('div', { className: "text-xs font-bold uppercase tracking-widest opacity-50 mb-4" }, "Pregled Tedna"),
+                    React.createElement('div', { className: "flex items-end justify-between h-32 gap-2" },
                         dataPoints.map((d, i) => {
                             const heightPercent = (d.value / maxBlocks) * 100;
                             const isGoal = d.value >= CILJ_DEL;
-                            return React.createElement('div', { key: i, className: "flex-1 flex flex-col items-center gap-1 h-full justify-end" },
+                            return React.createElement('div', { key: i, className: "flex-1 flex flex-col items-center gap-2 h-full justify-end" },
                                 React.createElement('div', { className: "w-full relative rounded-sm overflow-hidden", style: { height: '100%', backgroundColor: 'var(--color-accent-dim)' } },
                                     React.createElement('div', { className: "absolute bottom-0 left-0 w-full transition-all duration-500", style: { height: `${Math.max(heightPercent, 2)}%`, backgroundColor: isGoal ? 'var(--color-accent)' : 'var(--text-ink)' } })
                                 ),
-                                React.createElement('div', { className: "text-[8px] font-bold uppercase opacity-50" }, d.label.charAt(0))
+                                React.createElement('div', { className: "text-[10px] font-bold uppercase opacity-50" }, d.label.charAt(0))
                             );
                         })
                     )
                 ),
                 React.createElement('div', { className: "flex-1 flex flex-col min-h-0" },
-                    React.createElement('div', { className: "flex items-center gap-2 mb-2" }, React.createElement(Grid, { size: 14, className: "opacity-50" }), React.createElement('div', { className: "text-[10px] font-bold uppercase tracking-widest opacity-50" }, `Pregled Leta ${new Date().getFullYear()}`) ),
+                    React.createElement('div', { className: "flex items-center gap-2 mb-2" }, React.createElement(Grid, { size: 14, className: "opacity-50" }), React.createElement('div', { className: "text-xs font-bold uppercase tracking-widest opacity-50" }, `Pregled ${yearLabel}`) ),
                     React.createElement('div', { className: "flex-1 overflow-x-auto border rounded p-4 scrollbar-thin", style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' } },
                         React.createElement('div', { className: "flex gap-1 h-full" },
                             weeks.map((week, wIndex) => {
@@ -505,7 +547,7 @@
                                         if (day.value >= 1) bgColor = 'var(--text-ink-light)';
                                         if (day.value >= 3) bgColor = 'var(--color-accent)';
                                         const isEmpty = day.value === 0;
-                                        return React.createElement('div', { key: dIndex, className: "w-3 h-3 rounded-[1px] transition-colors", style: { backgroundColor: isEmpty ? 'transparent' : bgColor, border: isEmpty ? '1px solid var(--color-accent-dim)' : 'none' }, title: `${day.date}: ${day.value}` });
+                                        return React.createElement('div', { key: dIndex, className: "w-4 h-4 rounded-[1px] transition-colors", style: { backgroundColor: isEmpty ? 'transparent' : bgColor, border: isEmpty ? '1px solid var(--color-accent-dim)' : 'none' }, title: `${day.date}: ${day.value}` });
                                     })
                                 );
                             })
@@ -524,100 +566,100 @@
                     React.createElement('h1', { className: "text-3xl font-serif", style: { color: 'var(--text-ink)' } }, "Vitez")
                 ),
                 React.createElement('div', { className: "flex flex-col items-center gap-2 mb-8 p-6 rounded border transition-colors duration-500", style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' } },
-                    React.createElement('div', { className: "w-24 h-24 rounded-full border-2 flex items-center justify-center mb-2 shadow-inner", style: { backgroundColor: 'var(--bg-paper)', borderColor: 'var(--color-accent-dim)' } },
-                        React.createElement('div', { style: { color: 'var(--color-accent)', transform: 'scale(2)' } }, React.createElement(IconComp, { size: 20 }))
+                    React.createElement('div', { className: "w-28 h-28 rounded-full border-2 flex items-center justify-center mb-2 shadow-inner", style: { backgroundColor: 'var(--bg-paper)', borderColor: 'var(--color-accent-dim)' } },
+                        React.createElement('div', { style: { color: 'var(--color-accent)', transform: 'scale(2.5)' } }, React.createElement(IconComp, { size: 24 }))
                     ),
-                    React.createElement('h2', { className: "text-2xl font-bold uppercase tracking-wide", style: { color: 'var(--text-ink)' } }, currentRank.title),
-                    React.createElement('p', { className: "text-sm opacity-60 font-serif italic" }, `Stopnja ${currentLevel}`),
-                    React.createElement('div', { className: "w-full mt-4" },
-                        React.createElement('div', { className: "flex justify-between text-[10px] font-bold uppercase tracking-widest opacity-60 mb-1" },
+                    React.createElement('h2', { className: "text-3xl font-bold uppercase tracking-wide", style: { color: 'var(--text-ink)' } }, currentRank.title),
+                    React.createElement('p', { className: "text-base opacity-60 font-serif italic" }, `Stopnja ${currentLevel}`),
+                    React.createElement('div', { className: "w-full mt-6" },
+                        React.createElement('div', { className: "flex justify-between text-xs font-bold uppercase tracking-widest opacity-60 mb-1" },
                             React.createElement('span', null, `${xpProgressInLevel} XP`),
                             React.createElement('span', null, `${xpNeededForNextLevel} XP`)
                         ),
-                        React.createElement('div', { className: "h-2 w-full rounded-full overflow-hidden", style: { backgroundColor: 'var(--color-accent-dim)' } },
+                        React.createElement('div', { className: "h-3 w-full rounded-full overflow-hidden", style: { backgroundColor: 'var(--color-accent-dim)' } },
                             React.createElement('div', { className: "h-full transition-all duration-500", style: { width: `${percent}%`, backgroundColor: 'var(--color-accent)' } })
                         ),
-                        React.createElement('div', { className: "text-center text-[10px] mt-1 opacity-50" }, `Do naslednje stopnje: ${xpNeededForNextLevel - xpProgressInLevel} XP`)
+                        React.createElement('div', { className: "text-center text-xs mt-2 opacity-50" }, `Do naslednje stopnje: ${xpNeededForNextLevel - xpProgressInLevel} XP`)
                     )
                 ),
                 
                 // SYNC SECTION
                 React.createElement('div', { className: "mb-8 p-4 rounded border", style: { borderColor: 'var(--color-accent-dim)', backgroundColor: 'var(--bg-paper-dark)' } },
                     React.createElement('div', { className: "flex items-center gap-2 mb-3" },
-                        React.createElement(Link, { size: 16, style: { color: 'var(--color-accent)' } }),
-                        React.createElement('h3', { className: "text-xs font-bold uppercase tracking-widest opacity-80" }, "Povezava Naprav")
+                        React.createElement(Link, { size: 18, style: { color: 'var(--color-accent)' } }),
+                        React.createElement('h3', { className: "text-sm font-bold uppercase tracking-widest opacity-80" }, "Povezava Naprav")
                     ),
                     
                     !syncId ? (
-                        React.createElement('div', { className: "flex flex-col gap-2" },
+                        React.createElement('div', { className: "flex flex-col gap-3" },
                             React.createElement('div', { className: "flex gap-2" },
                                 React.createElement('input', { 
                                     type: "text", 
                                     placeholder: "Vnesi poljubno ime...", 
                                     value: tempSyncId,
                                     onChange: (e) => setTempSyncId(e.target.value),
-                                    className: "flex-1 p-2 rounded text-sm border bg-white/50 focus:outline-none focus:border-opacity-100",
+                                    className: "flex-1 p-3 rounded text-base border bg-white/50 focus:outline-none focus:border-opacity-100",
                                     style: { borderColor: 'var(--color-accent-dim)' }
                                 }),
                                 React.createElement('button', { 
                                     onClick: saveSyncId,
-                                    className: "p-2 rounded text-white shadow-sm",
+                                    className: "p-3 rounded text-white shadow-sm",
                                     style: { backgroundColor: 'var(--color-accent)' }
-                                }, React.createElement(Save, { size: 16 }))
+                                }, React.createElement(Save, { size: 20 }))
                             ),
                             // GUMB ZA GENERIRANJE KODE
                             React.createElement('button', {
                                 onClick: generateRandomCode,
-                                className: "text-[10px] uppercase font-bold underline opacity-60 hover:opacity-100 self-start flex items-center gap-1",
+                                className: "text-xs uppercase font-bold underline opacity-60 hover:opacity-100 self-start flex items-center gap-1 p-2",
                                 style: { color: 'var(--text-ink)' }
-                            }, React.createElement(RefreshCw, { size: 10 }), "Generiraj varno kodo")
+                            }, React.createElement(RefreshCw, { size: 12 }), "Generiraj varno kodo")
                         )
                     ) : (
-                        React.createElement('div', { className: "flex justify-between items-center bg-white/20 p-2 rounded" },
-                            React.createElement('div', { className: "text-sm" }, 
+                        React.createElement('div', { className: "flex justify-between items-center bg-white/20 p-3 rounded" },
+                            React.createElement('div', { className: "text-base" }, 
                                 React.createElement('span', { className: "opacity-50 text-xs block" }, "Povezan kot:"),
                                 React.createElement('strong', { style: { color: 'var(--color-accent)' } }, syncId)
                             ),
                             React.createElement('button', { 
                                 onClick: clearSyncId,
-                                className: "text-xs underline opacity-50 hover:opacity-100"
+                                className: "text-sm underline opacity-50 hover:opacity-100 p-2"
                             }, "Odjavi")
                         )
                     ),
-                    React.createElement('p', { className: "text-[10px] opacity-50 mt-2 leading-tight" }, "Vpiši isto ime na telefonu in računalniku za sinhronizacijo podatkov.")
+                    React.createElement('p', { className: "text-xs opacity-50 mt-2 leading-tight" }, "Vpiši isto ime na telefonu in računalniku za sinhronizacijo podatkov.")
                 ),
 
                 React.createElement('div', { className: "mb-8" },
                     React.createElement('div', { className: "flex items-center gap-2 mb-2 px-2" },
-                        React.createElement(Star, { size: 14, className: "opacity-50" }),
-                        React.createElement('h3', { className: "text-xs font-bold uppercase tracking-widest opacity-50" }, "Trenutni Zavetnik")
+                        React.createElement(Star, { size: 16, className: "opacity-50" }),
+                        React.createElement('h3', { className: "text-sm font-bold uppercase tracking-widest opacity-50" }, "Trenutni Zavetnik")
                     ),
-                    React.createElement('div', { className: "p-4 rounded text-sm leading-relaxed font-serif mb-6 border", style: { backgroundColor: 'var(--bg-paper)', borderColor: 'var(--color-accent)', color: 'var(--text-ink)' } },
+                    React.createElement('div', { className: "p-4 rounded text-base leading-relaxed font-serif mb-6 border", style: { backgroundColor: 'var(--bg-paper)', borderColor: 'var(--color-accent)', color: 'var(--text-ink)' } },
                         React.createElement('div', { className: "flex items-center gap-3 mb-2" },
-                            React.createElement('div', { style: { color: 'var(--color-accent)' } }, React.createElement(IconComp, { size: 20 })),
-                            React.createElement('strong', { className: "text-lg", style: { color: 'var(--color-accent)' } }, currentRank.saint)
+                            React.createElement('div', { style: { color: 'var(--color-accent)' } }, React.createElement(IconComp, { size: 24 })),
+                            React.createElement('strong', { className: "text-xl", style: { color: 'var(--color-accent)' } }, currentRank.saint)
                         ),
                         React.createElement('p', { className: "italic opacity-80" }, `"${currentRank.saintDesc}"`)
                     ),
                     React.createElement('div', { className: "flex items-center gap-2 mb-2 px-2" },
-                        React.createElement(HelpCircle, { size: 14, className: "opacity-50" }),
-                        React.createElement('h3', { className: "text-xs font-bold uppercase tracking-widest opacity-50" }, "Kodeks Igre")
+                        React.createElement(HelpCircle, { size: 16, className: "opacity-50" }),
+                        React.createElement('h3', { className: "text-sm font-bold uppercase tracking-widest opacity-50" }, "Kodeks Igre")
                     ),
-                    React.createElement('div', { className: "p-4 rounded text-sm leading-relaxed font-serif border", style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)', color: 'var(--text-ink)' } },
+                    React.createElement('div', { className: "p-4 rounded text-base leading-relaxed font-serif border", style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)', color: 'var(--text-ink)' } },
                         React.createElement('p', { className: "mb-2" }, React.createElement('strong', { style: { color: 'var(--color-accent)' } }, "1 Delo = 100 XP.")),
                         React.createElement('p', { className: "mb-4" }, "Vsak zabeležen blok dela ti prinese točke izkušenj."),
                         React.createElement('div', { className: "border-t pt-4 mt-4", style: { borderColor: 'var(--color-accent-dim)' } },
                             React.createElement('strong', { className: "text-xs font-bold uppercase opacity-70 block mb-3" }, "Hierarhija in Svetniki"),
-                            React.createElement('ul', { className: "space-y-3 text-xs opacity-90" },
+                            React.createElement('ul', { className: "space-y-4 text-xs opacity-90" },
                                 RANK_SYSTEM.map((rank, i) => {
                                     const isActive = currentLevel >= rank.minLevel && (i === RANK_SYSTEM.length - 1 || currentLevel < RANK_SYSTEM[i+1].minLevel);
                                     return React.createElement('li', { key: i, className: `flex flex-col pb-2 ${i !== RANK_SYSTEM.length - 1 ? 'border-b' : ''}`, style: { borderColor: 'var(--color-accent-dim)' } },
                                         React.createElement('div', { className: "flex justify-between items-center mb-1" },
-                                            React.createElement('span', { className: `font-bold uppercase ${isActive ? 'text-lg' : ''}`, style: { color: isActive ? 'var(--color-accent)' : 'var(--text-ink)' } }, rank.title),
+                                            React.createElement('span', { className: `font-bold uppercase ${isActive ? 'text-xl' : 'text-sm'}`, style: { color: isActive ? 'var(--color-accent)' : 'var(--text-ink)' } }, rank.title),
                                             React.createElement('span', { className: "opacity-60" }, `Lvl ${rank.minLevel}+`)
                                         ),
                                         React.createElement('div', { className: "flex items-center gap-2 opacity-80" },
-                                            React.createElement('span', { style: { color: isActive ? 'var(--color-accent)' : 'var(--text-ink-light)' } }, rank.saint)
+                                            React.createElement('span', { style: { color: isActive ? 'var(--color-accent)' : 'var(--text-ink-light)', fontSize: isActive ? '1.1em' : '1em' } }, rank.saint)
                                         )
                                     );
                                 })
@@ -625,7 +667,7 @@
                         )
                     )
                 ),
-                React.createElement('div', { className: "mt-auto border-t-2 pt-6", style: { borderColor: 'var(--color-accent-dim)' } },
+                React.createElement('div', { className: "mt-auto border-t-2 pt-6 pb-20", style: { borderColor: 'var(--color-accent-dim)' } },
                     React.createElement('div', { className: "flex justify-between items-center mb-4 text-xs font-bold uppercase tracking-widest opacity-50" },
                         React.createElement('span', null, "Urejanje Dneva"),
                         React.createElement('span', null, formatDateShort(selectedDate))
