@@ -3,665 +3,654 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malica Manager Pro</title>
+    <title>DeepFocus Medieval</title>
     
-    <!-- 1. TAILWIND CSS (Za izgled) -->
+    <!-- 1. TAILWIND CSS (Stili) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. IMPORT MAP (Da brskalnik ve, kje dobiti React in Ikone) -->
-    <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@18.2.0",
-        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-        "lucide-react": "https://esm.sh/lucide-react@0.263.1"
-      }
-    }
-    </script>
-
-    <!-- 3. BABEL (Prevajalnik za JSX) -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
+    <!-- 2. NOISE TEXTURE (Za ozadje) -->
     <style>
-        /* Dodatni stili za tiskanje in scrollbar */
-        @media print {
-            @page { margin: 1cm; }
-            body { background: white; -webkit-print-color-adjust: exact; }
-            .no-print { display: none !important; }
-        }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        /* Skrijemo scrollbar, a ohranimo funkcionalnost */
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        body { font-family: 'Times New Roman', serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
-
-    <!-- TUKAJ SE BO PRIKAZALA APLIKACIJA -->
+<body class="bg-[#f3e9d2] text-[#2c1810]">
     <div id="root"></div>
 
-    <!-- 4. TVOJA APLIKACIJA (Prekopirana in prilagojena React koda) -->
-    <script type="text/babel" data-type="module">
-        import React, { useState, useEffect, useMemo } from 'react';
-        import { createRoot } from 'react-dom/client';
+    <!-- 3. LOGIKA APLIKACIJE (React + Firebase) -->
+    <script type="module">
+        // Uvoz knjižnic neposredno iz spleta (ESM modules)
+        import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.2.0';
+        import ReactDOM from 'https://esm.sh/react-dom@18.2.0/client';
         import { 
-          Users, History, PlusCircle, Trash2, TrendingDown, 
-          CreditCard, UserPlus, ArrowRightCircle, Calendar, 
-          Wallet, Calculator, CheckCircle2, Download, 
-          AlertTriangle, FileText, CheckSquare, Square 
-        } from 'lucide-react';
+            Check, Minus, BarChart2, User, Scroll, Calendar, Shield, Crown, 
+            Sword, Feather, Grid, HelpCircle, Hammer, Anchor, Flame, Book, 
+            Star, Sun, Cloud, Loader, AlertTriangle 
+        } from 'https://esm.sh/lucide-react@0.292.0';
 
-        // --- POMOŽNA FUNKCIJA ZA DENAR ---
-        const money = (val) => Math.round(val * 100) / 100;
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const App = () => {
-          // --- STATE ---
-          const [members, setMembers] = useState(() => {
-            try {
-              const saved = localStorage.getItem('malica_members');
-              // Posodobljena imena
-              return saved ? JSON.parse(saved) : ["Martin", "Mitja", "Pavel", "Matej", "Zala", "Stela"];
-            } catch (e) { return []; }
-          });
-
-          const [history, setHistory] = useState(() => {
-            try {
-              const saved = localStorage.getItem('malica_history');
-              return saved ? JSON.parse(saved) : [];
-            } catch (e) { return []; }
-          });
-
-          const [activeTab, setActiveTab] = useState('dashboard');
-          const [showAddMember, setShowAddMember] = useState(false);
-          const [newMemberName, setNewMemberName] = useState('');
-          const [memberToDelete, setMemberToDelete] = useState(null);
-          const [showResetConfirm, setShowResetConfirm] = useState(false);
-
-          // Form State
-          const [amount, setAmount] = useState('');
-          const [payer, setPayer] = useState('');
-          const [selectedParticipants, setSelectedParticipants] = useState([]);
-          const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-
-          // --- INITIALIZE FORM ---
-          useEffect(() => {
-            if (members.length > 0) {
-              if (!payer || !members.includes(payer)) {
-                setPayer(members[0]);
-              }
-            } else {
-              setPayer('');
-            }
-            
-            setSelectedParticipants(prev => {
-                const valid = prev.filter(p => members.includes(p));
-                return valid.length === 0 ? members : valid;
-            });
-          }, [members, payer]);
-
-          // --- PERSISTENCE ---
-          useEffect(() => {
-            localStorage.setItem('malica_members', JSON.stringify(members));
-          }, [members]);
-
-          useEffect(() => {
-            localStorage.setItem('malica_history', JSON.stringify(history));
-          }, [history]);
-
-          // --- LOGIC ---
-          const balances = useMemo(() => {
-            const b = {};
-            members.forEach(m => b[m] = 0);
-
-            history.forEach(entry => {
-              const { payer, amount, participants } = entry;
-              const numAmount = parseFloat(amount);
-              
-              if (b.hasOwnProperty(payer)) {
-                b[payer] = money(b[payer] + numAmount);
-              }
-
-              const originalParticipantCount = participants.length;
-              if (originalParticipantCount > 0) {
-                const costPerPerson = money(numAmount / originalParticipantCount);
-                participants.forEach(p => {
-                  if (b.hasOwnProperty(p)) {
-                    b[p] = money(b[p] - costPerPerson);
-                  }
-                });
-              }
-            });
-
-            return b;
-          }, [history, members]);
-
-          const settlements = useMemo(() => {
-            const debtors = [];
-            const creditors = [];
-            
-            Object.entries(balances).forEach(([name, balance]) => {
-              if (balance < -0.05) { 
-                debtors.push({ name, balance: Math.abs(balance) });
-              } else if (balance > 0.05) {
-                creditors.push({ name, balance });
-              }
-            });
-
-            debtors.sort((a, b) => b.balance - a.balance);
-            creditors.sort((a, b) => b.balance - a.balance);
-
-            const result = [];
-            let dIdx = 0;
-            let cIdx = 0;
-
-            while (dIdx < debtors.length && cIdx < creditors.length) {
-              const debtor = debtors[dIdx];
-              const creditor = creditors[cIdx];
-              const amount = money(Math.min(debtor.balance, creditor.balance));
-
-              if (amount > 0) {
-                result.push({ from: debtor.name, to: creditor.name, amount: amount });
-                debtor.balance = money(debtor.balance - amount);
-                creditor.balance = money(creditor.balance - amount);
-              }
-              if (debtor.balance < 0.01) dIdx++;
-              if (creditor.balance < 0.01) cIdx++;
-            }
-            return result;
-          }, [balances]);
-
-          const nextPayer = useMemo(() => {
-            if (members.length === 0) return "Dodaj člana";
-            const allZero = Object.values(balances).every(v => Math.abs(v) < 0.1);
-            if (allZero && history.length > 0) return "Vsi poravnani";
-            
-            let minVal = Infinity;
-            let person = members[0];
-            members.forEach(m => {
-              if (balances[m] < minVal) {
-                minVal = balances[m];
-                person = m;
-              }
-            });
-            return person;
-          }, [balances, members, history]);
-
-          // --- ACTIONS ---
-          const addEntry = (e) => {
-            e.preventDefault();
-            if (!amount || isNaN(amount) || selectedParticipants.length === 0 || !payer) return;
-
-            const newEntry = {
-              id: Date.now(),
-              date,
-              payer,
-              amount: parseFloat(amount),
-              participants: [...selectedParticipants]
-            };
-
-            setHistory([newEntry, ...history]);
-            setAmount('');
-            setActiveTab('history');
-          };
-
-          const deleteEntry = (id) => {
-            setHistory(history.filter(e => e.id !== id));
-          };
-
-          const finalizeSettlement = () => {
-            setHistory([]);
-            setShowResetConfirm(false);
-            setActiveTab('dashboard');
-          };
-
-          const exportToPDF = () => {
-            window.print();
-          };
-
-          const addMember = () => {
-            const trimmed = newMemberName.trim();
-            if (trimmed && !members.includes(trimmed)) {
-              setMembers([...members, trimmed]);
-              setNewMemberName('');
-              setShowAddMember(false);
-            }
-          };
-
-          const confirmRemoveMember = (name) => {
-            setMembers(members.filter(m => m !== name));
-            setMemberToDelete(null);
-          };
-
-          const toggleParticipant = (name) => {
-            if (selectedParticipants.includes(name)) {
-              setSelectedParticipants(selectedParticipants.filter(p => p !== name));
-            } else {
-              setSelectedParticipants([...selectedParticipants, name]);
-            }
-          };
-
-          const toggleAllParticipants = () => {
-            if (selectedParticipants.length === members.length) {
-              setSelectedParticipants([]);
-            } else {
-              setSelectedParticipants([...members]);
-            }
-          };
-
-          // --- COMPONENTS ---
-          const TabButton = ({ id, icon: Icon, label }) => (
-            <button
-              onClick={() => setActiveTab(id)}
-              className={`flex flex-col items-center justify-center py-2 px-3 rounded-xl transition-all ${
-                activeTab === id ? 'bg-indigo-600 text-white shadow-lg scale-105' : 'text-gray-500 hover:bg-gray-100'
-              }`}
-            >
-              <Icon size={20} />
-              <span className="text-[10px] mt-1 font-medium">{label}</span>
-            </button>
-          );
-
-          return (
-            <div className="min-h-screen bg-slate-50 pb-24 print:bg-white print:pb-0 font-sans">
-              
-              {/* HEADER (Zaslon) */}
-              <header className="bg-gradient-to-br from-indigo-700 to-indigo-900 text-white p-6 rounded-b-[2.5rem] shadow-xl mb-6 print:hidden text-center relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-                  <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] rotate-12 bg-[radial-gradient(circle,white,transparent)]" />
-                </div>
-                <h1 className="text-2xl font-bold flex items-center justify-center gap-2 relative z-10">
-                  <Wallet className="text-indigo-200" /> Malica Manager
-                </h1>
-                <p className="text-indigo-200 text-xs mt-1 uppercase tracking-widest opacity-80">Pro Edition</p>
-              </header>
-
-              {/* PRINT VIEW */}
-              <div className="hidden print:block p-10 text-slate-900">
-                <div className="flex justify-between items-end border-b-2 border-slate-800 pb-4 mb-8">
-                  <div>
-                    <h1 className="text-4xl font-black uppercase tracking-tight">Poročilo o Malicah</h1>
-                    <p className="text-slate-500 mt-2">Pripravljeno: {new Date().toLocaleDateString('sl-SI')}</p>
-                  </div>
-                  <div className="text-right">
-                     <div className="text-sm text-slate-400">Obdobje</div>
-                     <div className="font-bold text-xl">{history.length > 0 ? `${history[history.length-1].date} - ${history[0].date}` : 'Ni podatkov'}</div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-8 mb-10">
-                  <div>
-                    <h2 className="text-lg font-bold bg-slate-100 p-2 mb-4 border-l-4 border-indigo-600">Končna Stanja</h2>
-                    <table className="w-full text-sm">
-                      <tbody>
-                      {members.map(m => (
-                        <tr key={m} className="border-b border-slate-100">
-                          <td className="py-2 font-medium">{m}</td>
-                          <td className={`py-2 text-right font-bold ${balances[m] >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
-                            {balances[m] >= 0 ? '+' : ''}{balances[m].toFixed(2)} €
-                          </td>
-                        </tr>
-                      ))}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div>
-                    <h2 className="text-lg font-bold bg-slate-100 p-2 mb-4 border-l-4 border-rose-500">Predlagan Poračun</h2>
-                    <div className="space-y-2 text-sm">
-                      {settlements.length > 0 ? settlements.map((s, idx) => (
-                        <div key={idx} className="flex justify-between items-center border p-2 rounded bg-slate-50">
-                          <span>{s.from} <span className="text-slate-400">→</span> {s.to}</span>
-                          <span className="font-bold">{s.amount.toFixed(2)} €</span>
-                        </div>
-                      )) : <p className="italic text-slate-400 p-2">Vse poravnano.</p>}
-                    </div>
-                  </div>
-                </div>
-
-                <h2 className="text-lg font-bold bg-slate-100 p-2 mb-4 border-l-4 border-slate-600">Podrobna Zgodovina</h2>
-                <table className="w-full text-sm border-collapse border border-slate-200">
-                  <thead className="bg-slate-50">
-                    <tr>
-                      <th className="p-2 border border-slate-200 text-left">Datum</th>
-                      <th className="p-2 border border-slate-200 text-left">Plačnik</th>
-                      <th className="p-2 border border-slate-200 text-right">Znesek</th>
-                      <th className="p-2 border border-slate-200 text-left w-1/2">Udeleženci</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {history.map(entry => (
-                      <tr key={entry.id}>
-                        <td className="p-2 border border-slate-200">{entry.date}</td>
-                        <td className="p-2 border border-slate-200 font-bold">{entry.payer}</td>
-                        <td className="p-2 border border-slate-200 text-right">{entry.amount.toFixed(2)} €</td>
-                        <td className="p-2 border border-slate-200 text-xs text-slate-500">{entry.participants.join(', ')}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* GLAVNA UI */}
-              <main className="max-w-md mx-auto px-4 print:hidden">
-                
-                {activeTab === 'dashboard' && (
-                  <div className="space-y-6">
-                    <div className="bg-white p-6 rounded-3xl shadow-lg shadow-indigo-100 border border-white relative overflow-hidden text-center group transition-all hover:scale-[1.02]">
-                      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                        <CreditCard size={100} className="rotate-12" />
-                      </div>
-                      <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Naslednji plača</p>
-                      <h2 className="text-3xl font-black text-slate-800 mb-2 leading-tight">{nextPayer}</h2>
-                      {nextPayer !== "Vsi poravnani" && nextPayer !== "Dodaj člana" && (
-                        <div className="inline-flex items-center gap-2 bg-slate-100 px-4 py-1.5 rounded-full text-sm font-bold text-slate-600">
-                          <TrendingDown size={14} className={balances[nextPayer] < 0 ? 'text-rose-500' : 'text-emerald-500'} /> 
-                          Stanje: {balances[nextPayer]?.toFixed(2)} €
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-                      <div className="p-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
-                        <h3 className="font-bold text-slate-700 flex items-center gap-2">
-                          <Users size={18} className="text-indigo-500" /> Trenutno stanje
-                        </h3>
-                        <button onClick={exportToPDF} className="text-indigo-600 bg-indigo-50 hover:bg-indigo-100 p-2 rounded-xl transition-colors" title="Prenesi PDF">
-                          <Download size={18} />
-                        </button>
-                      </div>
-                      <div className="divide-y divide-slate-50">
-                        {members.length > 0 ? members.map(m => (
-                          <div key={m} className="p-4 flex justify-between items-center hover:bg-slate-50 transition-colors">
-                            <span className="font-medium text-slate-600">{m}</span>
-                            <span className={`font-bold tabular-nums ${balances[m] >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
-                              {balances[m] >= 0 ? '+' : ''}{balances[m].toFixed(2)} €
-                            </span>
-                          </div>
-                        )) : <div className="p-6 text-center text-slate-400 text-sm">Dodaj člane v zavihku Ekipa</div>}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {activeTab === 'settle' && (
-                  <div className="space-y-6">
-                    <div className="flex justify-between items-center">
-                      <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                        <Calculator className="text-indigo-600" /> Obračun
-                      </h3>
-                      <button onClick={exportToPDF} className="flex items-center gap-2 bg-indigo-50 px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-700 hover:bg-indigo-100 transition-colors">
-                        <FileText size={14} /> Natisni PDF
-                      </button>
-                    </div>
-
-                    <div className="bg-white p-6 rounded-3xl shadow-sm border-2 border-slate-100">
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6 text-center">Plan poravnave</h4>
-                      <div className="space-y-4">
-                        {settlements.length > 0 ? settlements.map((s, idx) => (
-                          <div key={idx} className="flex items-center gap-3 relative">
-                            {idx !== settlements.length - 1 && <div className="absolute left-[50%] top-10 bottom-[-16px] w-px bg-slate-100 -z-10"></div>}
-                            <div className="flex-1 text-center bg-rose-50 rounded-xl p-2 border border-rose-100">
-                              <p className="font-bold text-slate-700 text-sm">{s.from}</p>
-                            </div>
-                            <div className="flex flex-col items-center justify-center min-w-[80px]">
-                              <span className="text-xs text-slate-400 mb-1">dolguje</span>
-                              <div className="bg-slate-800 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                                {s.amount.toFixed(2)} €
-                              </div>
-                              <ArrowRightCircle size={14} className="text-slate-300 mt-1" />
-                            </div>
-                            <div className="flex-1 text-center bg-emerald-50 rounded-xl p-2 border border-emerald-100">
-                              <p className="font-bold text-slate-700 text-sm">{s.to}</p>
-                            </div>
-                          </div>
-                        )) : (
-                          <div className="text-center py-10 text-slate-400 flex flex-col items-center">
-                            <CheckCircle2 size={48} className="text-emerald-200 mb-3" />
-                            <p className="font-medium text-slate-500">Računi so čisti!</p>
-                            <p className="text-xs mt-1">Nihče nikomur nič ne dolguje.</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      {showResetConfirm ? (
-                        <div className="bg-rose-50 border border-rose-100 p-5 rounded-3xl animate-in zoom-in-95 duration-200 shadow-lg shadow-rose-100/50">
-                          <div className="flex items-start gap-3 text-rose-800 mb-4">
-                            <AlertTriangle className="flex-shrink-0" />
-                            <div>
-                              <p className="font-bold text-sm">Brisanje zgodovine</p>
-                              <p className="text-xs mt-1 opacity-80">To bo trajno izbrisalo vse vnose. Predlagam, da najprej shraniš PDF.</p>
-                            </div>
-                          </div>
-                          <div className="flex gap-2">
-                            <button onClick={() => setShowResetConfirm(false)} className="flex-1 bg-white border border-rose-200 py-3 rounded-xl font-bold text-slate-600 text-sm">Prekliči</button>
-                            <button onClick={finalizeSettlement} className="flex-1 bg-rose-600 text-white py-3 rounded-xl font-bold text-sm shadow-md shadow-rose-200">Da, ponastavi</button>
-                          </div>
-                        </div>
-                      ) : (
-                        <button 
-                          disabled={history.length === 0}
-                          onClick={() => setShowResetConfirm(true)} 
-                          className="w-full bg-white border border-slate-200 text-slate-600 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                        >
-                          <CheckCircle2 size={20} className={history.length > 0 ? "text-emerald-500" : "text-slate-300"} /> 
-                          Zaključi obdobje
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {activeTab === 'add' && (
-                  <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                    <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-                      <PlusCircle className="text-indigo-600" /> Nov račun
-                    </h3>
-                    
-                    <form onSubmit={addEntry} className="space-y-6">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Datum</label>
-                          <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full p-3 bg-slate-50 rounded-xl font-medium text-slate-700 outline-none focus:ring-2 focus:ring-indigo-100 transition-all" />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Plačal</label>
-                          <select value={payer} onChange={e => setPayer(e.target.value)} className="w-full p-3 bg-slate-50 rounded-xl font-bold text-indigo-900 outline-none focus:ring-2 focus:ring-indigo-100 appearance-none transition-all">
-                            {members.map(m => <option key={m} value={m}>{m}</option>)}
-                          </select>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Znesek</label>
-                        <div className="relative">
-                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xl">€</span>
-                          <input 
-                            type="number" 
-                            step="0.01" 
-                            value={amount} 
-                            onChange={e => setAmount(e.target.value)} 
-                            placeholder="0.00" 
-                            className="w-full pl-10 pr-4 py-4 bg-slate-50 rounded-2xl text-3xl font-black text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all placeholder:text-slate-200" 
-                            autoFocus
-                          />
-                        </div>
-                      </div>
-
-                      <div className="pt-2">
-                        <div className="flex justify-between items-end mb-3">
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Kdo je jedel?</label>
-                            <button type="button" onClick={toggleAllParticipants} className="text-xs font-bold text-indigo-600 flex items-center gap-1 hover:bg-indigo-50 px-2 py-1 rounded">
-                                {selectedParticipants.length === members.length ? <CheckSquare size={14}/> : <Square size={14}/>}
-                                {selectedParticipants.length === members.length ? 'Odkljukaj vse' : 'Izberi vse'}
-                            </button>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
-                          {members.map(m => {
-                            const isSelected = selectedParticipants.includes(m);
-                            return (
-                              <button
-                                key={m}
-                                type="button"
-                                onClick={() => toggleParticipant(m)}
-                                className={`py-3 px-4 rounded-xl text-sm font-bold transition-all border flex items-center justify-between group ${
-                                  isSelected 
-                                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-200' 
-                                    : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300'
-                                }`}
-                              >
-                                {m}
-                                {isSelected && <CheckCircle2 size={16} className="text-indigo-200" />}
-                              </button>
-                            )
-                          })}
-                        </div>
-                      </div>
-
-                      <button 
-                        type="submit" 
-                        disabled={!amount || selectedParticipants.length === 0}
-                        className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-indigo-200 active:scale-95 transition-all disabled:opacity-50 disabled:shadow-none"
-                      >
-                        Shrani račun
-                      </button>
-                    </form>
-                  </div>
-                )}
-
-                {activeTab === 'history' && (
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center px-2">
-                      <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                        <History className="text-indigo-600" /> Zgodovina
-                      </h3>
-                      <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-full">{history.length} vnosov</span>
-                    </div>
-                    
-                    <div className="space-y-3 pb-4">
-                      {history.length > 0 ? history.map(entry => (
-                        <div key={entry.id} className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 relative group transition-all hover:shadow-md">
-                          <div className="flex justify-between items-start">
-                            <div className="flex gap-3">
-                                <div className="bg-indigo-50 w-12 h-12 rounded-xl flex items-center justify-center flex-col text-indigo-700 font-bold leading-none shrink-0">
-                                    <span className="text-[10px] opacity-60 uppercase">{new Date(entry.date).toLocaleString('default', { month: 'short' })}</span>
-                                    <span className="text-lg">{new Date(entry.date).getDate()}</span>
-                                </div>
-                                <div>
-                                    <p className="font-bold text-slate-700 text-sm">{entry.payer}</p>
-                                    <div className="flex flex-wrap gap-1 mt-1">
-                                        {entry.participants.map(p => (
-                                            <span key={p} className="text-[9px] bg-slate-50 text-slate-400 px-1.5 py-0.5 rounded border border-slate-100">
-                                                {p}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-lg font-black text-slate-800">{entry.amount.toFixed(2)} €</p>
-                            </div>
-                          </div>
-                          <button onClick={() => deleteEntry(entry.id)} className="absolute -top-2 -right-2 bg-white text-rose-500 p-2 rounded-full shadow-md border border-rose-50 opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-50 hover:scale-110">
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      )) : (
-                          <div className="text-center py-20 opacity-50">
-                              <div className="bg-slate-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-                                  <History size={40} />
-                              </div>
-                              <p>Zgodovina je prazna.</p>
-                          </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {activeTab === 'settings' && (
-                  <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                    <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2"><UserPlus className="text-indigo-600" /> Ekipa</h3>
-                    
-                    <div className="space-y-3 mb-6">
-                      {members.map(m => (
-                        <div key={m} className="flex justify-between items-center p-3 bg-slate-50 rounded-xl transition-all border border-transparent hover:border-slate-200">
-                          {memberToDelete === m ? (
-                            <div className="flex items-center justify-between w-full animate-in slide-in-from-right-5 duration-200">
-                              <span className="text-xs font-bold text-rose-600 uppercase tracking-wide ml-2">Izbrišem?</span>
-                              <div className="flex gap-2">
-                                <button onClick={() => setMemberToDelete(null)} className="bg-white border border-slate-200 text-slate-500 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-50">Ne</button>
-                                <button onClick={() => confirmRemoveMember(m)} className="bg-rose-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg shadow-rose-200 hover:bg-rose-600">Da</button>
-                              </div>
-                            </div>
-                          ) : (
-                            <>
-                              <div className="flex items-center gap-3">
-                                  <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xs">
-                                      {m.charAt(0)}
-                                  </div>
-                                  <span className="font-bold text-slate-700">{m}</span>
-                              </div>
-                              <button onClick={() => setMemberToDelete(m)} className="text-slate-300 p-2 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors">
-                                <Trash2 size={18} />
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-
-                    {!showAddMember ? (
-                        <button onClick={() => setShowAddMember(true)} className="w-full py-4 border-2 border-dashed border-slate-200 text-slate-400 rounded-2xl flex items-center justify-center gap-2 hover:bg-slate-50 hover:border-indigo-200 hover:text-indigo-400 transition-all font-bold text-sm uppercase tracking-wide">
-                          <PlusCircle size={20} /> Dodaj sodelavca
-                        </button>
-                      ) : (
-                        <div className="flex gap-2 animate-in fade-in duration-200">
-                          <input 
-                            autoFocus 
-                            type="text" 
-                            value={newMemberName} 
-                            onChange={e => setNewMemberName(e.target.value)} 
-                            placeholder="Vpiši ime..." 
-                            className="flex-1 px-4 py-3 bg-slate-50 border-2 border-indigo-100 rounded-xl focus:ring-0 focus:border-indigo-500 font-medium outline-none" 
-                            onKeyDown={e => e.key === 'Enter' && addMember()} 
-                          />
-                          <button onClick={addMember} className="bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold hover:bg-indigo-700 transition-colors">OK</button>
-                        </div>
-                      )}
-                      
-                      <div className="mt-8 pt-6 border-t border-slate-100 text-center">
-                          <p className="text-xs text-slate-300">Malica Manager Pro v1.2</p>
-                      </div>
-                  </div>
-                )}
-
-              </main>
-
-              {/* BOTTOM NAV */}
-              <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-6 py-2 pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.1)] print:hidden z-50">
-                <div className="max-w-md mx-auto flex justify-between items-center">
-                  <TabButton id="dashboard" icon={TrendingDown} label="Stanje" />
-                  <TabButton id="history" icon={History} label="Zgodovina" />
-                  <div className="relative -top-8 group">
-                     <div className="absolute inset-0 bg-indigo-500 rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
-                     <button onClick={() => setActiveTab('add')} className={`relative w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all ${activeTab === 'add' ? 'bg-indigo-700 scale-105' : 'bg-indigo-600 hover:bg-indigo-700 hover:scale-105'} text-white border-4 border-white`}>
-                      <PlusCircle size={32} />
-                    </button>
-                  </div>
-                  <TabButton id="settle" icon={Calculator} label="Obračun" />
-                  <TabButton id="settings" icon={Users} label="Ekipa" />
-                </div>
-              </nav>
-            </div>
-          );
+        // =================================================================
+        // --- 1. KONFIGURACIJA (TUKAJ VPIŠI SVOJE PODATKE ZA GITHUB) ---
+        // =================================================================
+        
+        // Če nalagaš na GitHub, te podatke zamenjaj s svojimi iz Firebase Console.
+        // Če testiraš tukaj v predogledu, pusti tako kot je (uporabilo bo samodejne podatke).
+        
+        const manualConfig = {
+          apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
+          authDomain: "delo-ae21b.firebaseapp.com",
+          projectId: "delo-ae21b",
+          storageBucket: "delo-ae21b.firebasestorage.app",
+          messagingSenderId: "721173225350",
+          appId: "1:721173225350:web:83926980686c6f4ec11607",
+          measurementId: "G-4STZTWDQ1X"
         };
 
-        const root = createRoot(document.getElementById('root'));
-        root.render(<App />);
+        // --- Logika inicializacije (Ne tikaj) ---
+        let firebaseConfig = null;
+        let isAutoConfig = false;
+
+        // 1. Preveri, če smo v predogledu (Canvas)
+        if (typeof __firebase_config !== 'undefined') {
+            try {
+                firebaseConfig = JSON.parse(__firebase_config);
+                isAutoConfig = true;
+            } catch (e) { console.error("Napaka pri branju auto-configa"); }
+        } 
+        
+        // 2. Če nismo v predogledu, uporabi ročne podatke (za GitHub)
+        if (!firebaseConfig) {
+            firebaseConfig = manualConfig;
+        }
+
+        // Inicializacija Firebase
+        let app, auth, db;
+        let firebaseInitialized = false;
+
+        // Preveri, če so podatki veljavni (niso placeholderji)
+        const isValidConfig = firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== "TUKAJ_VPIŠI_API_KEY";
+
+        if (isValidConfig) {
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                firebaseInitialized = true;
+            } catch (e) {
+                console.warn("Firebase inicializacija ni uspela:", e);
+            }
+        }
+
+        // Globalne spremenljivke okolja
+        const envAppId = typeof __app_id !== 'undefined' ? __app_id : 'deepfocus-medieval';
+        const envInitialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // =================================================================
+        // --- 2. KODA APLIKACIJE (DeepFocus Medieval) ---
+        // =================================================================
+
+        const CILJ_DEL = 3;
+        const XP_PER_BLOCK = 100;
+
+        // --- SISTEM RANGOV ---
+        const RANK_SYSTEM = [
+            {
+                minLevel: 1,
+                title: "Služabnik",
+                saint: "Sv. Jožef Delavec",
+                saintDesc: "Zavetnik tihega in vztrajnega dela. Uči nas discipline.",
+                icon: Hammer,
+                theme: {
+                    paper: "#f3e9d2", paperDark: "#eaddcf", ink: "#2c1810", inkLight: "rgba(44, 24, 16, 0.6)", accent: "#854d0e", accentDim: "rgba(133, 77, 14, 0.1)"
+                }
+            },
+            {
+                minLevel: 5,
+                title: "Oproda",
+                saint: "Sv. Krištof",
+                saintDesc: "Zavetnik popotnikov. Nese te čez težke začetke.",
+                icon: Anchor,
+                theme: {
+                    paper: "#e5e7eb", paperDark: "#d1d5db", ink: "#111827", inkLight: "rgba(17, 24, 39, 0.6)", accent: "#374151", accentDim: "rgba(55, 65, 81, 0.1)"
+                }
+            },
+            {
+                minLevel: 10,
+                title: "Vitez",
+                saint: "Sv. Jurij",
+                saintDesc: "Premagovalec zmaja. Simbol zmage nad lenobo.",
+                icon: Sword,
+                theme: {
+                    paper: "#fff1f2", paperDark: "#ffe4e6", ink: "#450a0a", inkLight: "rgba(69, 10, 10, 0.6)", accent: "#be123c", accentDim: "rgba(190, 18, 60, 0.1)"
+                }
+            },
+            {
+                minLevel: 15,
+                title: "Baron",
+                saint: "Sv. Benedikt",
+                saintDesc: "Oče 'Ora et Labora'. Mojster ravnovesja.",
+                icon: Shield,
+                theme: {
+                    paper: "#eff6ff", paperDark: "#dbeafe", ink: "#172554", inkLight: "rgba(23, 37, 84, 0.6)", accent: "#2563eb", accentDim: "rgba(37, 99, 235, 0.1)"
+                }
+            },
+            {
+                minLevel: 20,
+                title: "Vojvoda",
+                saint: "Sv. Hieronim",
+                saintDesc: "Velik učenjak. Predstavlja globok intelektualni fokus.",
+                icon: Book,
+                theme: {
+                    paper: "#faf5ff", paperDark: "#f3e8ff", ink: "#3b0764", inkLight: "rgba(59, 7, 100, 0.6)", accent: "#7e22ce", accentDim: "rgba(126, 34, 206, 0.1)"
+                }
+            },
+            {
+                minLevel: 25,
+                title: "Kralj",
+                saint: "Sv. Tomaž Akvinski",
+                saintDesc: "Angelski učitelj. Vrhunec modrosti in dosežka.",
+                icon: Crown,
+                theme: {
+                    paper: "#fffbeb", paperDark: "#fef3c7", ink: "#000000", inkLight: "rgba(0, 0, 0, 0.6)", accent: "#d97706", accentDim: "rgba(217, 119, 6, 0.1)"
+                }
+            }
+        ];
+
+        const getCurrentRankInfo = (level) => {
+            const rank = [...RANK_SYSTEM].reverse().find(r => level >= r.minLevel);
+            return rank || RANK_SYSTEM[0];
+        };
+
+        const getTodayString = () => new Date().toISOString().split('T')[0];
+        const formatDateShort = (dateStr) => {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('sl-SI', { day: 'numeric', month: 'short' });
+        };
+        const getDayName = (dateStr) => {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('sl-SI', { weekday: 'short' }).toUpperCase();
+        };
+        const generateDateRange = (daysBack, daysForward) => {
+            const dates = [];
+            const today = new Date();
+            for (let i = -daysBack; i <= daysForward; i++) {
+                const d = new Date(today);
+                d.setDate(today.getDate() + i);
+                dates.push({
+                    full: d.toISOString().split('T')[0],
+                    day: d.getDate(),
+                    weekday: d.toLocaleDateString('sl-SI', { weekday: 'short' }).toUpperCase(),
+                    isToday: i === 0
+                });
+            }
+            return dates;
+        };
+
+        // --- GLAVNA KOMPONENTA ---
+        function DeepFocusMedieval() {
+            const [user, setUser] = useState(null);
+            const [authLoading, setAuthLoading] = useState(true);
+            const [activeTab, setActiveTab] = useState('cockpit');
+            const [selectedDate, setSelectedDate] = useState(getTodayString());
+            const [history, setHistory] = useState({}); 
+            
+            // Auth & Sync Logic
+            useEffect(() => {
+                // Če Firebase ni inicializiran (npr. manjkajoči podatki), preskoči
+                if (!firebaseInitialized) {
+                    console.log("Offline način: Firebase ni konfiguriran.");
+                    setAuthLoading(false);
+                    return;
+                }
+
+                const initAuth = async () => {
+                    try {
+                        if (envInitialToken) {
+                            await signInWithCustomToken(auth, envInitialToken);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (error) {
+                        console.error("Auth error:", error);
+                    } finally {
+                        setAuthLoading(false);
+                    }
+                };
+                initAuth();
+                
+                // Spremljaj stanje uporabnika
+                const unsubscribe = onAuthStateChanged(auth, setUser);
+                return () => unsubscribe();
+            }, []);
+
+            // Sinhronizacija podatkov
+            useEffect(() => {
+                if (!user || !db) return;
+                
+                // Uporabimo envAppId za path (ali 'deepfocus-medieval' če smo v GitHubu brez env variable)
+                const collectionPath = isAutoConfig 
+                    ? `artifacts/${envAppId}/users/${user.uid}/daily_logs` // Canvas path
+                    : `users/${user.uid}/daily_logs`; // Standard path za tvojo bazo
+
+                // Ustvari referenco na kolekcijo - pazimo na način klica za v10 modular
+                // Če smo v Canvasu, je path kompleksen, če je tvoja baza, je preprost
+                // Uporabimo split logiko
+                
+                let q;
+                if (isAutoConfig) {
+                     q = collection(db, 'artifacts', envAppId, 'users', user.uid, 'daily_logs');
+                } else {
+                     q = collection(db, 'users', user.uid, 'daily_logs');
+                }
+
+                const unsubscribe = onSnapshot(q, (snapshot) => {
+                    const newHistory = {};
+                    snapshot.forEach((doc) => {
+                        newHistory[doc.id] = doc.data().count;
+                    });
+                    setHistory(newHistory);
+                }, (err) => {
+                    // Ignoriraj permission errors na začetku, dokler se auth ne stabilizira
+                    if (err.code !== 'permission-denied') console.error("Sync error:", err);
+                });
+                return () => unsubscribe();
+            }, [user]);
+
+            const blocksCompleted = history[selectedDate] || 0;
+            const isVictory = blocksCompleted >= CILJ_DEL;
+            const dateStrip = generateDateRange(30, 2);
+            const scrollRef = useRef(null);
+
+            useEffect(() => {
+                if (scrollRef.current) scrollRef.current.scrollLeft = scrollRef.current.scrollWidth - 150; 
+            }, []);
+
+            const totalBlocks = Object.values(history).reduce((a, b) => a + b, 0);
+            const totalXP = totalBlocks * XP_PER_BLOCK;
+            const currentLevel = Math.floor(Math.sqrt(totalXP / 100)) + 1;
+            const currentRank = getCurrentRankInfo(currentLevel);
+            const theme = currentRank.theme;
+
+            const xpForCurrentLevel = Math.pow(currentLevel - 1, 2) * 100;
+            const xpForNextLevel = Math.pow(currentLevel, 2) * 100;
+            const xpProgressInLevel = totalXP - xpForCurrentLevel;
+            const xpNeededForNextLevel = xpForNextLevel - xpForCurrentLevel;
+            const progressPercent = Math.min((xpProgressInLevel / xpNeededForNextLevel) * 100, 100);
+
+            const updateBlocks = async (change) => {
+                const currentVal = history[selectedDate] || 0;
+                const newVal = Math.max(0, currentVal + change);
+                
+                // Lokalni update
+                setHistory(prev => ({...prev, [selectedDate]: newVal}));
+
+                if (user && db) {
+                    try {
+                        let docRef;
+                        if (isAutoConfig) {
+                            docRef = doc(db, 'artifacts', envAppId, 'users', user.uid, 'daily_logs', selectedDate);
+                        } else {
+                            docRef = doc(db, 'users', user.uid, 'daily_logs', selectedDate);
+                        }
+                        await setDoc(docRef, { count: newVal }, { merge: true });
+                    } catch (err) { console.error("Save error:", err); }
+                }
+                if (change > 0 && navigator.vibrate) navigator.vibrate(50);
+            };
+
+            const resetDay = async () => {
+                setHistory(prev => ({...prev, [selectedDate]: 0}));
+                if (user && db) {
+                    let docRef;
+                    if (isAutoConfig) {
+                        docRef = doc(db, 'artifacts', envAppId, 'users', user.uid, 'daily_logs', selectedDate);
+                    } else {
+                        docRef = doc(db, 'users', user.uid, 'daily_logs', selectedDate);
+                    }
+                    await setDoc(docRef, { count: 0 }, { merge: true });
+                }
+            };
+
+            const appStyle = {
+                '--bg-paper': theme.paper,
+                '--bg-paper-dark': theme.paperDark,
+                '--text-ink': theme.ink,
+                '--text-ink-light': theme.inkLight,
+                '--color-accent': theme.accent,
+                '--color-accent-dim': theme.accentDim,
+            };
+
+            if (authLoading) {
+                return React.createElement('div', { className: "h-screen w-full flex items-center justify-center bg-[#f3e9d2] text-[#2c1810]" },
+                    React.createElement('div', { className: "flex flex-col items-center gap-4" },
+                        React.createElement(Loader, { className: "animate-spin", size: 32 }),
+                        React.createElement('span', { className: "font-serif italic text-sm" }, "Povezovanje s kroniko...")
+                    )
+                );
+            }
+
+            return (
+                React.createElement('div', { 
+                    className: "h-screen w-full flex flex-col font-serif overflow-hidden relative transition-colors duration-1000",
+                    style: { backgroundColor: 'var(--bg-paper)', color: 'var(--text-ink)', ...appStyle }
+                },
+                    // Background Texture
+                    React.createElement('div', { 
+                        className: "absolute inset-0 opacity-10 pointer-events-none mix-blend-multiply",
+                        style: { backgroundImage: `url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")` } 
+                    }),
+
+                    // Main Content
+                    React.createElement('div', { className: "flex-1 flex flex-col z-10 relative overflow-hidden" },
+                        
+                        // Header
+                        React.createElement('div', { 
+                            className: "h-28 flex-none border-b-2 pt-2 pb-2 z-20 flex flex-col justify-between transition-colors duration-500",
+                            style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' }
+                        },
+                            React.createElement('div', { className: "flex items-center justify-between px-6 py-2" },
+                                React.createElement('div', { className: "text-xs font-bold uppercase tracking-widest flex items-center gap-2", style: { color: 'var(--text-ink-light)' } },
+                                    user ? React.createElement(Cloud, { size: 14, className: "text-green-600" }) : React.createElement(Cloud, { size: 14, className: "text-red-400" }),
+                                    " Dnevnik"
+                                ),
+                                React.createElement('div', { className: "flex flex-col items-end w-32" },
+                                    React.createElement('div', { className: "text-xs font-bold flex justify-between w-full mb-1", style: { color: 'var(--text-ink-light)' } },
+                                        React.createElement('span', { className: "text-[10px]" }, `Lvl ${currentLevel}`),
+                                        React.createElement('span', { className: "opacity-50 text-[10px]" }, `${Math.floor(progressPercent)}%`)
+                                    ),
+                                    React.createElement('div', { className: "w-full h-1 rounded-full overflow-hidden", style: { backgroundColor: 'var(--color-accent-dim)' } },
+                                        React.createElement('div', { className: "h-full transition-all duration-500", style: { width: `${progressPercent}%`, backgroundColor: 'var(--color-accent)' } })
+                                    )
+                                )
+                            ),
+                            
+                            // WARNING BANNER (Če ni firebase configa)
+                            !firebaseInitialized && React.createElement('div', { className: "px-4 text-[10px] text-center text-red-500 font-bold" }, 
+                                "OPOZORILO: Podatki se ne shranjujejo trajno. Vpiši Firebase config v kodo."
+                            ),
+
+                            React.createElement('div', { ref: scrollRef, className: "flex gap-2 overflow-x-auto px-6 pb-2 hide-scrollbar scroll-smooth", style: { scrollbarWidth: 'none', msOverflowStyle: 'none' } },
+                                dateStrip.map((d, i) => {
+                                    const isSelected = selectedDate === d.full;
+                                    const blocks = history[d.full] || 0;
+                                    const goalMet = blocks >= CILJ_DEL;
+                                    return React.createElement('button', {
+                                        key: i,
+                                        onClick: () => setSelectedDate(d.full),
+                                        className: "flex-none w-12 h-14 rounded border-2 transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden",
+                                        style: {
+                                            backgroundColor: isSelected ? 'var(--text-ink)' : 'var(--bg-paper)',
+                                            borderColor: isSelected ? 'var(--text-ink)' : 'var(--color-accent-dim)',
+                                            color: isSelected ? 'var(--bg-paper)' : 'var(--text-ink-light)',
+                                            transform: isSelected ? 'translateY(-4px)' : 'none',
+                                            boxShadow: isSelected ? '0 4px 12px -2px rgba(0,0,0,0.2)' : 'none'
+                                        }
+                                    },
+                                        React.createElement('span', { className: "text-[9px] uppercase font-bold" }, d.weekday),
+                                        React.createElement('span', { className: "text-lg leading-none" }, d.day),
+                                        blocks > 0 && !isSelected && React.createElement('div', { 
+                                            className: "mt-1 w-1.5 h-1.5 rounded-full",
+                                            style: { backgroundColor: goalMet ? 'var(--color-accent)' : 'var(--text-ink-light)' }
+                                        })
+                                    );
+                                })
+                            )
+                        ),
+
+                        // Tab Content
+                        React.createElement('div', { className: "flex-1 overflow-y-auto relative p-6" },
+                            activeTab === 'cockpit' && React.createElement(Delavnica, { blocks: blocksCompleted, onAdd: () => updateBlocks(1), onRemove: () => updateBlocks(-1), isVictory }),
+                            activeTab === 'vault' && React.createElement(Kronika, { history }),
+                            activeTab === 'barracks' && React.createElement(Vitez, { 
+                                history, resetDay, selectedDate, currentLevel, totalXP, 
+                                xpNeededForNextLevel, xpProgressInLevel, currentRank 
+                            })
+                        )
+                    ),
+
+                    // Navigation
+                    React.createElement('nav', { 
+                        className: "h-20 flex-none border-t-2 flex justify-around items-center z-30 pb-2 transition-colors duration-500",
+                        style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' }
+                    },
+                        React.createElement(NavBtn, { active: activeTab === 'cockpit', onClick: () => setActiveTab('cockpit'), icon: Sword, label: "Delo" }),
+                        React.createElement(NavBtn, { active: activeTab === 'vault', onClick: () => setActiveTab('vault'), icon: Scroll, label: "Kronika" }),
+                        React.createElement(NavBtn, { active: activeTab === 'barracks', onClick: () => setActiveTab('barracks'), icon: Shield, label: "Vitez" })
+                    )
+                )
+            );
+        }
+
+        // --- SUB-COMPONENTS ---
+
+        function NavBtn({ active, onClick, icon, label }) {
+            const IconComp = icon;
+            return React.createElement('button', { onClick, className: "flex flex-col items-center justify-center w-20 group" },
+                React.createElement('div', { 
+                    className: `transition-all duration-300 transform ${active ? 'scale-110' : 'opacity-50 group-hover:opacity-70'}`,
+                    style: { color: active ? 'var(--color-accent)' : 'var(--text-ink)' }
+                }, React.createElement(IconComp, { size: 24, strokeWidth: 1.5 })),
+                React.createElement('span', { 
+                    className: `text-[10px] font-bold uppercase mt-1 tracking-wider ${active ? '' : 'opacity-50'}`,
+                    style: { color: active ? 'var(--color-accent)' : 'var(--text-ink)' }
+                }, label)
+            );
+        }
+
+        function Delavnica({ blocks, onAdd, onRemove, isVictory }) {
+            return React.createElement('div', { className: "h-full flex flex-col items-center justify-between py-4" },
+                React.createElement('div', { className: "flex flex-col items-center gap-2" },
+                    React.createElement('div', { 
+                        className: "px-4 py-1 border-2 text-xs font-bold uppercase tracking-[0.2em] rounded-full transition-colors",
+                        style: {
+                            borderColor: isVictory ? 'var(--color-accent)' : 'var(--color-accent-dim)',
+                            color: isVictory ? 'var(--color-accent)' : 'var(--text-ink-light)',
+                            backgroundColor: isVictory ? 'var(--color-accent-dim)' : 'transparent'
+                        }
+                    }, isVictory ? 'Zmaga dneva' : 'V službi kraljestva')
+                ),
+                React.createElement('div', { className: "relative w-64 h-64 flex items-center justify-center" },
+                    React.createElement('div', { className: "absolute inset-0 rounded-full border opacity-20", style: { borderColor: 'var(--text-ink)' } }),
+                    React.createElement('div', { className: "absolute inset-4 rounded-full border opacity-20", style: { borderColor: 'var(--text-ink)' } }),
+                    React.createElement('div', { className: "flex flex-col items-center z-10" },
+                        React.createElement('span', { className: "text-9xl font-serif leading-none", style: { color: 'var(--text-ink)' } }, blocks),
+                        React.createElement('div', { className: "h-px w-16 mt-4 mb-2 opacity-30", style: { backgroundColor: 'var(--text-ink)' } }),
+                        React.createElement('span', { className: "text-sm font-bold uppercase tracking-[0.2em]", style: { color: 'var(--color-accent)' } }, `${blocks} / ${CILJ_DEL}`),
+                        React.createElement('span', { className: "text-[10px] uppercase tracking-widest opacity-50 mt-1", style: { color: 'var(--text-ink)' } }, "Dnevni Cilj")
+                    )
+                ),
+                React.createElement('div', { className: "w-full max-w-xs flex flex-col gap-4" },
+                    React.createElement('button', { 
+                        onClick: onAdd,
+                        className: "w-full h-16 rounded border-2 flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-transform",
+                        style: { backgroundColor: 'var(--text-ink)', color: 'var(--bg-paper)', borderColor: 'var(--text-ink)' }
+                    }, React.createElement(Feather, { size: 20 }), React.createElement('span', { className: "text-lg font-bold tracking-widest uppercase" }, "Zapiši Delo")),
+                    React.createElement('button', { 
+                        onClick: onRemove, disabled: blocks === 0,
+                        className: "h-12 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest disabled:opacity-0 transition-colors",
+                        style: { color: 'var(--text-ink-light)' }
+                    }, React.createElement(Minus, { size: 14 }), "Prekliči zadnjega")
+                )
+            );
+        }
+
+        function Kronika({ history }) {
+            // Helper functions and render logic mostly identical to JSX version
+            // ... (Included in full implementation below)
+            const daysToShow = 7;
+            const dataPoints = [];
+            const today = new Date();
+            let maxBlocks = 4;
+            for (let i = daysToShow - 1; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(today.getDate() - i);
+                const dateStr = d.toISOString().split('T')[0];
+                const val = history[dateStr] || 0;
+                if (val > maxBlocks) maxBlocks = val;
+                dataPoints.push({ label: getDayName(dateStr), value: val, date: dateStr });
+            }
+
+            const generateGridData = () => {
+                const historyDates = Object.keys(history).sort();
+                const firstHistoryDate = historyDates.length > 0 ? new Date(historyDates[0]) : new Date();
+                const fixedStart = new Date('2026-01-01');
+                let startDate = firstHistoryDate < fixedStart ? firstHistoryDate : fixedStart;
+                const dayOfWeek = startDate.getDay();
+                const diffToMon = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+                startDate.setDate(startDate.getDate() - diffToMon);
+                const endDate = new Date();
+                const endDayOfWeek = endDate.getDay();
+                const diffToSun = endDayOfWeek === 0 ? 0 : 7 - endDayOfWeek;
+                endDate.setDate(endDate.getDate() + diffToSun);
+                const grid = [];
+                let current = new Date(startDate);
+                while (current <= endDate) {
+                    const dateStr = current.toISOString().split('T')[0];
+                    grid.push({ date: dateStr, value: history[dateStr] || 0, month: current.getMonth(), day: current.getDate(), year: current.getFullYear() });
+                    current.setDate(current.getDate() + 1);
+                }
+                return grid;
+            };
+            const gridData = generateGridData();
+            const weeks = [];
+            for (let i = 0; i < gridData.length; i += 7) weeks.push(gridData.slice(i, i + 7));
+            const monthNames = ["JAN", "FEB", "MAR", "APR", "MAJ", "JUN", "JUL", "AVG", "SEP", "OKT", "NOV", "DEC"];
+
+            return React.createElement('div', { className: "h-full flex flex-col gap-6" },
+                React.createElement('div', { className: "border-b-2 pb-4", style: { borderColor: 'var(--color-accent-dim)' } },
+                    React.createElement('h1', { className: "text-3xl font-serif", style: { color: 'var(--text-ink)' } }, "Kronika"),
+                    React.createElement('p', { className: "text-sm opacity-60 mt-1 italic" }, "Tvoja pot skozi čas.")
+                ),
+                React.createElement('div', { className: "p-4 rounded border flex-none", style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' } },
+                    React.createElement('div', { className: "text-[10px] font-bold uppercase tracking-widest opacity-50 mb-2" }, "Zadnji Teden"),
+                    React.createElement('div', { className: "flex items-end justify-between h-24 gap-2" },
+                        dataPoints.map((d, i) => {
+                            const heightPercent = (d.value / maxBlocks) * 100;
+                            const isGoal = d.value >= CILJ_DEL;
+                            return React.createElement('div', { key: i, className: "flex-1 flex flex-col items-center gap-1 h-full justify-end" },
+                                React.createElement('div', { className: "w-full relative rounded-sm overflow-hidden", style: { height: '100%', backgroundColor: 'var(--color-accent-dim)' } },
+                                    React.createElement('div', { className: "absolute bottom-0 left-0 w-full transition-all duration-500", style: { height: `${Math.max(heightPercent, 2)}%`, backgroundColor: isGoal ? 'var(--color-accent)' : 'var(--text-ink)' } })
+                                ),
+                                React.createElement('div', { className: "text-[8px] font-bold uppercase opacity-50" }, d.label.charAt(0))
+                            );
+                        })
+                    )
+                ),
+                React.createElement('div', { className: "flex-1 flex flex-col min-h-0" },
+                    React.createElement('div', { className: "flex items-center gap-2 mb-2" },
+                        React.createElement(Grid, { size: 14, className: "opacity-50" }),
+                        React.createElement('div', { className: "text-[10px] font-bold uppercase tracking-widest opacity-50" }, `Pregled Leta ${new Date().getFullYear()}`)
+                    ),
+                    React.createElement('div', { className: "flex-1 overflow-x-auto border rounded p-4 scrollbar-thin", style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' } },
+                        React.createElement('div', { className: "flex gap-1 h-full" },
+                            weeks.map((week, wIndex) => {
+                                const startOfMonth = week.find(d => d.day === 1);
+                                const isMonthChange = startOfMonth !== undefined;
+                                return React.createElement('div', { key: wIndex, className: `flex flex-col gap-1 relative ${isMonthChange ? 'ml-1 pl-1 border-l' : ''}`, style: { borderColor: 'var(--color-accent-dim)' } },
+                                    isMonthChange && React.createElement('div', { className: "absolute -top-4 left-0 text-[8px] font-bold uppercase tracking-wider whitespace-nowrap", style: { color: 'var(--text-ink)' } }, monthNames[startOfMonth.month]),
+                                    week.map((day, dIndex) => {
+                                        let bgColor = 'var(--color-accent-dim)';
+                                        if (day.value >= 1) bgColor = 'var(--text-ink-light)';
+                                        if (day.value >= 3) bgColor = 'var(--color-accent)';
+                                        const isEmpty = day.value === 0;
+                                        return React.createElement('div', {
+                                            key: dIndex,
+                                            className: "w-3 h-3 rounded-[1px] transition-colors",
+                                            style: { backgroundColor: isEmpty ? 'transparent' : bgColor, border: isEmpty ? '1px solid var(--color-accent-dim)' : 'none' },
+                                            title: `${day.date}: ${day.value}`
+                                        });
+                                    })
+                                );
+                            })
+                        )
+                    )
+                )
+            );
+        }
+
+        function Vitez({ history, resetDay, selectedDate, currentLevel, totalXP, xpNeededForNextLevel, xpProgressInLevel, currentRank }) {
+            const percent = Math.floor((xpProgressInLevel / xpNeededForNextLevel) * 100);
+            const IconComp = currentRank.icon;
+
+            return React.createElement('div', { className: "h-full flex flex-col overflow-y-auto" },
+                React.createElement('div', { className: "border-b-2 pb-4 mb-6", style: { borderColor: 'var(--color-accent-dim)' } },
+                    React.createElement('h1', { className: "text-3xl font-serif", style: { color: 'var(--text-ink)' } }, "Vitez")
+                ),
+                React.createElement('div', { className: "flex flex-col items-center gap-2 mb-8 p-6 rounded border transition-colors duration-500", style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' } },
+                    React.createElement('div', { className: "w-24 h-24 rounded-full border-2 flex items-center justify-center mb-2 shadow-inner", style: { backgroundColor: 'var(--bg-paper)', borderColor: 'var(--color-accent-dim)' } },
+                        React.createElement('div', { style: { color: 'var(--color-accent)', transform: 'scale(2)' } }, React.createElement(IconComp, { size: 20 }))
+                    ),
+                    React.createElement('h2', { className: "text-2xl font-bold uppercase tracking-wide", style: { color: 'var(--text-ink)' } }, currentRank.title),
+                    React.createElement('p', { className: "text-sm opacity-60 font-serif italic" }, `Stopnja ${currentLevel}`),
+                    React.createElement('div', { className: "w-full mt-4" },
+                        React.createElement('div', { className: "flex justify-between text-[10px] font-bold uppercase tracking-widest opacity-60 mb-1" },
+                            React.createElement('span', null, `${xpProgressInLevel} XP`),
+                            React.createElement('span', null, `${xpNeededForNextLevel} XP`)
+                        ),
+                        React.createElement('div', { className: "h-2 w-full rounded-full overflow-hidden", style: { backgroundColor: 'var(--color-accent-dim)' } },
+                            React.createElement('div', { className: "h-full transition-all duration-500", style: { width: `${percent}%`, backgroundColor: 'var(--color-accent)' } })
+                        ),
+                        React.createElement('div', { className: "text-center text-[10px] mt-1 opacity-50" }, `Do naslednje stopnje: ${xpNeededForNextLevel - xpProgressInLevel} XP`)
+                    )
+                ),
+                React.createElement('div', { className: "mb-8" },
+                    React.createElement('div', { className: "flex items-center gap-2 mb-2 px-2" },
+                        React.createElement(Star, { size: 14, className: "opacity-50" }),
+                        React.createElement('h3', { className: "text-xs font-bold uppercase tracking-widest opacity-50" }, "Trenutni Zavetnik")
+                    ),
+                    React.createElement('div', { className: "p-4 rounded text-sm leading-relaxed font-serif mb-6 border", style: { backgroundColor: 'var(--bg-paper)', borderColor: 'var(--color-accent)', color: 'var(--text-ink)' } },
+                        React.createElement('div', { className: "flex items-center gap-3 mb-2" },
+                            React.createElement('div', { style: { color: 'var(--color-accent)' } }, React.createElement(IconComp, { size: 20 })),
+                            React.createElement('strong', { className: "text-lg", style: { color: 'var(--color-accent)' } }, currentRank.saint)
+                        ),
+                        React.createElement('p', { className: "italic opacity-80" }, `"${currentRank.saintDesc}"`)
+                    ),
+                    React.createElement('div', { className: "flex items-center gap-2 mb-2 px-2" },
+                        React.createElement(HelpCircle, { size: 14, className: "opacity-50" }),
+                        React.createElement('h3', { className: "text-xs font-bold uppercase tracking-widest opacity-50" }, "Kodeks Igre")
+                    ),
+                    React.createElement('div', { className: "p-4 rounded text-sm leading-relaxed font-serif border", style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)', color: 'var(--text-ink)' } },
+                        React.createElement('p', { className: "mb-2" }, React.createElement('strong', { style: { color: 'var(--color-accent)' } }, "1 Delo = 100 XP.")),
+                        React.createElement('p', { className: "mb-4" }, "Vsak zabeležen blok dela ti prinese točke izkušenj."),
+                        React.createElement('div', { className: "border-t pt-4 mt-4", style: { borderColor: 'var(--color-accent-dim)' } },
+                            React.createElement('strong', { className: "text-xs font-bold uppercase opacity-70 block mb-3" }, "Hierarhija in Svetniki"),
+                            React.createElement('ul', { className: "space-y-3 text-xs opacity-90" },
+                                RANK_SYSTEM.map((rank, i) => {
+                                    const isActive = currentLevel >= rank.minLevel && (i === RANK_SYSTEM.length - 1 || currentLevel < RANK_SYSTEM[i+1].minLevel);
+                                    return React.createElement('li', { key: i, className: `flex flex-col pb-2 ${i !== RANK_SYSTEM.length - 1 ? 'border-b' : ''}`, style: { borderColor: 'var(--color-accent-dim)' } },
+                                        React.createElement('div', { className: "flex justify-between items-center mb-1" },
+                                            React.createElement('span', { className: `font-bold uppercase ${isActive ? 'text-lg' : ''}`, style: { color: isActive ? 'var(--color-accent)' : 'var(--text-ink)' } }, rank.title),
+                                            React.createElement('span', { className: "opacity-60" }, `Lvl ${rank.minLevel}+`)
+                                        ),
+                                        React.createElement('div', { className: "flex items-center gap-2 opacity-80" },
+                                            React.createElement('span', { style: { color: isActive ? 'var(--color-accent)' : 'var(--text-ink-light)' } }, rank.saint)
+                                        )
+                                    );
+                                })
+                            )
+                        )
+                    )
+                ),
+                React.createElement('div', { className: "mt-auto border-t-2 pt-6", style: { borderColor: 'var(--color-accent-dim)' } },
+                    React.createElement('div', { className: "flex justify-between items-center mb-4 text-xs font-bold uppercase tracking-widest opacity-50" },
+                        React.createElement('span', null, "Urejanje Dneva"),
+                        React.createElement('span', null, formatDateShort(selectedDate))
+                    ),
+                    React.createElement('button', {
+                        onClick: resetDay,
+                        className: "w-full py-4 border rounded text-xs font-bold uppercase tracking-widest transition-colors hover:opacity-80",
+                        style: { borderColor: 'var(--color-accent)', color: 'var(--color-accent)' }
+                    }, "Počisti izbran dan")
+                )
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(DeepFocusMedieval));
     </script>
 </body>
 </html>
