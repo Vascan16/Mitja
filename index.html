@@ -50,13 +50,13 @@
         // =================================================================
         
         const manualConfig = {
-          apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
-          authDomain: "delo-ae21b.firebaseapp.com",
-          projectId: "delo-ae21b",
-          storageBucket: "delo-ae21b.firebasestorage.app",
-          messagingSenderId: "721173225350",
-          appId: "1:721173225350:web:83926980686c6f4ec11607",
-          measurementId: "G-4STZTWDQ1X"
+  apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
+  authDomain: "delo-ae21b.firebaseapp.com",
+  projectId: "delo-ae21b",
+  storageBucket: "delo-ae21b.firebasestorage.app",
+  messagingSenderId: "721173225350",
+  appId: "1:721173225350:web:83926980686c6f4ec11607",
+  measurementId: "G-4STZTWDQ1X"
         };
 
         // --- Logika inicializacije (Ne tikaj) ---
@@ -289,11 +289,20 @@
                     React.createElement('div', { className: "flex-1 flex flex-col z-10 relative overflow-hidden" },
                         // Header
                         React.createElement('div', { 
-                            className: "h-32 flex-none border-b-2 pt-2 pb-2 z-20 flex flex-col justify-between transition-colors duration-500 shadow-sm",
+                            className: "h-34 flex-none border-b-2 pt-1 pb-2 z-20 flex flex-col justify-between transition-colors duration-500 shadow-sm",
                             style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' }
                         },
-                            // Top Bar: Dropdown Menu & Level
-                            React.createElement('div', { className: "flex items-center justify-between px-6 py-2" },
+                            
+                            // 1. STATUS VRSTICA (POVRNJENO)
+                            React.createElement('div', { className: "flex justify-center items-center pb-1 pt-1 opacity-80" },
+                                React.createElement('div', { className: "text-[10px] font-bold uppercase tracking-widest flex items-center gap-2", style: { color: 'var(--text-ink-light)' } },
+                                    (user && firebaseInitialized) ? React.createElement(Cloud, { size: 12, className: "text-green-600" }) : React.createElement(AlertTriangle, { size: 12, className: "text-red-500" }),
+                                    syncId ? `Povezan: ${syncId}` : "Lokalno / Brez povezave"
+                                )
+                            ),
+
+                            // 2. Top Bar: Dropdown Menu & Level
+                            React.createElement('div', { className: "flex items-center justify-between px-6 py-1" },
                                 
                                 // Dropdown za ročno izbiro
                                 React.createElement('div', { 
