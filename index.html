@@ -13,6 +13,18 @@
         body { font-family: 'Times New Roman', serif; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Custom date input styling to look like an icon/text */
+        .date-picker-trigger::-webkit-calendar-picker-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="bg-[#f3e9d2] text-[#2c1810]">
@@ -26,7 +38,7 @@
         import { 
             Check, Minus, BarChart2, User, Scroll, Calendar, Shield, Crown, 
             Sword, Feather, Grid, HelpCircle, Hammer, Anchor, Flame, Book, 
-            Star, Sun, Cloud, Loader, AlertTriangle, Link, Save 
+            Star, Sun, Cloud, Loader, AlertTriangle, Link, Save, ChevronDown, RefreshCw 
         } from 'https://esm.sh/lucide-react@0.292.0';
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -38,13 +50,13 @@
         // =================================================================
         
         const manualConfig = {
-  apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
-  authDomain: "delo-ae21b.firebaseapp.com",
-  projectId: "delo-ae21b",
-  storageBucket: "delo-ae21b.firebasestorage.app",
-  messagingSenderId: "721173225350",
-  appId: "1:721173225350:web:83926980686c6f4ec11607",
-  measurementId: "G-4STZTWDQ1X"
+          apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
+          authDomain: "delo-ae21b.firebaseapp.com",
+          projectId: "delo-ae21b",
+          storageBucket: "delo-ae21b.firebasestorage.app",
+          messagingSenderId: "721173225350",
+          appId: "1:721173225350:web:83926980686c6f4ec11607",
+          measurementId: "G-4STZTWDQ1X"
         };
 
         // --- Logika inicializacije (Ne tikaj) ---
@@ -67,7 +79,6 @@
         let firebaseInitialized = false;
         let configError = false;
 
-        // Preverimo, če so placeholderji še vedno prisotni
         if (firebaseConfig.apiKey === "TUKAJ_VPIŠI_API_KEY" && !isAutoConfig) {
             configError = true;
         } else {
@@ -114,17 +125,20 @@
             const d = new Date(dateStr);
             return d.toLocaleDateString('sl-SI', { weekday: 'short' }).toUpperCase();
         };
-        const generateDateRange = (daysBack, daysForward) => {
+        
+        // Generiranje traku glede na sidrni datum
+        const generateDateRange = (daysBack, daysForward, referenceDateStr) => {
             const dates = [];
-            const today = new Date();
+            const refDate = referenceDateStr ? new Date(referenceDateStr) : new Date();
+            
             for (let i = -daysBack; i <= daysForward; i++) {
-                const d = new Date(today);
-                d.setDate(today.getDate() + i);
+                const d = new Date(refDate);
+                d.setDate(refDate.getDate() + i);
                 dates.push({
                     full: d.toISOString().split('T')[0],
                     day: d.getDate(),
                     weekday: d.toLocaleDateString('sl-SI', { weekday: 'short' }).toUpperCase(),
-                    isToday: i === 0
+                    isToday: i === 0 
                 });
             }
             return dates;
@@ -137,7 +151,6 @@
             const [selectedDate, setSelectedDate] = useState(getTodayString());
             const [history, setHistory] = useState({}); 
             
-            // NOVO: Custom ID za sinhronizacijo med napravami
             const [syncId, setSyncId] = useState(localStorage.getItem('deepfocus_sync_id') || '');
             const [tempSyncId, setTempSyncId] = useState('');
 
@@ -158,16 +171,11 @@
             // Data Sync Logic
             useEffect(() => {
                 if (!user || !db) return;
-                
-                // Uporabimo syncId če obstaja, sicer user.uid
                 const userIdToUse = syncId && syncId.length > 3 ? `vitez_${syncId}` : user.uid;
                 
                 let q;
-                if (isAutoConfig) {
-                     q = collection(db, 'artifacts', envAppId, 'users', userIdToUse, 'daily_logs');
-                } else {
-                     q = collection(db, 'users', userIdToUse, 'daily_logs');
-                }
+                if (isAutoConfig) q = collection(db, 'artifacts', envAppId, 'users', userIdToUse, 'daily_logs');
+                else q = collection(db, 'users', userIdToUse, 'daily_logs');
 
                 const unsubscribe = onSnapshot(q, (snapshot) => {
                     const newHistory = {};
@@ -194,12 +202,28 @@
                 localStorage.removeItem('deepfocus_sync_id');
             }
 
+            // NOVO: Generiranje naključne kode
+            const generateRandomCode = () => {
+                const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+                let result = "";
+                for (let i = 0; i < 6; i++) {
+                    result += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                const formatted = result.slice(0,3) + "-" + result.slice(3);
+                setTempSyncId(formatted);
+            };
+
             const blocksCompleted = history[selectedDate] || 0;
             const isVictory = blocksCompleted >= CILJ_DEL;
-            const dateStrip = generateDateRange(30, 2);
+            
+            // Prikaz: 3 dni nazaj, 2 dni naprej od izbranega datuma.
+            const dateStrip = generateDateRange(3, 2, selectedDate);
+            
             const scrollRef = useRef(null);
 
-            useEffect(() => { if (scrollRef.current) scrollRef.current.scrollLeft = scrollRef.current.scrollWidth - 150; }, []);
+            useEffect(() => { 
+                if (scrollRef.current) scrollRef.current.scrollLeft = 0; 
+            }, [selectedDate]);
 
             const totalBlocks = Object.values(history).reduce((a, b) => a + b, 0);
             const totalXP = totalBlocks * XP_PER_BLOCK;
@@ -265,14 +289,33 @@
                     React.createElement('div', { className: "flex-1 flex flex-col z-10 relative overflow-hidden" },
                         // Header
                         React.createElement('div', { 
-                            className: "h-28 flex-none border-b-2 pt-2 pb-2 z-20 flex flex-col justify-between transition-colors duration-500",
+                            className: "h-32 flex-none border-b-2 pt-2 pb-2 z-20 flex flex-col justify-between transition-colors duration-500 shadow-sm",
                             style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' }
                         },
+                            // Top Bar: Dropdown Menu & Level
                             React.createElement('div', { className: "flex items-center justify-between px-6 py-2" },
-                                React.createElement('div', { className: "text-xs font-bold uppercase tracking-widest flex items-center gap-2", style: { color: 'var(--text-ink-light)' } },
-                                    (user && firebaseInitialized) ? React.createElement(Cloud, { size: 14, className: "text-green-600" }) : React.createElement(AlertTriangle, { size: 14, className: "text-red-500" }),
-                                    syncId ? `Povezan: ${syncId}` : "Lokalno / Brez povezave"
+                                
+                                // Dropdown za ročno izbiro
+                                React.createElement('div', { 
+                                    className: "relative group flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded border transition-all hover:bg-white/10 active:scale-95",
+                                    style: { borderColor: 'var(--color-accent-dim)' }
+                                },
+                                    React.createElement(Calendar, { size: 16, style: { color: 'var(--color-accent)' } }),
+                                    React.createElement('span', { className: "text-xs font-bold uppercase tracking-widest", style: { color: 'var(--text-ink)' } }, "Koledar"),
+                                    React.createElement(ChevronDown, { size: 14, style: { color: 'var(--text-ink-light)' } }),
+                                    
+                                    // Hidden Date Input trigger
+                                    React.createElement('input', {
+                                        type: "date",
+                                        className: "absolute inset-0 opacity-0 w-full h-full cursor-pointer date-picker-trigger",
+                                        onChange: (e) => {
+                                            if(e.target.value) setSelectedDate(e.target.value);
+                                        },
+                                        max: getTodayString()
+                                    })
                                 ),
+                                
+                                // Mini XP Bar
                                 React.createElement('div', { className: "flex flex-col items-end w-32" },
                                     React.createElement('div', { className: "text-xs font-bold flex justify-between w-full mb-1", style: { color: 'var(--text-ink-light)' } },
                                         React.createElement('span', { className: "text-[10px]" }, `Lvl ${currentLevel}`),
@@ -283,25 +326,40 @@
                                     )
                                 )
                             ),
-                            React.createElement('div', { ref: scrollRef, className: "flex gap-2 overflow-x-auto px-6 pb-2 hide-scrollbar scroll-smooth", style: { scrollbarWidth: 'none', msOverflowStyle: 'none' } },
+                            
+                            // Trak datumov
+                            React.createElement('div', { ref: scrollRef, className: "flex gap-3 overflow-x-auto px-6 pb-2 hide-scrollbar scroll-smooth items-center justify-center h-full", style: { scrollbarWidth: 'none', msOverflowStyle: 'none' } },
                                 dateStrip.map((d, i) => {
                                     const isSelected = selectedDate === d.full;
                                     const blocks = history[d.full] || 0;
                                     const goalMet = blocks >= CILJ_DEL;
+                                    
                                     return React.createElement('button', {
                                         key: i, onClick: () => setSelectedDate(d.full),
-                                        className: "flex-none w-12 h-14 rounded border-2 transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden",
+                                        className: `flex-none rounded-lg border-2 transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden group ${isSelected ? 'w-14 h-16 shadow-lg transform -translate-y-1 z-10' : 'w-12 h-14 opacity-70 hover:opacity-100'}`,
                                         style: {
                                             backgroundColor: isSelected ? 'var(--text-ink)' : 'var(--bg-paper)',
                                             borderColor: isSelected ? 'var(--text-ink)' : 'var(--color-accent-dim)',
                                             color: isSelected ? 'var(--bg-paper)' : 'var(--text-ink-light)',
-                                            transform: isSelected ? 'translateY(-4px)' : 'none',
-                                            boxShadow: isSelected ? '0 4px 12px -2px rgba(0,0,0,0.2)' : 'none'
                                         }
                                     },
-                                        React.createElement('span', { className: "text-[9px] uppercase font-bold" }, d.weekday),
-                                        React.createElement('span', { className: "text-lg leading-none" }, d.day),
-                                        blocks > 0 && !isSelected && React.createElement('div', { className: "mt-1 w-1.5 h-1.5 rounded-full", style: { backgroundColor: goalMet ? 'var(--color-accent)' : 'var(--text-ink-light)' } })
+                                        // Highlight overlay for selected
+                                        isSelected && React.createElement('div', { className: "absolute inset-0 opacity-10 bg-white" }),
+                                        
+                                        React.createElement('span', { className: "text-[9px] uppercase font-bold tracking-wider mb-0.5" }, d.weekday),
+                                        React.createElement('span', { className: `leading-none font-serif ${isSelected ? 'text-xl' : 'text-lg'}` }, d.day),
+                                        
+                                        // Pika za aktivnost
+                                        blocks > 0 && !isSelected && React.createElement('div', { 
+                                            className: "mt-1 w-1.5 h-1.5 rounded-full", 
+                                            style: { backgroundColor: goalMet ? 'var(--color-accent)' : 'var(--text-ink-light)' } 
+                                        }),
+                                        
+                                        // Zlata črta spodaj za izbranega
+                                        isSelected && React.createElement('div', { 
+                                            className: "absolute bottom-0 left-0 w-full h-1", 
+                                            style: { backgroundColor: 'var(--color-accent)' } 
+                                        })
                                     );
                                 })
                             )
@@ -314,7 +372,7 @@
                             activeTab === 'barracks' && React.createElement(Vitez, { 
                                 history, resetDay, selectedDate, currentLevel, totalXP, 
                                 xpNeededForNextLevel, xpProgressInLevel, currentRank,
-                                syncId, tempSyncId, setTempSyncId, saveSyncId, clearSyncId 
+                                syncId, tempSyncId, setTempSyncId, saveSyncId, clearSyncId, generateRandomCode // Passano naprej
                             })
                         )
                     ),
@@ -448,7 +506,7 @@
             );
         }
 
-        function Vitez({ history, resetDay, selectedDate, currentLevel, totalXP, xpNeededForNextLevel, xpProgressInLevel, currentRank, syncId, tempSyncId, setTempSyncId, saveSyncId, clearSyncId }) {
+        function Vitez({ history, resetDay, selectedDate, currentLevel, totalXP, xpNeededForNextLevel, xpProgressInLevel, currentRank, syncId, tempSyncId, setTempSyncId, saveSyncId, clearSyncId, generateRandomCode }) {
             const percent = Math.floor((xpProgressInLevel / xpNeededForNextLevel) * 100);
             const IconComp = currentRank.icon;
 
@@ -482,20 +540,28 @@
                     ),
                     
                     !syncId ? (
-                        React.createElement('div', { className: "flex gap-2" },
-                            React.createElement('input', { 
-                                type: "text", 
-                                placeholder: "Vnesi poljubno ime...", 
-                                value: tempSyncId,
-                                onChange: (e) => setTempSyncId(e.target.value),
-                                className: "flex-1 p-2 rounded text-sm border bg-white/50 focus:outline-none focus:border-opacity-100",
-                                style: { borderColor: 'var(--color-accent-dim)' }
-                            }),
-                            React.createElement('button', { 
-                                onClick: saveSyncId,
-                                className: "p-2 rounded text-white shadow-sm",
-                                style: { backgroundColor: 'var(--color-accent)' }
-                            }, React.createElement(Save, { size: 16 }))
+                        React.createElement('div', { className: "flex flex-col gap-2" },
+                            React.createElement('div', { className: "flex gap-2" },
+                                React.createElement('input', { 
+                                    type: "text", 
+                                    placeholder: "Vnesi poljubno ime...", 
+                                    value: tempSyncId,
+                                    onChange: (e) => setTempSyncId(e.target.value),
+                                    className: "flex-1 p-2 rounded text-sm border bg-white/50 focus:outline-none focus:border-opacity-100",
+                                    style: { borderColor: 'var(--color-accent-dim)' }
+                                }),
+                                React.createElement('button', { 
+                                    onClick: saveSyncId,
+                                    className: "p-2 rounded text-white shadow-sm",
+                                    style: { backgroundColor: 'var(--color-accent)' }
+                                }, React.createElement(Save, { size: 16 }))
+                            ),
+                            // GUMB ZA GENERIRANJE KODE
+                            React.createElement('button', {
+                                onClick: generateRandomCode,
+                                className: "text-[10px] uppercase font-bold underline opacity-60 hover:opacity-100 self-start flex items-center gap-1",
+                                style: { color: 'var(--text-ink)' }
+                            }, React.createElement(RefreshCw, { size: 10 }), "Generiraj varno kodo")
                         )
                     ) : (
                         React.createElement('div', { className: "flex justify-between items-center bg-white/20 p-2 rounded" },
