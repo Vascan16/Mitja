@@ -1,688 +1,369 @@
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DeepFocus Medieval</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Maria Theresa Thaler | 1780</title>
+    <meta name="description" content="A modern guide to the Maria Theresa Thaler 1780 - History, Variants, and Identification.">
     
-    <!-- 1. TAILWIND CSS (Stili) -->
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. NOISE TEXTURE (Za ozadje) -->
-    <style>
-        body { font-family: 'Times New Roman', serif; }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        /* Custom date input styling to look like an icon/text */
-        .date-picker-trigger::-webkit-calendar-picker-indicator {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        imperial: {
+                            red: '#8B0000',
+                            gold: '#C5A059',
+                            silver: '#E5E7EB',
+                            dark: '#1F2937'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
         }
-        /* Prepreči zoom na inputih na iOS */
-        input { font-size: 16px; }
+    </script>
+
+    <style>
+        /* Custom Utilities */
+        .coin-shadow {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), inset 0 0 50px rgba(255,255,255,0.5);
+        }
+        .text-shadow {
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .bg-pattern {
+            background-color: #f9fafb;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
     </style>
 </head>
-<body class="bg-[#f3e9d2] text-[#2c1810]">
-    <div id="root"></div>
+<body class="bg-gray-50 text-gray-800 antialiased">
 
-    <!-- 3. LOGIKA APLIKACIJE (React + Firebase) -->
-    <script type="module">
-        // Uvoz knjižnic neposredno iz spleta (ESM modules)
-        import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.2.0';
-        import ReactDOM from 'https://esm.sh/react-dom@18.2.0/client';
-        import { 
-            Check, Minus, BarChart2, User, Scroll, Calendar, Shield, Crown, 
-            Sword, Feather, Grid, HelpCircle, Hammer, Anchor, Flame, Book, 
-            Star, Sun, Cloud, Loader, AlertTriangle, Link, Save, ChevronDown, RefreshCw 
-        } from 'https://esm.sh/lucide-react@0.292.0';
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-200 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 flex items-center justify-center mr-3 shadow-inner">
+                        <span class="font-serif font-bold text-white text-xs">MTT</span>
+                    </div>
+                    <span class="font-serif text-xl font-bold tracking-tight text-gray-900">Theresia<span class="text-imperial-red">.name</span></span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#history" class="text-gray-600 hover:text-imperial-red transition-colors font-medium">History</a>
+                    <a href="#variants" class="text-gray-600 hover:text-imperial-red transition-colors font-medium">Variants</a>
+                    <a href="#identification" class="text-gray-600 hover:text-imperial-red transition-colors font-medium">Original vs Restrike</a>
+                    <a href="#specs" class="text-gray-600 hover:text-imperial-red transition-colors font-medium">Specifications</a>
+                </div>
 
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        // =================================================================
-        // --- 1. KONFIGURACIJA (TUKAJ VPIŠI SVOJE PODATKE ZA GITHUB) ---
-        // =================================================================
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-gray-600 hover:text-gray-900 focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
         
-        const manualConfig = {
-            apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
-            authDomain: "delo-ae21b.firebaseapp.com",
-            projectId: "delo-ae21b",
-            storageBucket: "delo-ae21b.firebasestorage.app",
-            messagingSenderId: "721173225350",
-            appId: "1:721173225350:web:83926980686c6f4ec11607"
-        };
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
+            <div class="px-4 pt-2 pb-6 space-y-1">
+                <a href="#history" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-imperial-red hover:bg-gray-50 rounded-md">History</a>
+                <a href="#variants" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-imperial-red hover:bg-gray-50 rounded-md">Variants</a>
+                <a href="#identification" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-imperial-red hover:bg-gray-50 rounded-md">Original vs Restrike</a>
+                <a href="#specs" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-imperial-red hover:bg-gray-50 rounded-md">Specifications</a>
+            </div>
+        </div>
+    </nav>
 
-        // --- Logika inicializacije (Ne tikaj) ---
-        let firebaseConfig = null;
-        let isAutoConfig = false;
-
-        if (typeof __firebase_config !== 'undefined') {
-            try {
-                firebaseConfig = JSON.parse(__firebase_config);
-                isAutoConfig = true;
-            } catch (e) { console.error("Napaka pri branju auto-configa"); }
-        } 
+    <!-- Hero Section -->
+    <header class="relative bg-gray-900 h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
+        <!-- Abstract Background -->
+        <div class="absolute inset-0 opacity-20">
+            <div class="absolute -top-24 -left-24 w-96 h-96 bg-imperial-gold rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+            <div class="absolute top-0 -right-4 w-72 h-72 bg-imperial-red rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+            <div class="absolute -bottom-8 left-20 w-72 h-72 bg-gray-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
+        </div>
         
-        if (!firebaseConfig) {
-            firebaseConfig = manualConfig;
-        }
-
-        // Inicializacija Firebase
-        let app, auth, db;
-        let firebaseInitialized = false;
-        let configError = false;
-
-        if (firebaseConfig.apiKey === "TUKAJ_VPIŠI_API_KEY" && !isAutoConfig) {
-            configError = true;
-        } else {
-            try {
-                app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                firebaseInitialized = true;
-            } catch (e) {
-                console.warn("Firebase inicializacija ni uspela:", e);
-            }
-        }
-
-        const envAppId = typeof __app_id !== 'undefined' ? __app_id : 'deepfocus-medieval';
-        const envInitialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // =================================================================
-        // --- 2. KODA APLIKACIJE ---
-        // =================================================================
-
-        const CILJ_DEL = 3;
-        const XP_PER_BLOCK = 100;
-
-        const RANK_SYSTEM = [
-            { minLevel: 1, title: "Služabnik", saint: "Sv. Jožef Delavec", saintDesc: "Zavetnik tihega dela.", icon: Hammer, theme: { paper: "#f3e9d2", paperDark: "#eaddcf", ink: "#2c1810", inkLight: "rgba(44, 24, 16, 0.6)", accent: "#854d0e", accentDim: "rgba(133, 77, 14, 0.1)" } },
-            { minLevel: 5, title: "Oproda", saint: "Sv. Krištof", saintDesc: "Zavetnik popotnikov.", icon: Anchor, theme: { paper: "#e5e7eb", paperDark: "#d1d5db", ink: "#111827", inkLight: "rgba(17, 24, 39, 0.6)", accent: "#374151", accentDim: "rgba(55, 65, 81, 0.1)" } },
-            { minLevel: 10, title: "Vitez", saint: "Sv. Jurij", saintDesc: "Premagovalec zmaja.", icon: Sword, theme: { paper: "#fff1f2", paperDark: "#ffe4e6", ink: "#450a0a", inkLight: "rgba(69, 10, 10, 0.6)", accent: "#be123c", accentDim: "rgba(190, 18, 60, 0.1)" } },
-            { minLevel: 15, title: "Baron", saint: "Sv. Benedikt", saintDesc: "Oče 'Ora et Labora'.", icon: Shield, theme: { paper: "#eff6ff", paperDark: "#dbeafe", ink: "#172554", inkLight: "rgba(23, 37, 84, 0.6)", accent: "#2563eb", accentDim: "rgba(37, 99, 235, 0.1)" } },
-            { minLevel: 20, title: "Vojvoda", saint: "Sv. Hieronim", saintDesc: "Velik učenjak.", icon: Book, theme: { paper: "#faf5ff", paperDark: "#f3e8ff", ink: "#3b0764", inkLight: "rgba(59, 7, 100, 0.6)", accent: "#7e22ce", accentDim: "rgba(126, 34, 206, 0.1)" } },
-            { minLevel: 25, title: "Kralj", saint: "Sv. Tomaž Akvinski", saintDesc: "Angelski učitelj.", icon: Crown, theme: { paper: "#fffbeb", paperDark: "#fef3c7", ink: "#000000", inkLight: "rgba(0, 0, 0, 0.6)", accent: "#d97706", accentDim: "rgba(217, 119, 6, 0.1)" } }
-        ];
-
-        const getCurrentRankInfo = (level) => {
-            const rank = [...RANK_SYSTEM].reverse().find(r => level >= r.minLevel);
-            return rank || RANK_SYSTEM[0];
-        };
-
-        // --- POPRAVLJENA LOGIKA DATUMOV (Lokalni čas) ---
-        // Uporabljamo lokalni čas za stringe YYYY-MM-DD, da preprečimo težave z UTC zamiki na telefonu
-        const getLocalDateString = (date) => {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        };
-
-        const parseLocalDate = (dateStr) => {
-            if (!dateStr) return new Date();
-            const [y, m, d] = dateStr.split('-').map(Number);
-            return new Date(y, m - 1, d); // Meseci so 0-indeksirani
-        };
-
-        const getTodayString = () => getLocalDateString(new Date());
-
-        const formatDateShort = (dateStr) => {
-            const d = parseLocalDate(dateStr);
-            return d.toLocaleDateString('sl-SI', { day: 'numeric', month: 'short' });
-        };
-        const getDayName = (dateStr) => {
-            const d = parseLocalDate(dateStr);
-            return d.toLocaleDateString('sl-SI', { weekday: 'short' }).toUpperCase();
-        };
-        
-        // Generiranje traku glede na sidrni datum (Popravljeno za lokalni čas)
-        const generateDateRange = (daysBack, daysForward, referenceDateStr) => {
-            const dates = [];
-            const refDate = parseLocalDate(referenceDateStr);
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="mb-8 inline-block animate-bounce-slow">
+                <!-- Coin Image: Obverse -->
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-yellow-600 to-gray-600 rounded-full blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                    <img 
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Maria_Theresia_Taler_1780_sf_av.jpg/600px-Maria_Theresia_Taler_1780_sf_av.jpg" 
+                        alt="Maria Theresa Thaler 1780 Obverse" 
+                        class="relative w-48 h-48 md:w-64 md:h-64 rounded-full shadow-2xl border-4 border-gray-300/50 coin-shadow object-cover transform transition-transform duration-500 hover:scale-105"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
+                    >
+                    <!-- Fallback if image fails -->
+                    <div class="hidden w-48 h-48 md:w-64 md:h-64 rounded-full bg-gradient-to-b from-gray-100 to-gray-400 p-1 shadow-2xl coin-shadow border-4 border-gray-300/50 flex items-center justify-center">
+                        <div class="text-center opacity-80">
+                            <i class="fas fa-crown text-6xl text-gray-500 mb-1"></i>
+                            <div class="text-xs font-serif font-bold tracking-widest text-gray-600">1780</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
-            for (let i = -daysBack; i <= daysForward; i++) {
-                const d = new Date(refDate);
-                d.setDate(refDate.getDate() + i);
-                dates.push({
-                    full: getLocalDateString(d),
-                    day: d.getDate(),
-                    weekday: d.toLocaleDateString('sl-SI', { weekday: 'short' }).toUpperCase(),
-                    isToday: i === 0 
-                });
-            }
-            return dates;
-        };
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 text-shadow">
+                The World's Most <br class="hidden md:block" /> Famous Silver Coin
+            </h1>
+            <p class="mt-4 text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto font-light">
+                The Maria Theresa Thaler. Minted since 1741. Frozen in 1780. Trusted for centuries across continents.
+            </p>
+            <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#identification" class="px-8 py-4 bg-imperial-gold hover:bg-yellow-600 text-white font-semibold rounded-sm transition-all shadow-lg uppercase tracking-wide text-sm">
+                    Identify Your Coin
+                </a>
+                <a href="#history" class="px-8 py-4 border border-white text-white hover:bg-white hover:text-gray-900 font-semibold rounded-sm transition-all uppercase tracking-wide text-sm">
+                    Read the History
+                </a>
+            </div>
+        </div>
+    </header>
 
-        function DeepFocusMedieval() {
-            const [user, setUser] = useState(null);
-            const [authLoading, setAuthLoading] = useState(true);
-            const [activeTab, setActiveTab] = useState('cockpit');
-            const [selectedDate, setSelectedDate] = useState(getTodayString());
-            const [history, setHistory] = useState({}); 
-            
-            const [syncId, setSyncId] = useState(localStorage.getItem('deepfocus_sync_id') || '');
-            const [tempSyncId, setTempSyncId] = useState('');
+    <!-- Specs Banner -->
+    <div id="specs" class="bg-white border-b border-gray-200 relative -mt-10 z-20 max-w-6xl mx-auto rounded-lg shadow-xl grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
+        <div class="p-6 text-center group hover:bg-gray-50 transition-colors">
+            <div class="text-imperial-red mb-2"><i class="fas fa-weight-hanging text-2xl"></i></div>
+            <div class="text-2xl font-serif font-bold text-gray-900">28.07g</div>
+            <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Weight</div>
+        </div>
+        <div class="p-6 text-center group hover:bg-gray-50 transition-colors">
+            <div class="text-imperial-red mb-2"><i class="fas fa-ruler-horizontal text-2xl"></i></div>
+            <div class="text-2xl font-serif font-bold text-gray-900">39.5mm</div>
+            <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Diameter</div>
+        </div>
+        <div class="p-6 text-center group hover:bg-gray-50 transition-colors">
+            <div class="text-imperial-red mb-2"><i class="fas fa-gem text-2xl"></i></div>
+            <div class="text-2xl font-serif font-bold text-gray-900">.833</div>
+            <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Silver Fineness</div>
+        </div>
+        <div class="p-6 text-center group hover:bg-gray-50 transition-colors">
+            <div class="text-imperial-red mb-2"><i class="fas fa-calendar-check text-2xl"></i></div>
+            <div class="text-2xl font-serif font-bold text-gray-900">1780</div>
+            <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Frozen Date</div>
+        </div>
+    </div>
 
-            // Auth Logic
-            useEffect(() => {
-                if (!firebaseInitialized) { setAuthLoading(false); return; }
-                const initAuth = async () => {
-                    try {
-                        if (envInitialToken) await signInWithCustomToken(auth, envInitialToken);
-                        else await signInAnonymously(auth);
-                    } catch (error) { console.error("Auth error:", error); } 
-                    finally { setAuthLoading(false); }
-                };
-                initAuth();
-                return onAuthStateChanged(auth, setUser);
-            }, []);
+    <!-- History Section -->
+    <section id="history" class="py-20 md:py-32 bg-pattern">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="text-sm font-bold text-imperial-red uppercase tracking-widest mb-2">The Legacy</h2>
+                    <h3 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6 leading-tight">A Currency of the Austrian Empire</h3>
+                    <div class="prose prose-lg text-gray-600">
+                        <p class="mb-4">
+                            Originally struck in Austria from 1740 to 1780, the Thaler was the primary currency of the Austrian Empire. However, its influence extended far beyond the borders of Europe.
+                        </p>
+                        <p class="mb-4">
+                            It became critically important for trade with the Levant (parts of Turkey, Lebanon, Syria) and eventually became the most popular silver coin in the Arabian world and parts of Africa.
+                        </p>
+                        <p class="border-l-4 border-imperial-gold pl-4 italic text-gray-800 bg-white p-4 rounded-r-lg shadow-sm">
+                            "After the death of Empress Maria Theresa in 1780, Joseph II permitted the Austrian mint to continue striking the coin with the 1780 dies in order to meet demand from the Middle East."
+                        </p>
+                        <p class="mt-4">
+                            Since then, the Maria Theresa Thaler has been "restruck" for trade purposes at Vienna with the 1780 date frozen in time. It is one of the few coins in history to be produced continuously for nearly 300 years with virtually unchanged designs.
+                        </p>
+                    </div>
+                </div>
+                <div class="relative flex justify-center">
+                    <!-- Coin Image: Reverse -->
+                     <div class="relative group">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-gray-200 to-gray-400 rounded-full blur opacity-50 group-hover:opacity-75 transition duration-1000"></div>
+                        <img 
+                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Maria_Theresia_Taler_1780_sf_rv.jpg/600px-Maria_Theresia_Taler_1780_sf_rv.jpg" 
+                            alt="Maria Theresa Thaler 1780 Reverse" 
+                            class="relative w-64 h-64 md:w-80 md:h-80 rounded-full shadow-2xl border-8 border-white object-cover transform transition-transform duration-700 hover:rotate-12"
+                        >
+                        <div class="absolute bottom-0 right-0 bg-white px-4 py-2 rounded-lg shadow-lg border border-gray-100 text-xs font-serif italic text-gray-600">
+                            The Imperial Double-Headed Eagle
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            // Data Sync Logic
-            useEffect(() => {
-                if (!user || !db) return;
-                const userIdToUse = syncId && syncId.length > 3 ? `vitez_${syncId}` : user.uid;
+    <!-- Variants Section -->
+    <section id="variants" class="py-20 bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">Understanding Variants</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    While they all say 1780, minute differences tell the story of where and when they were minted. There are over 150 known variants.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-gray-800 rounded-lg p-8 border border-gray-700 hover:border-imperial-gold transition-colors group">
+                    <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center mb-6 group-hover:bg-imperial-gold transition-colors">
+                        <i class="fas fa-search text-xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-serif font-bold mb-3">The Saltire (X)</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Added in 1750, the "X" (Saltire) next to the date indicates the debased standard of the thaler. It became a permanent fixture on the 1780 restrikes.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-gray-800 rounded-lg p-8 border border-gray-700 hover:border-imperial-gold transition-colors group">
+                    <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center mb-6 group-hover:bg-imperial-gold transition-colors">
+                        <i class="fas fa-feather-alt text-xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-serif font-bold mb-3">Eagle Feathers</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        To distinguish mints (Rome, London, Vienna), numismatists look at the tail feathers of the eagle. The arrangement (1-2-1 vs 1-3-1) is a key identifier.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-gray-800 rounded-lg p-8 border border-gray-700 hover:border-imperial-gold transition-colors group">
+                    <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center mb-6 group-hover:bg-imperial-gold transition-colors">
+                        <i class="fas fa-signature text-xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-serif font-bold mb-3">Signatures</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        "S.F." stands for Schöbl and Faby, the mint officials in Guenzburg. This signature was frozen on the coin just like the date.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Original vs Restrike (Interactive Guide) -->
+    <section id="identification" class="py-20 bg-white">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-sm font-bold text-imperial-red uppercase tracking-widest mb-2">Collector's Guide</h2>
+                <h3 class="text-3xl md:text-5xl font-serif font-bold text-gray-900 mb-6">Original vs. Restrike</h3>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    Is your coin an 18th-century original or a modern restrike? Most "1780" coins found today were minted after 1850. Here is how to tell them apart.
+                </p>
+            </div>
+
+            <div class="bg-gray-50 rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+                <!-- Header of Table -->
+                <div class="grid grid-cols-3 bg-gray-100 border-b border-gray-200 p-4 font-serif font-bold text-gray-800 text-sm md:text-base">
+                    <div class="col-span-1">Feature</div>
+                    <div class="col-span-1 text-center text-imperial-gold">Original (Pre-1850)</div>
+                    <div class="col-span-1 text-center text-imperial-red">Modern Restrike</div>
+                </div>
+
+                <!-- Row 1 -->
+                <div class="grid grid-cols-3 p-6 border-b border-gray-100 hover:bg-white transition-colors items-center">
+                    <div class="font-medium text-gray-900">Brooch on Veil</div>
+                    <div class="text-center text-gray-600 text-sm">Usually no pearls, or distinct shape</div>
+                    <div class="text-center text-gray-600 text-sm">Oval with Pearls</div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="grid grid-cols-3 p-6 border-b border-gray-100 hover:bg-white transition-colors items-center">
+                    <div class="font-medium text-gray-900">Reverse Text</div>
+                    <div class="text-center text-gray-600 text-sm">Often <span class="font-mono bg-gray-200 px-1 rounded">AUST. DUX</span></div>
+                    <div class="text-center text-gray-600 text-sm">Always <span class="font-mono bg-gray-200 px-1 rounded">AVST. DUX</span></div>
+                </div>
+
+                <!-- Row 3 -->
+                <div class="grid grid-cols-3 p-6 border-b border-gray-100 hover:bg-white transition-colors items-center">
+                    <div class="font-medium text-gray-900">Signature</div>
+                    <div class="text-center text-gray-600 text-sm">I.C.-F.A. (Vienna)</div>
+                    <div class="text-center text-gray-600 text-sm">S.F. (Guenzburg/Modern)</div>
+                </div>
                 
-                let q;
-                if (isAutoConfig) q = collection(db, 'artifacts', envAppId, 'users', userIdToUse, 'daily_logs');
-                else q = collection(db, 'users', userIdToUse, 'daily_logs');
+                 <!-- Row 4 -->
+                 <div class="grid grid-cols-3 p-6 hover:bg-white transition-colors items-center">
+                    <div class="font-medium text-gray-900">Rarity</div>
+                    <div class="text-center text-gray-600 text-sm"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">RARE</span></div>
+                    <div class="text-center text-gray-600 text-sm"><span class="px-2 py-1 bg-gray-200 text-gray-800 rounded-full text-xs font-bold">COMMON</span></div>
+                </div>
+            </div>
 
-                const unsubscribe = onSnapshot(q, (snapshot) => {
-                    const newHistory = {};
-                    snapshot.forEach((doc) => {
-                        newHistory[doc.id] = doc.data().count;
-                    });
-                    setHistory(newHistory);
-                }, (err) => { if (err.code !== 'permission-denied') console.error("Sync error:", err); });
-                return () => unsubscribe();
-            }, [user, syncId]);
+            <div class="mt-8 text-center">
+                <p class="text-sm text-gray-500 italic">
+                    Note: This is a simplified guide. Consult a specialist for valuation. 
+                    <a href="https://www.theresia.name/en/svergleich.html" target="_blank" class="text-imperial-red hover:underline decoration-1 underline-offset-2">View detailed comparison on original site &rarr;</a>
+                </p>
+            </div>
+        </div>
+    </section>
 
-            // Save Sync ID
-            const saveSyncId = () => {
-                if(tempSyncId.trim().length > 0) {
-                    setSyncId(tempSyncId.trim());
-                    localStorage.setItem('deepfocus_sync_id', tempSyncId.trim());
-                    alert("Povezava uspešna! Podatki se bodo naložili.");
-                }
-            };
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div class="col-span-1 md:col-span-2">
+                    <span class="font-serif text-2xl font-bold text-white block mb-4">Theresia<span class="text-imperial-red">.name</span></span>
+                    <p class="text-sm max-w-xs leading-relaxed">
+                        A modern tribute to the original Theresia.name website. Dedicated to the study and history of the Maria Theresa Thaler 1780.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold uppercase tracking-wider text-xs mb-4">Sections</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#history" class="hover:text-white transition-colors">History</a></li>
+                        <li><a href="#variants" class="hover:text-white transition-colors">Variants</a></li>
+                        <li><a href="#identification" class="hover:text-white transition-colors">Identification</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold uppercase tracking-wider text-xs mb-4">External</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="https://www.theresia.name" target="_blank" class="hover:text-white transition-colors">Original Website</a></li>
+                        <li><a href="https://www.mtt.at.tf" target="_blank" class="hover:text-white transition-colors">MTT Austria</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-xs">&copy; 2024 Modern Theresia Tribute. All rights reserved.</p>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <i class="fab fa-github hover:text-white cursor-pointer transition-colors"></i>
+                    <i class="fas fa-coins hover:text-white cursor-pointer transition-colors"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-            const clearSyncId = () => {
-                setSyncId('');
-                setTempSyncId('');
-                localStorage.removeItem('deepfocus_sync_id');
+    <!-- Scripts -->
+    <script>
+        // Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Sticky Navbar effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                navbar.classList.add('shadow-md');
+            } else {
+                navbar.classList.remove('shadow-md');
             }
-
-            // NOVO: Generiranje naključne kode
-            const generateRandomCode = () => {
-                const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-                let result = "";
-                for (let i = 0; i < 6; i++) {
-                    result += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
-                const formatted = result.slice(0,3) + "-" + result.slice(3);
-                setTempSyncId(formatted);
-            };
-
-            const blocksCompleted = history[selectedDate] || 0;
-            const isVictory = blocksCompleted >= CILJ_DEL;
-            
-            // Prikaz: 3 dni nazaj, 2 dni naprej od izbranega datuma.
-            const dateStrip = generateDateRange(3, 2, selectedDate);
-            
-            const scrollRef = useRef(null);
-
-            useEffect(() => { 
-                if (scrollRef.current) scrollRef.current.scrollLeft = 0; 
-            }, [selectedDate]);
-
-            const totalBlocks = Object.values(history).reduce((a, b) => a + b, 0);
-            const totalXP = totalBlocks * XP_PER_BLOCK;
-            const currentLevel = Math.floor(Math.sqrt(totalXP / 100)) + 1;
-            const currentRank = getCurrentRankInfo(currentLevel);
-            const theme = currentRank.theme;
-
-            const xpForCurrentLevel = Math.pow(currentLevel - 1, 2) * 100;
-            const xpForNextLevel = Math.pow(currentLevel, 2) * 100;
-            const xpProgressInLevel = totalXP - xpForCurrentLevel;
-            const xpNeededForNextLevel = xpForNextLevel - xpForCurrentLevel;
-            const progressPercent = Math.min((xpProgressInLevel / xpNeededForNextLevel) * 100, 100);
-
-            const updateBlocks = async (change) => {
-                const currentVal = history[selectedDate] || 0;
-                const newVal = Math.max(0, currentVal + change);
-                setHistory(prev => ({...prev, [selectedDate]: newVal}));
-
-                if (user && db) {
-                    const userIdToUse = syncId && syncId.length > 3 ? `vitez_${syncId}` : user.uid;
-                    try {
-                        let docRef;
-                        if (isAutoConfig) docRef = doc(db, 'artifacts', envAppId, 'users', userIdToUse, 'daily_logs', selectedDate);
-                        else docRef = doc(db, 'users', userIdToUse, 'daily_logs', selectedDate);
-                        await setDoc(docRef, { count: newVal }, { merge: true });
-                    } catch (err) { console.error("Save error:", err); }
-                }
-                if (change > 0 && navigator.vibrate) navigator.vibrate(50);
-            };
-
-            const resetDay = async () => {
-                setHistory(prev => ({...prev, [selectedDate]: 0}));
-                if (user && db) {
-                    const userIdToUse = syncId && syncId.length > 3 ? `vitez_${syncId}` : user.uid;
-                    let docRef;
-                    if (isAutoConfig) docRef = doc(db, 'artifacts', envAppId, 'users', userIdToUse, 'daily_logs', selectedDate);
-                    else docRef = doc(db, 'users', userIdToUse, 'daily_logs', selectedDate);
-                    await setDoc(docRef, { count: 0 }, { merge: true });
-                }
-            };
-
-            const appStyle = {
-                '--bg-paper': theme.paper, '--bg-paper-dark': theme.paperDark,
-                '--text-ink': theme.ink, '--text-ink-light': theme.inkLight,
-                '--color-accent': theme.accent, '--color-accent-dim': theme.accentDim,
-            };
-
-            if (authLoading) return React.createElement('div', { className: "h-screen w-full flex items-center justify-center" }, React.createElement(Loader, { className: "animate-spin" }));
-
-            return (
-                React.createElement('div', { 
-                    className: "h-screen w-full flex flex-col font-serif overflow-hidden relative transition-colors duration-1000",
-                    style: { backgroundColor: 'var(--bg-paper)', color: 'var(--text-ink)', ...appStyle }
-                },
-                    // Background & Warnings
-                    React.createElement('div', { className: "absolute inset-0 opacity-10 pointer-events-none mix-blend-multiply", style: { backgroundImage: `url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")` } }),
-                    
-                    configError && React.createElement('div', { className: "absolute top-0 left-0 w-full bg-red-600 text-white text-xs p-2 text-center z-50 font-sans" }, 
-                        "NAPAKA: V index.html vpiši svoje Firebase podatke! (Glej vrstico 35)"
-                    ),
-
-                    // Main Content
-                    React.createElement('div', { className: "flex-1 flex flex-col z-10 relative overflow-hidden" },
-                        // Header
-                        React.createElement('div', { 
-                            className: "h-36 flex-none border-b-2 pt-1 pb-2 z-20 flex flex-col justify-between transition-colors duration-500 shadow-sm",
-                            style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' }
-                        },
-                            
-                            // 1. STATUS VRSTICA
-                            React.createElement('div', { className: "flex justify-center items-center pb-1 pt-1 opacity-80" },
-                                React.createElement('div', { className: "text-[10px] font-bold uppercase tracking-widest flex items-center gap-2", style: { color: 'var(--text-ink-light)' } },
-                                    (user && firebaseInitialized) ? React.createElement(Cloud, { size: 12, className: "text-green-600" }) : React.createElement(AlertTriangle, { size: 12, className: "text-red-500" }),
-                                    syncId ? `Povezan: ${syncId}` : "Lokalno / Brez povezave"
-                                )
-                            ),
-
-                            // 2. Top Bar: Dropdown Menu & Level
-                            React.createElement('div', { className: "flex items-center justify-between px-6 py-1" },
-                                
-                                // Dropdown za ročno izbiro
-                                React.createElement('div', { 
-                                    className: "relative group flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded border transition-all hover:bg-white/10 active:scale-95",
-                                    style: { borderColor: 'var(--color-accent-dim)' }
-                                },
-                                    React.createElement(Calendar, { size: 16, style: { color: 'var(--color-accent)' } }),
-                                    React.createElement('span', { className: "text-xs font-bold uppercase tracking-widest", style: { color: 'var(--text-ink)' } }, "Koledar"),
-                                    React.createElement(ChevronDown, { size: 14, style: { color: 'var(--text-ink-light)' } }),
-                                    
-                                    // Hidden Date Input trigger
-                                    React.createElement('input', {
-                                        type: "date",
-                                        className: "absolute inset-0 opacity-0 w-full h-full cursor-pointer date-picker-trigger",
-                                        onChange: (e) => {
-                                            if(e.target.value) setSelectedDate(e.target.value);
-                                        },
-                                        max: getTodayString()
-                                    })
-                                ),
-                                
-                                // Mini XP Bar
-                                React.createElement('div', { className: "flex flex-col items-end w-32" },
-                                    React.createElement('div', { className: "text-xs font-bold flex justify-between w-full mb-1", style: { color: 'var(--text-ink-light)' } },
-                                        React.createElement('span', { className: "text-[10px]" }, `Lvl ${currentLevel}`),
-                                        React.createElement('span', { className: "opacity-50 text-[10px]" }, `${Math.floor(progressPercent)}%`)
-                                    ),
-                                    React.createElement('div', { className: "w-full h-1.5 rounded-full overflow-hidden", style: { backgroundColor: 'var(--color-accent-dim)' } },
-                                        React.createElement('div', { className: "h-full transition-all duration-500", style: { width: `${progressPercent}%`, backgroundColor: 'var(--color-accent)' } })
-                                    )
-                                )
-                            ),
-                            
-                            // Trak datumov - VEČJI ZA MOBILE
-                            React.createElement('div', { ref: scrollRef, className: "flex gap-3 overflow-x-auto px-6 pb-2 hide-scrollbar scroll-smooth items-center justify-center h-full", style: { scrollbarWidth: 'none', msOverflowStyle: 'none' } },
-                                dateStrip.map((d, i) => {
-                                    const isSelected = selectedDate === d.full;
-                                    const blocks = history[d.full] || 0;
-                                    const goalMet = blocks >= CILJ_DEL;
-                                    
-                                    return React.createElement('button', {
-                                        key: i, onClick: () => setSelectedDate(d.full),
-                                        className: `flex-none rounded-lg border-2 transition-all duration-300 flex flex-col items-center justify-center relative overflow-hidden group ${isSelected ? 'w-16 h-20 shadow-lg transform -translate-y-1 z-10' : 'w-14 h-16 opacity-70 hover:opacity-100'}`,
-                                        style: {
-                                            backgroundColor: isSelected ? 'var(--text-ink)' : 'var(--bg-paper)',
-                                            borderColor: isSelected ? 'var(--text-ink)' : 'var(--color-accent-dim)',
-                                            color: isSelected ? 'var(--bg-paper)' : 'var(--text-ink-light)',
-                                        }
-                                    },
-                                        isSelected && React.createElement('div', { className: "absolute inset-0 opacity-10 bg-white" }),
-                                        React.createElement('span', { className: "text-[9px] uppercase font-bold tracking-wider mb-0.5" }, d.weekday),
-                                        React.createElement('span', { className: `leading-none font-serif ${isSelected ? 'text-2xl' : 'text-xl'}` }, d.day),
-                                        blocks > 0 && !isSelected && React.createElement('div', { className: "mt-1 w-2 h-2 rounded-full", style: { backgroundColor: goalMet ? 'var(--color-accent)' : 'var(--text-ink-light)' } }),
-                                        isSelected && React.createElement('div', { className: "absolute bottom-0 left-0 w-full h-1.5", style: { backgroundColor: 'var(--color-accent)' } })
-                                    );
-                                })
-                            )
-                        ),
-
-                        // Tab Content
-                        React.createElement('div', { className: "flex-1 overflow-y-auto relative p-6" },
-                            activeTab === 'cockpit' && React.createElement(Delavnica, { blocks: blocksCompleted, onAdd: () => updateBlocks(1), onRemove: () => updateBlocks(-1), isVictory }),
-                            activeTab === 'vault' && React.createElement(Kronika, { history, selectedDate }), // DODANO: selectedDate se prenaša v Kroniko
-                            activeTab === 'barracks' && React.createElement(Vitez, { 
-                                history, resetDay, selectedDate, currentLevel, totalXP, 
-                                xpNeededForNextLevel, xpProgressInLevel, currentRank,
-                                syncId, tempSyncId, setTempSyncId, saveSyncId, clearSyncId, generateRandomCode 
-                            })
-                        )
-                    ),
-
-                    // Navigation
-                    React.createElement('nav', { 
-                        className: "h-24 flex-none border-t-2 flex justify-around items-center z-30 pb-4 transition-colors duration-500",
-                        style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' }
-                    },
-                        React.createElement(NavBtn, { active: activeTab === 'cockpit', onClick: () => setActiveTab('cockpit'), icon: Sword, label: "Delo" }),
-                        React.createElement(NavBtn, { active: activeTab === 'vault', onClick: () => setActiveTab('vault'), icon: Scroll, label: "Kronika" }),
-                        React.createElement(NavBtn, { active: activeTab === 'barracks', onClick: () => setActiveTab('barracks'), icon: Shield, label: "Vitez" })
-                    )
-                )
-            );
-        }
-
-        // --- SUB-COMPONENTS ---
-        function NavBtn({ active, onClick, icon, label }) {
-            const IconComp = icon;
-            return React.createElement('button', { onClick, className: "flex flex-col items-center justify-center w-24 group p-2" },
-                React.createElement('div', { className: `transition-all duration-300 transform ${active ? 'scale-110' : 'opacity-50 group-hover:opacity-70'}`, style: { color: active ? 'var(--color-accent)' : 'var(--text-ink)' } }, React.createElement(IconComp, { size: 28, strokeWidth: 1.5 })),
-                React.createElement('span', { className: `text-xs font-bold uppercase mt-1 tracking-wider ${active ? '' : 'opacity-50'}`, style: { color: active ? 'var(--color-accent)' : 'var(--text-ink)' } }, label)
-            );
-        }
-
-        function Delavnica({ blocks, onAdd, onRemove, isVictory }) {
-            return React.createElement('div', { className: "h-full flex flex-col items-center justify-between py-4" },
-                React.createElement('div', { className: "flex flex-col items-center gap-2" },
-                    React.createElement('div', { 
-                        className: "px-6 py-2 border-2 text-sm font-bold uppercase tracking-[0.2em] rounded-full transition-colors",
-                        style: { borderColor: isVictory ? 'var(--color-accent)' : 'var(--color-accent-dim)', color: isVictory ? 'var(--color-accent)' : 'var(--text-ink-light)', backgroundColor: isVictory ? 'var(--color-accent-dim)' : 'transparent' }
-                    }, isVictory ? 'Zmaga dneva' : 'V službi kraljestva')
-                ),
-                React.createElement('div', { className: "relative w-72 h-72 flex items-center justify-center" },
-                    React.createElement('div', { className: "absolute inset-0 rounded-full border opacity-20", style: { borderColor: 'var(--text-ink)' } }),
-                    React.createElement('div', { className: "absolute inset-4 rounded-full border opacity-20", style: { borderColor: 'var(--text-ink)' } }),
-                    React.createElement('div', { className: "flex flex-col items-center z-10" },
-                        React.createElement('span', { className: "text-[8rem] font-serif leading-none", style: { color: 'var(--text-ink)' } }, blocks),
-                        React.createElement('div', { className: "h-px w-20 mt-4 mb-2 opacity-30", style: { backgroundColor: 'var(--text-ink)' } }),
-                        React.createElement('span', { className: "text-base font-bold uppercase tracking-[0.2em]", style: { color: 'var(--color-accent)' } }, `${blocks} / ${CILJ_DEL}`),
-                        React.createElement('span', { className: "text-xs uppercase tracking-widest opacity-50 mt-1", style: { color: 'var(--text-ink)' } }, "Dnevni Cilj")
-                    )
-                ),
-                React.createElement('div', { className: "w-full max-w-sm flex flex-col gap-4" },
-                    React.createElement('button', { onClick: onAdd, className: "w-full h-20 rounded border-2 flex items-center justify-center gap-4 shadow-lg active:scale-[0.98] transition-transform", style: { backgroundColor: 'var(--text-ink)', color: 'var(--bg-paper)', borderColor: 'var(--text-ink)' } }, React.createElement(Feather, { size: 24 }), React.createElement('span', { className: "text-xl font-bold tracking-widest uppercase" }, "Zapiši Delo")),
-                    React.createElement('button', { onClick: onRemove, disabled: blocks === 0, className: "h-14 flex items-center justify-center gap-2 text-sm font-bold uppercase tracking-widest disabled:opacity-0 transition-colors", style: { color: 'var(--text-ink-light)' } }, React.createElement(Minus, { size: 16 }), "Prekliči zadnjega")
-                )
-            );
-        }
-
-        function Kronika({ history, selectedDate }) {
-            // POPRAVEK: Uporaba selectedDate za določitev konca grafa tedna
-            const today = parseLocalDate(selectedDate); // Uporabimo izbran datum namesto "danes"
-            const daysToShow = 7;
-            const dataPoints = [];
-            let maxBlocks = 4;
-            
-            // Generiranje grafa za teden okoli izbranega dne (3 nazaj, 3 naprej ali 6 nazaj?)
-            // Najbolje: Zadnjih 7 dni do vključno selectedDate
-            for (let i = daysToShow - 1; i >= 0; i--) {
-                const d = new Date(today); 
-                d.setDate(today.getDate() - i);
-                const dateStr = getLocalDateString(d);
-                const val = history[dateStr] || 0;
-                if (val > maxBlocks) maxBlocks = val;
-                dataPoints.push({ label: getDayName(dateStr), value: val, date: dateStr });
-            }
-
-            const generateGridData = () => {
-                const historyDates = Object.keys(history).sort();
-                const now = new Date();
-                const sel = parseLocalDate(selectedDate);
-                
-                // Določi meje mreže: Da vključuje zgodovino IN izbran datum
-                let minDate = new Date('2026-01-01'); // Fiksen začetek
-                // Če je zgodovina starejša, uporabi to
-                if (historyDates.length > 0 && parseLocalDate(historyDates[0]) < minDate) minDate = parseLocalDate(historyDates[0]);
-                // Če je izbran datum starejši, uporabi to (da se vidi npr. dec 2025)
-                if (sel < minDate) minDate = new Date(sel);
-
-                // Konec: Danes ali zadnji vpis ali izbran datum
-                let maxDate = now;
-                if (historyDates.length > 0 && parseLocalDate(historyDates[historyDates.length-1]) > maxDate) maxDate = parseLocalDate(historyDates[historyDates.length-1]);
-                if (sel > maxDate) maxDate = new Date(sel);
-
-                // Poravnava na ponedeljek
-                const startDate = new Date(minDate);
-                const dayOfWeek = startDate.getDay();
-                const diffToMon = dayOfWeek === 0 ? 6 : dayOfWeek - 1; 
-                startDate.setDate(startDate.getDate() - diffToMon);
-
-                // Poravnava na nedeljo
-                const endDate = new Date(maxDate);
-                const endDayOfWeek = endDate.getDay();
-                const diffToSun = endDayOfWeek === 0 ? 0 : 7 - endDayOfWeek;
-                endDate.setDate(endDate.getDate() + diffToSun);
-
-                const grid = [];
-                let current = new Date(startDate);
-                
-                // Uporaba LOKALNEGA časa za iteracijo
-                while (current <= endDate) {
-                    const dateStr = getLocalDateString(current);
-                    grid.push({ 
-                        date: dateStr, 
-                        value: history[dateStr] || 0, 
-                        month: current.getMonth(), 
-                        day: current.getDate(), 
-                        year: current.getFullYear() 
-                    });
-                    current.setDate(current.getDate() + 1);
-                }
-                return grid;
-            };
-            
-            const gridData = generateGridData();
-            const weeks = [];
-            for (let i = 0; i < gridData.length; i += 7) weeks.push(gridData.slice(i, i + 7));
-            const monthNames = ["JAN", "FEB", "MAR", "APR", "MAJ", "JUN", "JUL", "AVG", "SEP", "OKT", "NOV", "DEC"];
-            
-            // Naslov leta
-            const startYear = gridData[0].year;
-            const endYear = gridData[gridData.length-1].year;
-            const yearLabel = startYear === endYear ? `Leto ${startYear}` : `Leta ${startYear} - ${endYear}`;
-
-            return React.createElement('div', { className: "h-full flex flex-col gap-6" },
-                React.createElement('div', { className: "border-b-2 pb-4", style: { borderColor: 'var(--color-accent-dim)' } },
-                    React.createElement('h1', { className: "text-3xl font-serif", style: { color: 'var(--text-ink)' } }, "Kronika"),
-                    React.createElement('p', { className: "text-sm opacity-60 mt-1 italic" }, "Tvoja pot skozi čas.")
-                ),
-                React.createElement('div', { className: "p-4 rounded border flex-none", style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' } },
-                    React.createElement('div', { className: "text-xs font-bold uppercase tracking-widest opacity-50 mb-4" }, "Pregled Tedna"),
-                    React.createElement('div', { className: "flex items-end justify-between h-32 gap-2" },
-                        dataPoints.map((d, i) => {
-                            const heightPercent = (d.value / maxBlocks) * 100;
-                            const isGoal = d.value >= CILJ_DEL;
-                            return React.createElement('div', { key: i, className: "flex-1 flex flex-col items-center gap-2 h-full justify-end" },
-                                React.createElement('div', { className: "w-full relative rounded-sm overflow-hidden", style: { height: '100%', backgroundColor: 'var(--color-accent-dim)' } },
-                                    React.createElement('div', { className: "absolute bottom-0 left-0 w-full transition-all duration-500", style: { height: `${Math.max(heightPercent, 2)}%`, backgroundColor: isGoal ? 'var(--color-accent)' : 'var(--text-ink)' } })
-                                ),
-                                React.createElement('div', { className: "text-[10px] font-bold uppercase opacity-50" }, d.label.charAt(0))
-                            );
-                        })
-                    )
-                ),
-                React.createElement('div', { className: "flex-1 flex flex-col min-h-0" },
-                    React.createElement('div', { className: "flex items-center gap-2 mb-2" }, React.createElement(Grid, { size: 14, className: "opacity-50" }), React.createElement('div', { className: "text-xs font-bold uppercase tracking-widest opacity-50" }, `Pregled ${yearLabel}`) ),
-                    React.createElement('div', { className: "flex-1 overflow-x-auto border rounded p-4 scrollbar-thin", style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' } },
-                        React.createElement('div', { className: "flex gap-1 h-full" },
-                            weeks.map((week, wIndex) => {
-                                const startOfMonth = week.find(d => d.day === 1);
-                                const isMonthChange = startOfMonth !== undefined;
-                                return React.createElement('div', { key: wIndex, className: `flex flex-col gap-1 relative ${isMonthChange ? 'ml-1 pl-1 border-l' : ''}`, style: { borderColor: 'var(--color-accent-dim)' } },
-                                    isMonthChange && React.createElement('div', { className: "absolute -top-4 left-0 text-[8px] font-bold uppercase tracking-wider whitespace-nowrap", style: { color: 'var(--text-ink)' } }, monthNames[startOfMonth.month]),
-                                    week.map((day, dIndex) => {
-                                        let bgColor = 'var(--color-accent-dim)';
-                                        if (day.value >= 1) bgColor = 'var(--text-ink-light)';
-                                        if (day.value >= 3) bgColor = 'var(--color-accent)';
-                                        const isEmpty = day.value === 0;
-                                        return React.createElement('div', { key: dIndex, className: "w-4 h-4 rounded-[1px] transition-colors", style: { backgroundColor: isEmpty ? 'transparent' : bgColor, border: isEmpty ? '1px solid var(--color-accent-dim)' : 'none' }, title: `${day.date}: ${day.value}` });
-                                    })
-                                );
-                            })
-                        )
-                    )
-                )
-            );
-        }
-
-        function Vitez({ history, resetDay, selectedDate, currentLevel, totalXP, xpNeededForNextLevel, xpProgressInLevel, currentRank, syncId, tempSyncId, setTempSyncId, saveSyncId, clearSyncId, generateRandomCode }) {
-            const percent = Math.floor((xpProgressInLevel / xpNeededForNextLevel) * 100);
-            const IconComp = currentRank.icon;
-
-            return React.createElement('div', { className: "h-full flex flex-col overflow-y-auto" },
-                React.createElement('div', { className: "border-b-2 pb-4 mb-6", style: { borderColor: 'var(--color-accent-dim)' } },
-                    React.createElement('h1', { className: "text-3xl font-serif", style: { color: 'var(--text-ink)' } }, "Vitez")
-                ),
-                React.createElement('div', { className: "flex flex-col items-center gap-2 mb-8 p-6 rounded border transition-colors duration-500", style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)' } },
-                    React.createElement('div', { className: "w-28 h-28 rounded-full border-2 flex items-center justify-center mb-2 shadow-inner", style: { backgroundColor: 'var(--bg-paper)', borderColor: 'var(--color-accent-dim)' } },
-                        React.createElement('div', { style: { color: 'var(--color-accent)', transform: 'scale(2.5)' } }, React.createElement(IconComp, { size: 24 }))
-                    ),
-                    React.createElement('h2', { className: "text-3xl font-bold uppercase tracking-wide", style: { color: 'var(--text-ink)' } }, currentRank.title),
-                    React.createElement('p', { className: "text-base opacity-60 font-serif italic" }, `Stopnja ${currentLevel}`),
-                    React.createElement('div', { className: "w-full mt-6" },
-                        React.createElement('div', { className: "flex justify-between text-xs font-bold uppercase tracking-widest opacity-60 mb-1" },
-                            React.createElement('span', null, `${xpProgressInLevel} XP`),
-                            React.createElement('span', null, `${xpNeededForNextLevel} XP`)
-                        ),
-                        React.createElement('div', { className: "h-3 w-full rounded-full overflow-hidden", style: { backgroundColor: 'var(--color-accent-dim)' } },
-                            React.createElement('div', { className: "h-full transition-all duration-500", style: { width: `${percent}%`, backgroundColor: 'var(--color-accent)' } })
-                        ),
-                        React.createElement('div', { className: "text-center text-xs mt-2 opacity-50" }, `Do naslednje stopnje: ${xpNeededForNextLevel - xpProgressInLevel} XP`)
-                    )
-                ),
-                
-                // SYNC SECTION
-                React.createElement('div', { className: "mb-8 p-4 rounded border", style: { borderColor: 'var(--color-accent-dim)', backgroundColor: 'var(--bg-paper-dark)' } },
-                    React.createElement('div', { className: "flex items-center gap-2 mb-3" },
-                        React.createElement(Link, { size: 18, style: { color: 'var(--color-accent)' } }),
-                        React.createElement('h3', { className: "text-sm font-bold uppercase tracking-widest opacity-80" }, "Povezava Naprav")
-                    ),
-                    
-                    !syncId ? (
-                        React.createElement('div', { className: "flex flex-col gap-3" },
-                            React.createElement('div', { className: "flex gap-2" },
-                                React.createElement('input', { 
-                                    type: "text", 
-                                    placeholder: "Vnesi poljubno ime...", 
-                                    value: tempSyncId,
-                                    onChange: (e) => setTempSyncId(e.target.value),
-                                    className: "flex-1 p-3 rounded text-base border bg-white/50 focus:outline-none focus:border-opacity-100",
-                                    style: { borderColor: 'var(--color-accent-dim)' }
-                                }),
-                                React.createElement('button', { 
-                                    onClick: saveSyncId,
-                                    className: "p-3 rounded text-white shadow-sm",
-                                    style: { backgroundColor: 'var(--color-accent)' }
-                                }, React.createElement(Save, { size: 20 }))
-                            ),
-                            // GUMB ZA GENERIRANJE KODE
-                            React.createElement('button', {
-                                onClick: generateRandomCode,
-                                className: "text-xs uppercase font-bold underline opacity-60 hover:opacity-100 self-start flex items-center gap-1 p-2",
-                                style: { color: 'var(--text-ink)' }
-                            }, React.createElement(RefreshCw, { size: 12 }), "Generiraj varno kodo")
-                        )
-                    ) : (
-                        React.createElement('div', { className: "flex justify-between items-center bg-white/20 p-3 rounded" },
-                            React.createElement('div', { className: "text-base" }, 
-                                React.createElement('span', { className: "opacity-50 text-xs block" }, "Povezan kot:"),
-                                React.createElement('strong', { style: { color: 'var(--color-accent)' } }, syncId)
-                            ),
-                            React.createElement('button', { 
-                                onClick: clearSyncId,
-                                className: "text-sm underline opacity-50 hover:opacity-100 p-2"
-                            }, "Odjavi")
-                        )
-                    ),
-                    React.createElement('p', { className: "text-xs opacity-50 mt-2 leading-tight" }, "Vpiši isto ime na telefonu in računalniku za sinhronizacijo podatkov.")
-                ),
-
-                React.createElement('div', { className: "mb-8" },
-                    React.createElement('div', { className: "flex items-center gap-2 mb-2 px-2" },
-                        React.createElement(Star, { size: 16, className: "opacity-50" }),
-                        React.createElement('h3', { className: "text-sm font-bold uppercase tracking-widest opacity-50" }, "Trenutni Zavetnik")
-                    ),
-                    React.createElement('div', { className: "p-4 rounded text-base leading-relaxed font-serif mb-6 border", style: { backgroundColor: 'var(--bg-paper)', borderColor: 'var(--color-accent)', color: 'var(--text-ink)' } },
-                        React.createElement('div', { className: "flex items-center gap-3 mb-2" },
-                            React.createElement('div', { style: { color: 'var(--color-accent)' } }, React.createElement(IconComp, { size: 24 })),
-                            React.createElement('strong', { className: "text-xl", style: { color: 'var(--color-accent)' } }, currentRank.saint)
-                        ),
-                        React.createElement('p', { className: "italic opacity-80" }, `"${currentRank.saintDesc}"`)
-                    ),
-                    React.createElement('div', { className: "flex items-center gap-2 mb-2 px-2" },
-                        React.createElement(HelpCircle, { size: 16, className: "opacity-50" }),
-                        React.createElement('h3', { className: "text-sm font-bold uppercase tracking-widest opacity-50" }, "Kodeks Igre")
-                    ),
-                    React.createElement('div', { className: "p-4 rounded text-base leading-relaxed font-serif border", style: { backgroundColor: 'var(--bg-paper-dark)', borderColor: 'var(--color-accent-dim)', color: 'var(--text-ink)' } },
-                        React.createElement('p', { className: "mb-2" }, React.createElement('strong', { style: { color: 'var(--color-accent)' } }, "1 Delo = 100 XP.")),
-                        React.createElement('p', { className: "mb-4" }, "Vsak zabeležen blok dela ti prinese točke izkušenj."),
-                        React.createElement('div', { className: "border-t pt-4 mt-4", style: { borderColor: 'var(--color-accent-dim)' } },
-                            React.createElement('strong', { className: "text-xs font-bold uppercase opacity-70 block mb-3" }, "Hierarhija in Svetniki"),
-                            React.createElement('ul', { className: "space-y-4 text-xs opacity-90" },
-                                RANK_SYSTEM.map((rank, i) => {
-                                    const isActive = currentLevel >= rank.minLevel && (i === RANK_SYSTEM.length - 1 || currentLevel < RANK_SYSTEM[i+1].minLevel);
-                                    return React.createElement('li', { key: i, className: `flex flex-col pb-2 ${i !== RANK_SYSTEM.length - 1 ? 'border-b' : ''}`, style: { borderColor: 'var(--color-accent-dim)' } },
-                                        React.createElement('div', { className: "flex justify-between items-center mb-1" },
-                                            React.createElement('span', { className: `font-bold uppercase ${isActive ? 'text-xl' : 'text-sm'}`, style: { color: isActive ? 'var(--color-accent)' : 'var(--text-ink)' } }, rank.title),
-                                            React.createElement('span', { className: "opacity-60" }, `Lvl ${rank.minLevel}+`)
-                                        ),
-                                        React.createElement('div', { className: "flex items-center gap-2 opacity-80" },
-                                            React.createElement('span', { style: { color: isActive ? 'var(--color-accent)' : 'var(--text-ink-light)', fontSize: isActive ? '1.1em' : '1em' } }, rank.saint)
-                                        )
-                                    );
-                                })
-                            )
-                        )
-                    )
-                ),
-                React.createElement('div', { className: "mt-auto border-t-2 pt-6 pb-20", style: { borderColor: 'var(--color-accent-dim)' } },
-                    React.createElement('div', { className: "flex justify-between items-center mb-4 text-xs font-bold uppercase tracking-widest opacity-50" },
-                        React.createElement('span', null, "Urejanje Dneva"),
-                        React.createElement('span', null, formatDateShort(selectedDate))
-                    ),
-                    React.createElement('button', {
-                        onClick: resetDay,
-                        className: "w-full py-4 border rounded text-xs font-bold uppercase tracking-widest transition-colors hover:opacity-80",
-                        style: { borderColor: 'var(--color-accent)', color: 'var(--color-accent)' }
-                    }, "Počisti izbran dan")
-                )
-            );
-        }
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(React.createElement(DeepFocusMedieval));
+        });
     </script>
 </body>
 </html>
