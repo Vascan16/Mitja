@@ -1,369 +1,1133 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="sl">
 <head>
+    <!-- 
+        ========================================================================
+        OSNOVNE NASTAVITVE IN META PODATKI
+        ========================================================================
+    -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Maria Theresa Thaler | 1780</title>
-    <meta name="description" content="A modern guide to the Maria Theresa Thaler 1780 - History, Variants, and Identification.">
     
-    <!-- Google Fonts -->
+    <!-- Dinamični naslov se nastavi preko JS (glej dno datoteke), fallback je spodaj -->
+    <title>Mizarstvo Hrast - Unikatno pohištvo po meri</title>
+    
+    <!-- Meta opis za SEO (Google) - Zamenjaj vsebino spodaj, če želiš ročno, ali pusti, da JS to uredi -->
+    <meta name="description" content="Izdelava unikatnega pohištva po meri. Kuhinje, vgradne omare in masivne mize. 50-letna tradicija in slovenski les.">
+    
+    <!-- Open Graph meta podatki za socialna omrežja (Facebook/Instagram predogled) -->
+    <meta property="og:title" content="Mizarstvo Hrast - Toplina vašega doma">
+    <meta property="og:description" content="Unikatno pohištvo po meri, izdelano z ljubeznijo do lesa in tradicijo.">
+    <meta property="og:image" content="https://placehold.co/1200x630/8B5A2B/white?text=Mizarstvo+Hrast">
+    <meta property="og:url" content="https://www.mizarstvo-hrast-demo.si">
+    <meta property="og:type" content="website">
+
+    <!-- 
+        ========================================================================
+        PISAVE (Google Fonts)
+        Uporabljamo: Montserrat (Naslovi) in Open Sans (Besedilo)
+        ========================================================================
+    -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        imperial: {
-                            red: '#8B0000',
-                            gold: '#C5A059',
-                            silver: '#E5E7EB',
-                            dark: '#1F2937'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
-
+    <!-- 
+        ========================================================================
+        CSS STILI (DIZAJN)
+        ========================================================================
+    -->
     <style>
-        /* Custom Utilities */
-        .coin-shadow {
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), inset 0 0 50px rgba(255,255,255,0.5);
+        /* --- SPREMENLJIVKE ZA BARVE (Tukaj hitro spremeniš celotno barvno shemo) --- */
+        :root {
+            --primary-color: #8B5A2B;    /* Naravna barva hrasta */
+            --primary-dark: #6d4520;     /* Temnejša verzija za hover efekte */
+            --text-color: #333333;       /* Temno siva za besedilo */
+            --text-light: #666666;       /* Svetlejša siva */
+            --bg-light: #f9f9f9;         /* Svetlo ozadje za sekcije */
+            --white: #ffffff;
+            --border-radius: 8px;        /* Zaobljenost robov */
+            --transition: 0.3s ease;     /* Hitrost animacij */
+            --shadow: 0 4px 15px rgba(0,0,0,0.05); /* Senca kartic */
         }
-        .text-shadow {
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+
+        /* --- OSNOVNI RESET --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .bg-pattern {
-            background-color: #f9fafb;
-            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
-            background-size: 20px 20px;
+
+        html {
+            scroll-behavior: smooth;
+            /* POMEMBNO: Da fiksni header ne prekriva naslovov pri kliku na meni */
+            scroll-padding-top: 80px; 
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            background-color: var(--white);
+            overflow-x: hidden; /* Prepreči horizontalni scroll */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* UREJEVALNIK SLIK - Da se slike ne raztegnejo */
+        .img-cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- POMOŽNI RAZREDI (Utility Classes) --- */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .section-padding {
+            padding: 80px 0;
+        }
+
+        .text-center { text-align: center; }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .section-title .divider {
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary-color);
+            margin: 0 auto;
+            border-radius: 2px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            border-radius: 50px;
+            border: 2px solid var(--primary-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            background-color: transparent;
+            color: var(--primary-color);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--white);
+            color: var(--text-color);
+        }
+
+        /* --- GLAVA (HEADER) & NAVIGACIJA --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            height: 80px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            font-size: 0.95rem;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Hamburger meni (Mobile) */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+        
+        .bar {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px auto;
+            transition: all 0.3s ease-in-out;
+            background-color: var(--text-color);
+        }
+
+        /* --- HERO SEKCIJA (PRVI VTIS) --- */
+        .hero {
+            height: 85vh; /* POPRAVEK: Zmanjšano iz 100vh za boljši pregled */
+            min-height: 550px;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://placehold.co/1920x1080/8B5A2B/333333?text=Ozadje+Hrast+Pohistvo'); /* Placeholder slika */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Parallax efekt */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+            margin-top: 0; /* Header je fixed */
+        }
+
+        .hero-content {
+            padding: 20px;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            color: var(--white); /* <--- DODAJ TO VRSTICO */
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        /* --- O NAS / PREDNOSTI (FEATURES) --- */
+        .features {
+            background-color: var(--white);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: var(--bg-light);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+        }
+        
+        .feature-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: var(--primary-color);
+        }
+
+        /* --- STORITVE --- */
+        .services {
+            background-color: var(--bg-light);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .service-img-wrapper {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .service-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .service-content h3 {
+            font-size: 1.3rem;
+            color: var(--primary-color);
+        }
+
+        /* --- GALERIJA SLIK --- */
+        .gallery {
+            background-color: var(--white);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--border-radius);
+            height: 250px;
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        /* --- OSEBNA IZKAZNICA & URNIK --- */
+        .info-section {
+            background-color: var(--text-color);
+            color: var(--white);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+
+        .legal-card {
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 30px;
+            border-radius: var(--border-radius);
+        }
+        
+        .legal-card h3 { color: var(--primary-color); }
+        .legal-row { margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; display: flex; justify-content: space-between;}
+        .legal-row span:first-child { color: #aaa; }
+        
+        .hours-card table { width: 100%; }
+        .hours-card td { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .hours-card td:last-child { text-align: right; font-weight: bold; color: var(--primary-color); }
+
+        /* --- KONTAKT & ZEMLJEVID --- */
+        .contact {
+            background-color: var(--white);
+        }
+
+        .contact-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .contact-details {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(139, 90, 43, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .contact-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--primary-color);
+        }
+
+        .contact-text h4 { margin-bottom: 5px; font-size: 0.9rem; color: var(--text-light); }
+        .contact-text p, .contact-text a { font-size: 1.1rem; font-weight: 600; color: var(--text-color); }
+        .contact-text a:hover { color: var(--primary-color); }
+
+        .google-form-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            font-size: 1.1rem;
+        }
+
+        .map-wrapper {
+            flex: 1;
+            min-width: 300px;
+            height: 400px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        /* --- NOGA (FOOTER) --- */
+        footer {
+            background-color: #222;
+            color: #eee;
+            padding: 50px 0 20px;
+            font-size: 0.9rem;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .social-links a svg {
+            width: 24px;
+            height: 24px;
+            fill: #eee;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover svg { fill: var(--primary-color); }
+
+        .footer-bottom {
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            text-align: center;
+            color: #888;
+        }
+        
+        .footer-links a { color: #aaa; margin: 0 10px; font-size: 0.8rem; cursor: pointer;}
+        .footer-links a:hover { color: var(--white); }
+
+        /* --- STICKY GUMB ZA KLIC --- */
+        .sticky-call {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(139, 90, 43, 0.4);
+            z-index: 990;
+            animation: pulse 2s infinite;
+        }
+        
+        .sticky-call svg { width: 30px; height: 30px; fill: white; }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(139, 90, 43, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(139, 90, 43, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 90, 43, 0); }
+        }
+
+        /* --- MODALNA OKNA --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        /* Cookie Banner */
+        .cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--text-color);
+            color: var(--white);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1500;
+            transform: translateY(100%);
+            transition: transform 0.5s ease;
+        }
+        
+        .cookie-banner.show { transform: translateY(0); }
+        .cookie-btn { padding: 8px 20px; font-size: 0.9rem; margin-left: 20px; }
+
+        /* --- ANIMACIJE --- */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- ODZIVNOST (MEDIA QUERIES) --- */
+        @media (max-width: 768px) {
+            .hamburger { display: block; }
+            .hamburger.active .bar:nth-child(2) { opacity: 0; }
+            .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+            .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 80px;
+                gap: 0;
+                flex-direction: column;
+                background-color: var(--white);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: 0 10px 10px rgba(0,0,0,0.1);
+            }
+
+            .nav-menu.active { left: 0; }
+            .nav-item { margin: 16px 0; }
+            .hero h1 { font-size: 2rem; }
+            .info-grid { grid-template-columns: 1fr; }
+            .cookie-banner { flex-direction: column; text-align: center; gap: 10px; }
+            .cookie-btn { margin-left: 0; }
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
+<body>
 
-    <!-- Navigation -->
-    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-200 transition-all duration-300" id="navbar">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex-shrink-0 flex items-center">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 flex items-center justify-center mr-3 shadow-inner">
-                        <span class="font-serif font-bold text-white text-xs">MTT</span>
-                    </div>
-                    <span class="font-serif text-xl font-bold tracking-tight text-gray-900">Theresia<span class="text-imperial-red">.name</span></span>
-                </div>
-                
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex space-x-8">
-                    <a href="#history" class="text-gray-600 hover:text-imperial-red transition-colors font-medium">History</a>
-                    <a href="#variants" class="text-gray-600 hover:text-imperial-red transition-colors font-medium">Variants</a>
-                    <a href="#identification" class="text-gray-600 hover:text-imperial-red transition-colors font-medium">Original vs Restrike</a>
-                    <a href="#specs" class="text-gray-600 hover:text-imperial-red transition-colors font-medium">Specifications</a>
-                </div>
-
-                <!-- Mobile Menu Button -->
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-gray-600 hover:text-gray-900 focus:outline-none">
-                        <i class="fas fa-bars text-2xl"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
-            <div class="px-4 pt-2 pb-6 space-y-1">
-                <a href="#history" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-imperial-red hover:bg-gray-50 rounded-md">History</a>
-                <a href="#variants" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-imperial-red hover:bg-gray-50 rounded-md">Variants</a>
-                <a href="#identification" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-imperial-red hover:bg-gray-50 rounded-md">Original vs Restrike</a>
-                <a href="#specs" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-imperial-red hover:bg-gray-50 rounded-md">Specifications</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <header class="relative bg-gray-900 h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
-        <!-- Abstract Background -->
-        <div class="absolute inset-0 opacity-20">
-            <div class="absolute -top-24 -left-24 w-96 h-96 bg-imperial-gold rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
-            <div class="absolute top-0 -right-4 w-72 h-72 bg-imperial-red rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-            <div class="absolute -bottom-8 left-20 w-72 h-72 bg-gray-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
-        </div>
-        
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="mb-8 inline-block animate-bounce-slow">
-                <!-- Coin Image: Obverse -->
-                <div class="relative group">
-                    <div class="absolute -inset-1 bg-gradient-to-r from-yellow-600 to-gray-600 rounded-full blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-                    <img 
-                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Maria_Theresia_Taler_1780_sf_av.jpg/600px-Maria_Theresia_Taler_1780_sf_av.jpg" 
-                        alt="Maria Theresa Thaler 1780 Obverse" 
-                        class="relative w-48 h-48 md:w-64 md:h-64 rounded-full shadow-2xl border-4 border-gray-300/50 coin-shadow object-cover transform transition-transform duration-500 hover:scale-105"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
-                    >
-                    <!-- Fallback if image fails -->
-                    <div class="hidden w-48 h-48 md:w-64 md:h-64 rounded-full bg-gradient-to-b from-gray-100 to-gray-400 p-1 shadow-2xl coin-shadow border-4 border-gray-300/50 flex items-center justify-center">
-                        <div class="text-center opacity-80">
-                            <i class="fas fa-crown text-6xl text-gray-500 mb-1"></i>
-                            <div class="text-xs font-serif font-bold tracking-widest text-gray-600">1780</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- 
+        ========================================================================
+        HEADER (Glava strani)
+        ========================================================================
+    -->
+    <header>
+        <div class="container nav-container">
+            <!-- Logo - Tekstovni (Izpolni JS) -->
+            <a href="#" class="logo" data-company="name">...</a>
             
-            <h1 class="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 text-shadow">
-                The World's Most <br class="hidden md:block" /> Famous Silver Coin
-            </h1>
-            <p class="mt-4 text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto font-light">
-                The Maria Theresa Thaler. Minted since 1741. Frozen in 1780. Trusted for centuries across continents.
-            </p>
-            <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-                <a href="#identification" class="px-8 py-4 bg-imperial-gold hover:bg-yellow-600 text-white font-semibold rounded-sm transition-all shadow-lg uppercase tracking-wide text-sm">
-                    Identify Your Coin
-                </a>
-                <a href="#history" class="px-8 py-4 border border-white text-white hover:bg-white hover:text-gray-900 font-semibold rounded-sm transition-all uppercase tracking-wide text-sm">
-                    Read the History
-                </a>
+            <!-- Navigacija -->
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#domov" class="nav-link">Domov</a></li>
+                <li class="nav-item"><a href="#o-nas" class="nav-link">O nas</a></li>
+                <li class="nav-item"><a href="#storitve" class="nav-link">Storitve</a></li>
+                <li class="nav-item"><a href="#galerija" class="nav-link">Galerija</a></li>
+                <li class="nav-item"><a href="#kontakt" class="nav-link">Kontakt</a></li>
+            </ul>
+
+            <!-- Hamburger gumb za mobilne -->
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
             </div>
         </div>
     </header>
 
-    <!-- Specs Banner -->
-    <div id="specs" class="bg-white border-b border-gray-200 relative -mt-10 z-20 max-w-6xl mx-auto rounded-lg shadow-xl grid grid-cols-2 md:grid-cols-4 divide-x divide-gray-100">
-        <div class="p-6 text-center group hover:bg-gray-50 transition-colors">
-            <div class="text-imperial-red mb-2"><i class="fas fa-weight-hanging text-2xl"></i></div>
-            <div class="text-2xl font-serif font-bold text-gray-900">28.07g</div>
-            <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Weight</div>
+    <!-- 
+        ========================================================================
+        HERO SEKCIJA (Prvi vtis)
+        ========================================================================
+    -->
+    <section id="domov" class="hero">
+        <div class="container hero-content fade-in">
+            <h1>Ustvarjamo toplino vašega doma</h1>
+            <p>Unikatno pohištvo po meri, izdelano z ljubeznijo do lesa in tradicijo.</p>
+            <a href="#kontakt" class="btn">Zahtevaj ponudbo</a>
         </div>
-        <div class="p-6 text-center group hover:bg-gray-50 transition-colors">
-            <div class="text-imperial-red mb-2"><i class="fas fa-ruler-horizontal text-2xl"></i></div>
-            <div class="text-2xl font-serif font-bold text-gray-900">39.5mm</div>
-            <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Diameter</div>
-        </div>
-        <div class="p-6 text-center group hover:bg-gray-50 transition-colors">
-            <div class="text-imperial-red mb-2"><i class="fas fa-gem text-2xl"></i></div>
-            <div class="text-2xl font-serif font-bold text-gray-900">.833</div>
-            <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Silver Fineness</div>
-        </div>
-        <div class="p-6 text-center group hover:bg-gray-50 transition-colors">
-            <div class="text-imperial-red mb-2"><i class="fas fa-calendar-check text-2xl"></i></div>
-            <div class="text-2xl font-serif font-bold text-gray-900">1780</div>
-            <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Frozen Date</div>
-        </div>
-    </div>
+    </section>
 
-    <!-- History Section -->
-    <section id="history" class="py-20 md:py-32 bg-pattern">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <div>
-                    <h2 class="text-sm font-bold text-imperial-red uppercase tracking-widest mb-2">The Legacy</h2>
-                    <h3 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6 leading-tight">A Currency of the Austrian Empire</h3>
-                    <div class="prose prose-lg text-gray-600">
-                        <p class="mb-4">
-                            Originally struck in Austria from 1740 to 1780, the Thaler was the primary currency of the Austrian Empire. However, its influence extended far beyond the borders of Europe.
-                        </p>
-                        <p class="mb-4">
-                            It became critically important for trade with the Levant (parts of Turkey, Lebanon, Syria) and eventually became the most popular silver coin in the Arabian world and parts of Africa.
-                        </p>
-                        <p class="border-l-4 border-imperial-gold pl-4 italic text-gray-800 bg-white p-4 rounded-r-lg shadow-sm">
-                            "After the death of Empress Maria Theresa in 1780, Joseph II permitted the Austrian mint to continue striking the coin with the 1780 dies in order to meet demand from the Middle East."
-                        </p>
-                        <p class="mt-4">
-                            Since then, the Maria Theresa Thaler has been "restruck" for trade purposes at Vienna with the 1780 date frozen in time. It is one of the few coins in history to be produced continuously for nearly 300 years with virtually unchanged designs.
-                        </p>
+    <!-- 
+        ========================================================================
+        O NAS / PREDNOSTI
+        ========================================================================
+    -->
+    <section id="o-nas" class="section-padding features">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Zakaj izbrati nas?</h2>
+                <div class="divider"></div>
+            </div>
+
+            <div class="features-grid">
+                <!-- Kartica 1: Kakovost -->
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <!-- SVG Ikona: Zvezda/Medalja -->
+                        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <h3>Vrhunska Kakovost</h3>
+                    <p>Uporabljamo le najboljše materiale in okovje, da zagotovimo dolgo življenjsko dobo vašega pohištva.</p>
+                </div>
+
+                <!-- Kartica 2: Tradicija -->
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <!-- SVG Ikona: Čas/Ura -->
+                        <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    </div>
+                    <h3>50-letna Tradicija</h3>
+                    <p>Znanje prenašamo iz roda v rod. Izkušnje, ki zagotavljajo mojstrsko izdelavo.</p>
+                </div>
+
+                <!-- Kartica 3: Slovenski les -->
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <!-- SVG Ikona: Drevo -->
+                        <svg viewBox="0 0 24 24"><path d="M10 21v-2H6.43c-1.2 0-1.63-1.63-.56-2.14l2.84-1.37-3.23-1.61c-1.12-.56-.69-2.22.56-2.22h2.24V9.97c0-1.1 1.48-1.54 2.12-.64l1.6 2.25 1.6-2.25c.64-.89 2.12-.46 2.12.64v1.69h2.24c1.25 0 1.68 1.66.56 2.22l-3.23 1.61 2.84 1.37c1.07.51.64 2.14-.56 2.14H14v2h-4z"/></svg>
+                    </div>
+                    <h3>Slovenski Les</h3>
+                    <p>Podpiramo lokalno. Naš les prihaja izključno iz slovenskih gozdov.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 
+        ========================================================================
+        STORITVE
+        ========================================================================
+    -->
+    <section id="storitve" class="section-padding services">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Kaj ustvarjamo?</h2>
+                <div class="divider"></div>
+            </div>
+
+            <div class="services-grid">
+                <!-- Storitev 1: Kuhinje -->
+                <div class="service-card fade-in">
+                    <div class="service-img-wrapper">
+                        <!-- ZAMENJAJ SRC S TVOJO SLIKO KUHINJE -->
+                        <img src="https://placehold.co/600x400/8B5A2B/white?text=Kuhinje+po+meri" alt="Kuhinje po meri" class="img-cover">
+                    </div>
+                    <div class="service-content">
+                        <h3>Kuhinje po meri</h3>
+                        <p>Funkcionalne in estetske kuhinje, prilagojene vašemu prostoru in kuharskim navadam.</p>
                     </div>
                 </div>
-                <div class="relative flex justify-center">
-                    <!-- Coin Image: Reverse -->
-                     <div class="relative group">
-                        <div class="absolute -inset-1 bg-gradient-to-r from-gray-200 to-gray-400 rounded-full blur opacity-50 group-hover:opacity-75 transition duration-1000"></div>
-                        <img 
-                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Maria_Theresia_Taler_1780_sf_rv.jpg/600px-Maria_Theresia_Taler_1780_sf_rv.jpg" 
-                            alt="Maria Theresa Thaler 1780 Reverse" 
-                            class="relative w-64 h-64 md:w-80 md:h-80 rounded-full shadow-2xl border-8 border-white object-cover transform transition-transform duration-700 hover:rotate-12"
-                        >
-                        <div class="absolute bottom-0 right-0 bg-white px-4 py-2 rounded-lg shadow-lg border border-gray-100 text-xs font-serif italic text-gray-600">
-                            The Imperial Double-Headed Eagle
+
+                <!-- Storitev 2: Vgradne omare -->
+                <div class="service-card fade-in">
+                    <div class="service-img-wrapper">
+                        <!-- ZAMENJAJ SRC S TVOJO SLIKO OMAR -->
+                        <img src="https://placehold.co/600x400/333/white?text=Vgradne+omare" alt="Vgradne omare" class="img-cover">
+                    </div>
+                    <div class="service-content">
+                        <h3>Vgradne omare</h3>
+                        <p>Maksimalen izkoristek prostora z elegantnimi rešitvami za shranjevanje.</p>
+                    </div>
+                </div>
+
+                <!-- Storitev 3: Masivne mize -->
+                <div class="service-card fade-in">
+                    <div class="service-img-wrapper">
+                        <!-- ZAMENJAJ SRC S TVOJO SLIKO MIZE -->
+                        <img src="https://placehold.co/600x400/8B5A2B/white?text=Masivne+mize" alt="Masivne mize" class="img-cover">
+                    </div>
+                    <div class="service-content">
+                        <h3>Masivne mize</h3>
+                        <p>Srce jedilnice. Unikatne mize iz hrastovega, orehovega ali jesenovega lesa.</p>
+                    </div>
+                </div>
+
+                <!-- Storitev 4: Stopnice -->
+                <div class="service-card fade-in">
+                    <div class="service-img-wrapper">
+                        <!-- ZAMENJAJ SRC S TVOJO SLIKO STOPNIC -->
+                        <img src="https://placehold.co/600x400/333/white?text=Lesene+stopnice" alt="Lesene stopnice" class="img-cover">
+                    </div>
+                    <div class="service-content">
+                        <h3>Lesene stopnice</h3>
+                        <p>Varna in trajna stopnišča, ki povezujejo vaš dom v celoto.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 
+        ========================================================================
+        GALERIJA
+        ========================================================================
+    -->
+    <section id="galerija" class="section-padding gallery">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Naši projekti</h2>
+                <div class="divider"></div>
+            </div>
+
+            <div class="gallery-grid">
+                <!-- Slike galerije - POPRAVEK: Zdaj uporabljajo ratio 600x400 (3:2) -->
+                <!-- ZAMENJAJ SRC S TVOJIMI SLIKAMI -->
+                <div class="gallery-item fade-in"><img src="https://placehold.co/600x400/8B5A2B/fff?text=Projekt+1" alt="Pohištvo projekt 1"></div>
+                <div class="gallery-item fade-in"><img src="https://placehold.co/600x400/333/fff?text=Projekt+2" alt="Pohištvo projekt 2"></div>
+                <div class="gallery-item fade-in"><img src="https://placehold.co/600x400/8B5A2B/fff?text=Projekt+3" alt="Pohištvo projekt 3"></div>
+                <div class="gallery-item fade-in"><img src="https://placehold.co/600x400/333/fff?text=Projekt+4" alt="Pohištvo projekt 4"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 
+        ========================================================================
+        OSEBNA IZKAZNICA & URNIK (INFO SEKCIJA)
+        ========================================================================
+    -->
+    <section class="section-padding info-section">
+        <div class="container info-grid">
+            
+            <!-- Osebna izkaznica podjetja (Pravni podatki) -->
+            <div class="legal-card fade-in">
+                <h3>Podatki o podjetju</h3>
+                <div class="legal-row"><span>Podjetje:</span> <span data-company="legalName">...</span></div>
+                <div class="legal-row"><span>Naslov:</span> <span data-company="address">...</span></div>
+                <div class="legal-row"><span>Matična št.:</span> <span data-company="registration">...</span></div>
+                <div class="legal-row"><span>Davčna št.:</span> <span data-company="tax">...</span></div>
+                <div class="legal-row"><span>Zavezanec za DDV:</span> <span>DA</span></div>
+                <div class="legal-row"><span>TRR:</span> <span data-company="bank">...</span></div>
+            </div>
+
+            <!-- Delovni čas -->
+            <div class="hours-card fade-in">
+                <h3>Delovni čas</h3>
+                <table>
+                    <tr>
+                        <td>Ponedeljek</td>
+                        <td>07:00 - 15:00</td>
+                    </tr>
+                    <tr>
+                        <td>Torek</td>
+                        <td>07:00 - 15:00</td>
+                    </tr>
+                    <tr>
+                        <td>Sreda</td>
+                        <td>07:00 - 15:00</td>
+                    </tr>
+                    <tr>
+                        <td>Četrtek</td>
+                        <td>07:00 - 15:00</td>
+                    </tr>
+                    <tr>
+                        <td>Petek</td>
+                        <td>07:00 - 15:00</td>
+                    </tr>
+                    <tr>
+                        <td>Sobota & Nedelja</td>
+                        <td>Zaprto</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- 
+        ========================================================================
+        KONTAKT & LOKACIJA
+        ========================================================================
+    -->
+    <section id="kontakt" class="section-padding contact">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>Stopite v stik</h2>
+                <div class="divider"></div>
+            </div>
+
+            <div class="contact-wrapper">
+                <!-- Kontaktni podatki -->
+                <div class="contact-details fade-in">
+                    
+                    <!-- Telefon (POPRAVEK: Uporablja data-company="phone" za tekst in link) -->
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                        </div>
+                        <div class="contact-text">
+                            <h4>Pokličite nas</h4>
+                            <a href="#" data-company="phone">...</a>
                         </div>
                     </div>
+
+                    <!-- Email (POPRAVEK: Uporablja data-company="email" za tekst in link) -->
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        </div>
+                        <div class="contact-text">
+                            <h4>Pišite nam</h4>
+                            <a href="#" data-company="email">...</a>
+                        </div>
+                    </div>
+
+                    <!-- Lokacija -->
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                        </div>
+                        <div class="contact-text">
+                            <h4>Obiščite nas</h4>
+                            <p data-company="address">...</p>
+                        </div>
+                    </div>
+
+                    <!-- Gumb za Google Forms -->
+                    <a href="#" id="googleFormBtn" target="_blank" class="btn google-form-btn">
+                        Pošlji povpraševanje (Obrazec)
+                    </a>
+                </div>
+
+                <!-- Google Maps (Placeholder slika za demo, spodaj je komentar za iframe) -->
+                <div class="map-wrapper fade-in">
+                    <!-- NAVODILO: Zamenjaj spodnji img tag z Google Maps IFRAME kodo:
+                         <iframe src="TU_PRILEPI_URL" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    -->
+                    <img src="https://placehold.co/600x400/eee/333?text=Zemljevid+Lokacije" alt="Zemljevid" class="img-cover">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Variants Section -->
-    <section id="variants" class="py-20 bg-gray-900 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">Understanding Variants</h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">
-                    While they all say 1780, minute differences tell the story of where and when they were minted. There are over 150 known variants.
-                </p>
-            </div>
+    <!-- 
+        ========================================================================
+        STICKY GUMB ZA KLIC (Lebdeči gumb)
+        ========================================================================
+    -->
+    <a href="#" class="sticky-call" data-company="phoneLink" aria-label="Pokliči nas">
+        <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+    </a>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Card 1 -->
-                <div class="bg-gray-800 rounded-lg p-8 border border-gray-700 hover:border-imperial-gold transition-colors group">
-                    <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center mb-6 group-hover:bg-imperial-gold transition-colors">
-                        <i class="fas fa-search text-xl text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-serif font-bold mb-3">The Saltire (X)</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        Added in 1750, the "X" (Saltire) next to the date indicates the debased standard of the thaler. It became a permanent fixture on the 1780 restrikes.
-                    </p>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="bg-gray-800 rounded-lg p-8 border border-gray-700 hover:border-imperial-gold transition-colors group">
-                    <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center mb-6 group-hover:bg-imperial-gold transition-colors">
-                        <i class="fas fa-feather-alt text-xl text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-serif font-bold mb-3">Eagle Feathers</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        To distinguish mints (Rome, London, Vienna), numismatists look at the tail feathers of the eagle. The arrangement (1-2-1 vs 1-3-1) is a key identifier.
-                    </p>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="bg-gray-800 rounded-lg p-8 border border-gray-700 hover:border-imperial-gold transition-colors group">
-                    <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center mb-6 group-hover:bg-imperial-gold transition-colors">
-                        <i class="fas fa-signature text-xl text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-serif font-bold mb-3">Signatures</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        "S.F." stands for Schöbl and Faby, the mint officials in Guenzburg. This signature was frozen on the coin just like the date.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Original vs Restrike (Interactive Guide) -->
-    <section id="identification" class="py-20 bg-white">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-sm font-bold text-imperial-red uppercase tracking-widest mb-2">Collector's Guide</h2>
-                <h3 class="text-3xl md:text-5xl font-serif font-bold text-gray-900 mb-6">Original vs. Restrike</h3>
-                <p class="text-gray-600 max-w-2xl mx-auto">
-                    Is your coin an 18th-century original or a modern restrike? Most "1780" coins found today were minted after 1850. Here is how to tell them apart.
-                </p>
-            </div>
-
-            <div class="bg-gray-50 rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
-                <!-- Header of Table -->
-                <div class="grid grid-cols-3 bg-gray-100 border-b border-gray-200 p-4 font-serif font-bold text-gray-800 text-sm md:text-base">
-                    <div class="col-span-1">Feature</div>
-                    <div class="col-span-1 text-center text-imperial-gold">Original (Pre-1850)</div>
-                    <div class="col-span-1 text-center text-imperial-red">Modern Restrike</div>
-                </div>
-
-                <!-- Row 1 -->
-                <div class="grid grid-cols-3 p-6 border-b border-gray-100 hover:bg-white transition-colors items-center">
-                    <div class="font-medium text-gray-900">Brooch on Veil</div>
-                    <div class="text-center text-gray-600 text-sm">Usually no pearls, or distinct shape</div>
-                    <div class="text-center text-gray-600 text-sm">Oval with Pearls</div>
-                </div>
-
-                <!-- Row 2 -->
-                <div class="grid grid-cols-3 p-6 border-b border-gray-100 hover:bg-white transition-colors items-center">
-                    <div class="font-medium text-gray-900">Reverse Text</div>
-                    <div class="text-center text-gray-600 text-sm">Often <span class="font-mono bg-gray-200 px-1 rounded">AUST. DUX</span></div>
-                    <div class="text-center text-gray-600 text-sm">Always <span class="font-mono bg-gray-200 px-1 rounded">AVST. DUX</span></div>
-                </div>
-
-                <!-- Row 3 -->
-                <div class="grid grid-cols-3 p-6 border-b border-gray-100 hover:bg-white transition-colors items-center">
-                    <div class="font-medium text-gray-900">Signature</div>
-                    <div class="text-center text-gray-600 text-sm">I.C.-F.A. (Vienna)</div>
-                    <div class="text-center text-gray-600 text-sm">S.F. (Guenzburg/Modern)</div>
-                </div>
+    <!-- 
+        ========================================================================
+        FOOTER (Noga)
+        ========================================================================
+    -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <h3 data-company="name" style="color:white; margin-bottom:10px;">...</h3>
+                <p>Izdelano v Sloveniji z ljubeznijo do lesa.</p>
                 
-                 <!-- Row 4 -->
-                 <div class="grid grid-cols-3 p-6 hover:bg-white transition-colors items-center">
-                    <div class="font-medium text-gray-900">Rarity</div>
-                    <div class="text-center text-gray-600 text-sm"><span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold">RARE</span></div>
-                    <div class="text-center text-gray-600 text-sm"><span class="px-2 py-1 bg-gray-200 text-gray-800 rounded-full text-xs font-bold">COMMON</span></div>
+                <div class="social-links">
+                    <a href="#" id="fbLink" target="_blank" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.15 5.96C15.21 5.96 16.12 6.04 16.39 6.08V8.7H14.86C13.65 8.7 13.41 9.28 13.41 10.12V12.06H16.32L15.85 14.96H13.41V21.96C18.19 21.21 21.85 17.06 21.85 12.06C21.85 6.53 17.35 2.04 12 2.04Z"/></svg>
+                    </a>
+                    <a href="#" id="instaLink" target="_blank" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg>
+                    </a>
                 </div>
             </div>
 
-            <div class="mt-8 text-center">
-                <p class="text-sm text-gray-500 italic">
-                    Note: This is a simplified guide. Consult a specialist for valuation. 
-                    <a href="https://www.theresia.name/en/svergleich.html" target="_blank" class="text-imperial-red hover:underline decoration-1 underline-offset-2">View detailed comparison on original site &rarr;</a>
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-12 border-t border-gray-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-                <div class="col-span-1 md:col-span-2">
-                    <span class="font-serif text-2xl font-bold text-white block mb-4">Theresia<span class="text-imperial-red">.name</span></span>
-                    <p class="text-sm max-w-xs leading-relaxed">
-                        A modern tribute to the original Theresia.name website. Dedicated to the study and history of the Maria Theresa Thaler 1780.
-                    </p>
+            <div class="footer-bottom">
+                <p>&copy; <span id="year"></span> <span data-company="name">...</span>. Vse pravice pridržane.</p>
+                <div class="footer-links">
+                    <a onclick="openModal('modal-terms')">Splošni pogoji</a>
+                    <a onclick="openModal('modal-privacy')">Politika zasebnosti</a>
                 </div>
-                <div>
-                    <h4 class="text-white font-bold uppercase tracking-wider text-xs mb-4">Sections</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#history" class="hover:text-white transition-colors">History</a></li>
-                        <li><a href="#variants" class="hover:text-white transition-colors">Variants</a></li>
-                        <li><a href="#identification" class="hover:text-white transition-colors">Identification</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-white font-bold uppercase tracking-wider text-xs mb-4">External</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="https://www.theresia.name" target="_blank" class="hover:text-white transition-colors">Original Website</a></li>
-                        <li><a href="https://www.mtt.at.tf" target="_blank" class="hover:text-white transition-colors">MTT Austria</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-xs">&copy; 2024 Modern Theresia Tribute. All rights reserved.</p>
-                <div class="flex space-x-4 mt-4 md:mt-0">
-                    <i class="fab fa-github hover:text-white cursor-pointer transition-colors"></i>
-                    <i class="fas fa-coins hover:text-white cursor-pointer transition-colors"></i>
-                </div>
+                <p style="margin-top: 10px; font-size: 0.8rem; color:#666;">Izdelava spletnih strani: SpletnaVizitka</p>
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
+    <!-- 
+        ========================================================================
+        MODALNA OKNA (Skrita vsebina)
+        ========================================================================
+    -->
+
+    <!-- Cookie Banner -->
+    <div class="cookie-banner" id="cookieBanner">
+        <p>Spletna stran uporablja nujne piškotke za nemoteno delovanje. Z uporabo strani se strinjate z uporabo piškotkov.</p>
+        <button class="btn cookie-btn" onclick="acceptCookies()">V redu</button>
+    </div>
+
+    <!-- Modal: Splošni pogoji -->
+    <div id="modal-terms" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('modal-terms')">&times;</span>
+            <h2>Splošni pogoji poslovanja</h2>
+            <hr style="margin: 15px 0;">
+            <p><strong>1. Uvod</strong><br>
+            Tukaj vpišite splošne pogoje poslovanja podjetja Mizarstvo Hrast. To je vzorčno besedilo.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p><strong>2. Naročila in plačila</strong><br>
+            Podrobnosti o načinu naročanja in plačevanja storitev.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Politika zasebnosti -->
+    <div id="modal-privacy" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('modal-privacy')">&times;</span>
+            <h2>Politika zasebnosti (GDPR)</h2>
+            <hr style="margin: 15px 0;">
+            <p><strong>1. Varstvo podatkov</strong><br>
+            Vaše osebne podatke obdelujemo v skladu z veljavno zakonodajo in uredbo GDPR.</p>
+            <p>Podatke, ki jih vpišete v kontaktni obrazec, uporabljamo izključno za pripravo ponudbe in komunikacijo z vami.</p>
+        </div>
+    </div>
+
+    <!-- 
+        ========================================================================
+        JAVASCRIPT KONFIGURACIJA IN LOGIKA
+        ========================================================================
+    -->
     <script>
-        // Mobile Menu Toggle
-        const btn = document.getElementById('mobile-menu-btn');
-        const menu = document.getElementById('mobile-menu');
+        /* * 1. KONFIGURACIJA PODJETJA (UREDI SAMO TUKAJ!)
+         * Vsi podatki se bodo avtomatsko prepisali na pravo mesto na strani.
+         */
+        const companyData = {
+            name: "Mizarstvo Hrast",
+            legalName: "Mizarstvo Hrast, obdelava lesa d.o.o.",
+            address: "Gozdna pot 12, 1000 Ljubljana",
+            phone: "+386 41 987 654",
+            email: "info@mizarstvo-hrast-demo.si",
+            registration: "12345678", // Matična
+            tax: "SI87654321",         // Davčna
+            bank: "SI56 0201 0000 1111 222", // TRR
+            social: {
+                facebook: "https://facebook.com/mizarstvo-demo",
+                instagram: "https://instagram.com/mizarstvo-demo"
+            },
+            formLink: "https://docs.google.com/forms/d/e/1FAIpQLSdExampleLink/viewform" // Link do Google Form
+        };
 
-        btn.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
-        });
+        /* * 2. FUNKCIJA ZA POLNJENJE PODATKOV
+         * Ta koda poišče elemente in vstavi podatke iz zgornjega objekta.
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Nastavi tekstovne vsebine
+            document.querySelectorAll('[data-company="name"]').forEach(el => el.textContent = companyData.name);
+            document.querySelectorAll('[data-company="legalName"]').forEach(el => el.textContent = companyData.legalName);
+            document.querySelectorAll('[data-company="address"]').forEach(el => el.textContent = companyData.address);
+            document.querySelectorAll('[data-company="registration"]').forEach(el => el.textContent = companyData.registration);
+            document.querySelectorAll('[data-company="tax"]').forEach(el => el.textContent = companyData.tax);
+            document.querySelectorAll('[data-company="bank"]').forEach(el => el.textContent = companyData.bank);
 
-        // Sticky Navbar effect
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 10) {
-                navbar.classList.add('shadow-md');
-            } else {
-                navbar.classList.remove('shadow-md');
+            // POPRAVEK: Združena logika za telefon in email (nastavi tekst IN link hkrati)
+            document.querySelectorAll('[data-company="phone"]').forEach(el => {
+                el.textContent = companyData.phone;
+                if(el.tagName === 'A') el.href = `tel:${companyData.phone.replace(/\s/g, '')}`;
+            });
+
+            document.querySelectorAll('[data-company="email"]').forEach(el => {
+                el.textContent = companyData.email;
+                if(el.tagName === 'A') el.href = `mailto:${companyData.email}`;
+            });
+
+            // Posebna logika za sticky gumb (ker nima teksta, ampak samo link)
+            document.querySelectorAll('[data-company="phoneLink"]').forEach(el => el.href = `tel:${companyData.phone.replace(/\s/g, '')}`);
+
+            // Nastavi socialna omrežja in obrazec
+            const fbLink = document.getElementById('fbLink');
+            const instaLink = document.getElementById('instaLink');
+            const formBtn = document.getElementById('googleFormBtn');
+
+            if(fbLink) fbLink.href = companyData.social.facebook;
+            if(instaLink) instaLink.href = companyData.social.instagram;
+            if(formBtn) formBtn.href = companyData.formLink;
+
+            // Avtomatska letnica v nogi
+            document.getElementById('year').textContent = new Date().getFullYear();
+
+            // Cookie logika (Preveri če je uporabnik že potrdil)
+            if (!localStorage.getItem('cookiesAccepted')) {
+                setTimeout(() => {
+                    document.getElementById('cookieBanner').classList.add('show');
+                }, 1000);
             }
         });
+
+        /* * 3. MOBILNI MENI LOGIKA
+         * Odpiranje/zapiranje in avtomatski zapik ob kliku na povezavo
+         */
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        /* * 4. ANIMACIJE NA SCROLL (IntersectionObserver)
+         * Elementi se prikažejo, ko pridejo v vidno polje
+         */
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        /* * 5. MODALNA OKNA & PIŠKOTKI
+         */
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Zapri modal če klikneš izven okna
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        function acceptCookies() {
+            localStorage.setItem('cookiesAccepted', 'true');
+            document.getElementById('cookieBanner').classList.remove('show');
+        }
     </script>
 </body>
 </html>
