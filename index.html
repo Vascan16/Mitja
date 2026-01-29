@@ -1,81 +1,96 @@
 <!DOCTYPE html>
 <html lang="sl">
 <head>
-    <!-- 
-        ========================================================================
-        OSNOVNE NASTAVITVE IN META PODATKI (SEO)
-        ========================================================================
-    -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- Dinamično nastavljen naslov (JS ga bo povozil, če je nastavljen, sicer ostane ta) -->
-    <title>Frizerski Studio Glamur - Vaša lepota, naš navdih</title>
+    <!-- SEO METADATA (Izpolni opis) -->
+    <meta name="description" content="Kakovostna notranja oprema iz masivnega lesa. Kuhinje, omare, stopnice in pohištvo po meri. Ročna izdelava, Leseni Dotik Mengeš.">
+    <meta name="keywords" content="mizarstvo, masivni les, pohištvo po meri, kuhinje, Mengeš, notranja oprema">
+    <meta name="author" content="Leseni Dotik d.o.o.">
     
-    <!-- SEO Opis: TUKAJ NAPIŠI KRATEK OPIS STRANI (cca 160 znakov) ZA GOOGLE -->
-    <meta name="description" content="Ekskluzivno frizersko razvajanje v centru Ljubljane. Frizerski studio Glamur nudi vrhunsko striženje, barvanje in nego las. Naročite se danes!">
-    
-    <!-- Open Graph (Za lep prikaz na Facebooku/Instagramu) -->
-    <meta property="og:title" content="Frizerski Studio Glamur">
-    <meta property="og:description" content="Vaša lepota, naš navdih. Ekskluzivno frizersko razvajanje v centru Ljubljane.">
-    <meta property="og:image" content="https://placehold.co/1200x630"> <!-- ZAMENJAJ URL S SLIKO ZA SOCIALNA OMREŽJA -->
-    <meta property="og:url" content="https://www.studio-glamur.si">
+    <!-- OPEN GRAPH (Za socialna omrežja) -->
+    <meta property="og:title" content="Leseni Dotik | Les po meri vašega doma">
+    <meta property="og:description" content="Kakovostna notranja oprema iz masivnega lesa, izdelana z občutkom in natančnostjo.">
+    <meta property="og:image" content="https://placehold.co/1200x630/0a0a0a/800000?text=Leseni+Dotik+Gothic">
+    <meta property="og:url" content="https://www.lesenidotik.si">
+    <meta property="og:type" content="website">
 
-    <!-- Uvoz Pisav (Google Fonts: Playfair Display za naslove, Lato za tekst) -->
+    <!-- DINAMIČEN NASLOV (JS ga bo povozil, ampak za backup) -->
+    <title>Leseni Dotik | Mizarstvo in notranja oprema</title>
+
+    <!-- FAVICON PLACEHOLDER -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪵</text></svg>">
+
+    <!-- FONTS: Cinzel (Gotski naslovi) + Inter (Tekst) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-    <!-- 
-        ========================================================================
-        CSS STILI (DIZAJN IN PREDLOGA)
-        ========================================================================
-    -->
     <style>
-        /* --- 1. SPREMENLJIVKE (Barve in Pisave - SPREMINJAJ TUKAJ) --- */
+        /* -----------------------------------------------------------
+           1. CSS SPREMENLJIVKE (CONFIG) & RESET - GOTSKI STIL
+           Dark Mode + Crimson Accents
+        ----------------------------------------------------------- */
         :root {
-            --primary-color: #D4AF37;       /* Zlata barva */
-            --primary-dark: #b59020;        /* Temnejša zlata za hover efekte */
-            --bg-color: #F9F9F9;            /* Nežno krem/bela */
-            --white: #ffffff;
-            --text-color: #333333;          /* Temno siva za besedilo */
-            --light-grey: #e0e0e0;
-            --footer-bg: #222222;           /* Temno ozadje za footer */
+            /* Barvna paleta: Gotska / Dark Mode */
+            --color-bg-main: #0a0a0a;     /* Skoraj črna - Glavno ozadje */
+            --color-bg-alt: #141414;      /* Zelo temno siva - Sekundarno ozadje */
+            --color-card-bg: #1f1f1f;     /* Temno siva - Kartice */
             
-            --font-heading: 'Playfair Display', serif;
-            --font-body: 'Lato', sans-serif;
+            --color-primary: #e0e0e0;     /* Svetlo siva/Srebrna - Glavni tekst */
+            --color-primary-muted: #a0a0a0; /* Zamolkla siva - Stranski tekst */
+            
+            --color-accent: #8a0303;      /* "Blood Red" / Temno rdeča - Poudarki */
+            --color-accent-hover: #b30000; /* Svetlejša rdeča za hover */
+            
+            --color-border: #333333;      /* Robovi */
+            
+            /* Pisave */
+            --font-heading: 'Cinzel', serif; /* Gotski/Klasični stil */
+            --font-body: 'Inter', sans-serif;
 
+            /* Razmiki in dimenzije */
             --container-width: 1200px;
             --header-height: 80px;
-            --border-radius: 8px;
-            --shadow: 0 4px 15px rgba(0,0,0,0.05);
+            --border-radius: 4px; /* Bolj ostr robovi za gotski stil */
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.7); /* Močnejše sence */
         }
 
-        /* --- 2. RESET IN OSNOVE --- */
-        * {
+        /* Osnovni Reset */
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         html {
             scroll-behavior: smooth;
-            scroll-padding-top: var(--header-height); /* Da header ne prekrije naslova sekcije */
+            scroll-padding-top: var(--header-height);
         }
 
         body {
             font-family: var(--font-body);
-            color: var(--text-color);
-            background-color: var(--bg-color);
+            color: var(--color-primary);
+            background-color: var(--color-bg-main);
             line-height: 1.6;
-            overflow-x: hidden; /* Prepreči horizontalni scroll */
+            overflow-x: hidden;
         }
 
-        h1, h2, h3, h4, h5, h6 {
+        h1, h2, h3, h4 {
             font-family: var(--font-heading);
-            color: var(--text-color);
-            margin-bottom: 1rem;
             font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: var(--color-primary);
+            text-transform: uppercase; /* Gotski napisi so pogosto velike črke */
+            letter-spacing: 1px;
+        }
+        
+        h2 {
+            border-bottom: 2px solid var(--color-accent);
+            display: inline-block;
+            padding-bottom: 10px;
         }
 
         a {
@@ -92,80 +107,72 @@
             max-width: 100%;
             height: auto;
             display: block;
+            filter: brightness(0.9) contrast(1.1); /* Rahlo temnejše slike */
         }
 
-        /* --- 3. POMOŽNI RAZREDI --- */
+        /* Utility classes */
         .container {
+            width: 90%;
             max-width: var(--container-width);
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 15px;
         }
 
-        .section-padding {
-            padding: 20px 0;
+        .section {
+            padding: 5rem 0;
+        }
+
+        .bg-beige {
+            /* Preimenovano logično v kodi, ampak ohranimo ime class-a za združljivost */
+            background-color: var(--color-bg-alt);
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
         }
 
         .text-center {
             text-align: center;
         }
 
-        .section-title {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--text-color);
+        .hidden {
+            display: none !important;
         }
 
-        .section-subtitle {
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Gumb Stil */
+        /* Gumbi - Gotski stil */
         .btn {
             display: inline-block;
-            background-color: var(--primary-color);
-            color: var(--white);
-            padding: 12px 30px;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-radius: 0; /* Elegantni ostri robovi ali pa dodaj var(--border-radius) */
+            padding: 12px 32px;
+            background-color: var(--color-accent);
+            color: #ffffff;
+            font-family: var(--font-heading);
             font-weight: 700;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            letter-spacing: 1px;
+            border-radius: 2px; /* Ostri robovi */
+            border: 1px solid var(--color-accent);
             cursor: pointer;
-            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(138, 3, 3, 0.3);
+            text-transform: uppercase;
         }
 
         .btn:hover {
-            background-color: var(--primary-dark);
+            background-color: var(--color-accent-hover);
+            border-color: var(--color-accent-hover);
             transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(179, 0, 0, 0.5);
         }
 
-        .btn-outline {
-            background-color: transparent;
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--primary-color);
-            color: var(--white);
-        }
-
-        /* --- 4. HEADER & NAVIGACIJA --- */
+        /* -----------------------------------------------------------
+           2. HEADER & NAVIGACIJA
+        ----------------------------------------------------------- */
         header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: var(--header-height);
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: rgba(10, 10, 10, 0.95); /* Temno ozadje */
             backdrop-filter: blur(10px);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 1px solid var(--color-border);
             z-index: 1000;
             display: flex;
             align-items: center;
@@ -180,871 +187,1105 @@
 
         .logo {
             font-family: var(--font-heading);
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-color);
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--color-primary);
             letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
-        
+
         .logo span {
-            color: var(--primary-color);
+            color: var(--color-accent);
         }
 
-        .nav-menu {
+        /* Desktop Nav */
+        .nav-links {
             display: flex;
-            gap: 30px;
+            gap: 2rem;
         }
 
-        .nav-link {
-            font-weight: 600;
+        .nav-links a {
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            color: var(--color-primary);
             text-transform: uppercase;
-            font-size: 0.9rem;
             letter-spacing: 1px;
+            font-family: var(--font-heading);
         }
 
-        .nav-link:hover, .nav-link.active {
-            color: var(--primary-color);
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--color-accent);
+            transition: width 0.3s;
         }
 
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hamburger Menu Icon */
         .hamburger {
             display: none;
             cursor: pointer;
         }
 
-        /* --- 5. HERO SEKCIJA --- */
+        /* Mobile Nav Styles */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+                z-index: 1001;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 80%;
+                max-width: 300px;
+                background-color: var(--color-bg-alt);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+                transition: right 0.3s ease-in-out;
+                box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+                border-left: 1px solid var(--color-border);
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .nav-links a {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* -----------------------------------------------------------
+           3. HERO SEKCIJA
+        ----------------------------------------------------------- */
         .hero {
             height: 100vh;
-            width: 100%;
-            /* TUKAJ ZAMENJAJ URL ZA OZADJE (Velika slika) */
-            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('guilherme-petri-PtOfbGkU3uI-unsplash.jpg');
-            background-size: cover;
-            background-position: center;
-            /* Parallax efekt za desktop */
-            background-attachment: fixed; 
+            min-height: 600px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: var(--white);
-            padding-top: var(--header-height);
+            color: var(--color-white);
+            position: relative;
+            
+            /* Temnejši overlay za gotski efekt */
+            background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(20, 0, 0, 0.6)), url('https://placehold.co/1920x1080/1a1a1a/800000?text=Gotsko+Mizarstvo');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            border-bottom: 4px solid var(--color-accent);
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                background-attachment: scroll;
+            }
         }
 
         .hero-content {
             max-width: 800px;
-            padding: 20px;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s ease forwards;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.5); /* Steklen efekt */
+            backdrop-filter: blur(3px);
         }
 
         .hero h1 {
-            font-size: 3.5rem;
-            color: var(--white);
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            margin-bottom: 1rem;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
         }
 
         .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 40px;
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            margin-bottom: 2rem;
             font-weight: 300;
+            color: #ddd;
         }
 
-        /* --- 6. O NAS / PREDNOSTI --- */
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* -----------------------------------------------------------
+           4. O NAS / PREDNOSTI
+        ----------------------------------------------------------- */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
         }
 
         .feature-card {
-            background: var(--white);
-            padding: 40px 30px;
+            background: var(--color-card-bg);
+            padding: 2rem;
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
             text-align: center;
-            transition: transform 0.3s ease;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, border-color 0.3s;
+            border: 1px solid var(--color-border);
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-5px);
+            border-color: var(--color-accent);
         }
 
         .feature-icon {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 20px;
-            fill: var(--primary-color);
+            width: 70px;
+            height: 70px;
+            background-color: var(--color-bg-main);
+            border: 1px solid var(--color-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: var(--color-accent);
+            box-shadow: 0 0 15px rgba(138, 3, 3, 0.2);
         }
 
-        /* --- 7. STORITVE --- */
-        .services {
-            background-color: var(--white);
+        .feature-icon svg {
+            width: 35px;
+            height: 35px;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        /* -----------------------------------------------------------
+           5. STORITVE
+        ----------------------------------------------------------- */
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header span {
+            color: var(--color-accent);
+            font-family: var(--font-heading);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            display: block;
+            margin-bottom: 0.5rem;
         }
 
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
         }
 
         .service-card {
-            border: 1px solid var(--light-grey);
+            background: var(--color-card-bg);
             border-radius: var(--border-radius);
             overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .service-card:hover {
-            border-color: var(--primary-color);
             box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--color-border);
         }
 
         .service-img {
             width: 100%;
-            height: 200px;
-            object-fit: cover; /* KLJUČNO: Prepreči raztegovanje slik */
-        }
-
-        .service-content {
-            padding: 25px;
-        }
-
-        .service-price {
-            color: var(--primary-color);
-            font-weight: 700;
-            font-size: 1.1rem;
-            display: block;
-            margin-top: 10px;
-        }
-
-        /* --- 8. GALERIJA --- */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 15px;
-        }
-
-        .gallery-item {
-            position: relative;
+            height: 250px;
             overflow: hidden;
-            aspect-ratio: 1/1; /* Kvadratne slike */
-            border-radius: var(--border-radius);
-            cursor: pointer;
+            border-bottom: 1px solid var(--color-accent);
         }
 
-        .gallery-item img {
+        /* TukajSlika - Storitve */
+        .service-img img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.5s ease;
         }
 
-        .gallery-item:hover img {
-            transform: scale(1.1);
+        .service-card:hover .service-img img {
+            transform: scale(1.05);
         }
 
-        /* --- 9. URNIK & OSEBNA IZKAZNICA --- */
-        .info-section {
-            background-color: var(--bg-color);
+        .service-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
-        .info-grid {
+        .service-content h3 {
+            margin-bottom: 0.5rem;
+            color: var(--color-primary);
+        }
+        
+        .service-content p {
+            color: var(--color-primary-muted);
+        }
+
+        .service-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--color-primary-muted);
+            border-top: 1px solid #333;
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .service-details.open {
+            max-height: 500px;
+        }
+
+        .service-toggle {
+            margin-top: auto;
+            background: none;
+            border: none;
+            color: var(--color-accent);
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .service-toggle svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s;
+        }
+
+        .service-toggle.active svg {
+            transform: rotate(180deg);
+        }
+
+        /* -----------------------------------------------------------
+           6. OSEBNA IZKAZNICA & URNIK
+        ----------------------------------------------------------- */
+        .business-info-wrapper {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 50px;
+            gap: 4rem;
         }
 
-        .opening-hours, .business-card {
-            background: var(--white);
-            padding: 40px;
+        @media (max-width: 768px) {
+            .business-info-wrapper {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        .info-box {
+            background: var(--color-card-bg);
+            padding: 2rem;
             border-radius: var(--border-radius);
+            border-left: 4px solid var(--color-accent);
             box-shadow: var(--shadow);
+            border-top: 1px solid var(--color-border);
+            border-right: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
         }
 
-        .hours-list {
-            width: 100%;
-        }
-
-        .hours-list li {
+        .schedule-list li {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-primary-muted);
         }
 
-        .hours-list li:last-child {
+        .schedule-list li:last-child {
             border-bottom: none;
         }
 
-        .business-data p {
-            margin-bottom: 10px;
-            font-size: 0.95rem;
+        .schedule-list span:first-child {
+            font-weight: 600;
+            color: var(--color-primary);
         }
 
-        .business-data strong {
-            color: var(--text-color);
-            min-width: 120px;
-            display: inline-block;
-        }
-
-        /* --- 10. KONTAKT & MAP --- */
-        .contact-wrapper {
+        .legal-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0;
-            background: var(--white);
+            grid-template-columns: auto 1fr;
+            gap: 1rem 2rem;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--color-primary-muted);
+        }
+
+        .legal-label {
+            font-weight: 600;
+            color: var(--color-accent); /* Rdeči labeli */
+        }
+
+        /* -----------------------------------------------------------
+           7. KONTAKT & MAPA
+        ----------------------------------------------------------- */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 2rem;
+            background: var(--color-card-bg);
             border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: var(--shadow);
+            border: 1px solid var(--color-border);
         }
 
-        .contact-info {
-            padding: 50px;
-            background: var(--white);
+        @media (max-width: 768px) {
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .contact-details {
+            padding: 3rem;
+            background-color: #0f0f0f; /* Še temneje za kontrast */
+            color: var(--color-primary);
+            border-right: 1px solid var(--color-border);
         }
 
         .contact-item {
             display: flex;
-            align-items: center;
-            margin-bottom: 25px;
-            font-size: 1.1rem;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
         .contact-item svg {
+            min-width: 24px;
             width: 24px;
             height: 24px;
-            margin-right: 15px;
-            fill: var(--primary-color);
-            flex-shrink: 0;
-        }
-
-        .map-container {
-            width: 100%;
-            height: 100%;
-            min-height: 400px;
-            background-color: #eee;
-            position: relative;
+            stroke: var(--color-accent);
         }
         
-        .map-frame {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            object-fit: cover;
+        .contact-item a {
+            font-size: 1.1rem;
+            font-weight: 600;
         }
 
-        /* --- 11. FOOTER --- */
-        footer {
-            background-color: var(--footer-bg);
-            color: #ccc;
-            padding: 60px 0 20px;
-            font-size: 0.9rem;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .footer h3 {
-            color: var(--white);
-            margin-bottom: 20px;
+        .contact-item a:hover {
+            color: var(--color-accent);
         }
 
         .social-links {
             display: flex;
-            gap: 15px;
+            gap: 1rem;
+            margin-top: 2rem;
         }
 
-        .social-links a svg {
-            width: 24px;
-            height: 24px;
-            fill: var(--white);
-            transition: fill 0.3s;
-        }
-
-        .social-links a:hover svg {
-            fill: var(--primary-color);
-        }
-
-        .footer-bottom {
-            border-top: 1px solid #444;
-            padding-top: 20px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .footer-links a {
-            margin: 0 10px;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        /* --- 12. LEBDEČI GUMB (Sticky Call) --- */
-        .sticky-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: var(--primary-color);
-            color: white;
-            width: 60px;
-            height: 60px;
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--color-accent);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.5);
-            z-index: 990;
-            transition: transform 0.3s;
-            animation: pulse 2s infinite;
+            color: var(--color-primary);
+            transition: all 0.3s;
+            background: rgba(138, 3, 3, 0.1);
         }
 
-        .sticky-btn:hover {
-            transform: scale(1.1);
+        .social-links a:hover {
+            background-color: var(--color-accent);
+            color: #fff;
+            box-shadow: 0 0 10px var(--color-accent);
+        }
+
+        .map-wrapper {
+            position: relative;
+            min-height: 400px;
+            background-color: #333;
         }
         
-        .sticky-btn svg {
-            width: 28px;
-            height: 28px;
-            fill: white;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
-        }
-
-        /* --- 13. ANIMACIJE (Fade In) --- */
-        .fade-in-section {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-            will-change: opacity, visibility;
-        }
-
-        .fade-in-section.is-visible {
-            opacity: 1;
-            transform: none;
-        }
-
-        /* --- 14. MODALI & COOKIES --- */
-        .modal {
-            display: none;
-            position: fixed;
+        .map-wrapper iframe {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
+            border: 0;
+            filter: invert(90%) hue-rotate(180deg); /* Dark mode mapa hack */
         }
 
-        .modal.active {
-            display: flex;
+        .form-btn-wrapper {
+            margin-top: 2rem;
         }
 
-        .modal-content {
-            background: var(--white);
-            padding: 40px;
-            width: 90%;
-            max-width: 600px;
-            border-radius: var(--border-radius);
-            position: relative;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 2rem;
-            cursor: pointer;
+        /* -----------------------------------------------------------
+           8. FOOTER
+        ----------------------------------------------------------- */
+        footer {
+            background-color: #000000;
             color: #666;
+            padding: 3rem 0;
+            font-size: 0.9rem;
+            border-top: 4px solid var(--color-accent);
         }
 
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            text-align: center;
+        }
+
+        .footer-links a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #888;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--color-accent);
+        }
+
+        /* -----------------------------------------------------------
+           9. LEBDEČI ELEMENTI (Sticky)
+        ----------------------------------------------------------- */
+        /* Sticky Phone Button */
+        .sticky-call {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--color-accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(138, 3, 3, 0.6);
+            z-index: 900;
+            transition: transform 0.3s;
+            animation: pulse 2s infinite;
+            border: 2px solid #5a0000;
+        }
+
+        .sticky-call:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(138, 3, 3, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(138, 3, 3, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(138, 3, 3, 0); }
+        }
+
+        /* Back to top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background-color: var(--color-card-bg);
+            color: var(--color-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 899;
+            border: 1px solid var(--color-accent);
+        }
+
+        .back-to-top.visible {
+            opacity: 0.8;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            opacity: 1;
+            background-color: var(--color-accent);
+            color: #fff;
+        }
+
+        /* -----------------------------------------------------------
+           10. MODALI & PIŠKOTKI
+        ----------------------------------------------------------- */
+        /* Cookie Banner */
         .cookie-banner {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: var(--text-color);
-            color: var(--white);
-            padding: 15px 20px;
-            display: none; /* JS bo spremenil na flex če ni potrjeno */
+            background-color: var(--color-card-bg);
+            box-shadow: 0 -2px 20px rgba(0,0,0,0.5);
+            padding: 1rem 0;
+            z-index: 2000;
+            transform: translateY(100%);
+            transition: transform 0.5s;
+            border-top: 2px solid var(--color-accent);
+            color: var(--color-primary);
+        }
+
+        .cookie-banner.show {
+            transform: translateY(0);
+        }
+
+        .cookie-content {
+            display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 1500;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        /* Modal Box */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85); /* Temnejši overlay */
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background-color: var(--color-card-bg);
+            color: var(--color-primary);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            position: relative;
+            border: 1px solid var(--color-accent);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            background: none;
+            border: none;
+        }
+
+        /* -----------------------------------------------------------
+           ANIMACIJE NA SCROLL (Fade In)
+        ----------------------------------------------------------- */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, visibility;
         }
         
-        .cookie-banner.active {
-            display: flex;
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
         }
 
-        /* --- 15. RESPONSIVE / MEDIA QUERIES (Mobile First Override) --- */
-        @media (max-width: 992px) {
-            .contact-wrapper { grid-template-columns: 1fr; }
-            .info-grid { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 768px) {
-            .hamburger { display: block; }
-            
-            .nav-menu {
-                position: fixed;
-                left: -100%;
-                top: var(--header-height);
-                flex-direction: column;
-                background-color: var(--white);
-                width: 100%;
-                height: calc(100vh - var(--header-height));
-                text-align: center;
-                transition: 0.3s;
-                padding-top: 40px;
-                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-            }
-
-            .nav-menu.active {
-                left: 0;
-            }
-
-            .hero h1 { font-size: 2.5rem; }
-            
-            /* BUG FIX ZA IPHONE: Prepreči zoom efekt ozadja */
-            .hero { background-attachment: scroll; }
-            
-            .cookie-banner { flex-direction: column; gap: 10px; text-align: center; }
-        }
     </style>
 </head>
 <body>
 
-    <!-- 
-        ========================================================================
-        NAVIGACIJA
-        ========================================================================
-    -->
+    <!-- 1. HEADER -->
     <header>
         <div class="container nav-container">
-            <a href="#" class="logo">GLAMUR</a>
+            <!-- Logo tekst -->
+            <a href="#" class="logo">Leseni<span>Dotik</span></a>
             
-            <!-- Hamburger Ikona (SVG) -->
-            <div class="hamburger" id="hamburger-btn">
-                <svg viewBox="0 0 100 80" width="30" height="30" fill="var(--text-color)">
-                    <rect width="100" height="10"></rect>
-                    <rect y="30" width="100" height="10"></rect>
-                    <rect y="60" width="100" height="10"></rect>
-                </svg>
-            </div>
-
+            <!-- Navigacija -->
             <nav>
-                <ul class="nav-menu" id="nav-menu">
-                    <li><a href="#home" class="nav-link">Domov</a></li>
-                    <li><a href="#about" class="nav-link">O nas</a></li>
-                    <li><a href="#services" class="nav-link">Storitve</a></li>
-                    <li><a href="#gallery" class="nav-link">Galerija</a></li>
-                    <li><a href="#contact" class="nav-link">Kontakt</a></li>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#domov">Domov</a></li>
+                    <li><a href="#o-nas">O nas</a></li>
+                    <li><a href="#storitve">Storitve</a></li>
+                    <li><a href="#urnik">Urnik</a></li>
+                    <li><a href="#kontakt">Kontakt</a></li>
                 </ul>
             </nav>
+
+            <!-- Hamburger Ikona (SVG) -->
+            <div class="hamburger" id="hamburger">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </div>
         </div>
     </header>
 
-    <!-- 
-        ========================================================================
-        HERO SEKCIJA
-        ========================================================================
-    -->
-    <section id="home" class="hero">
-        <div class="hero-content fade-in-section">
-            <h1>Vaša lepota, naš navdih.</h1>
-            <p>Ekskluzivno frizersko razvajanje v centru Ljubljane. Prepustite se rokam strokovnjakov.</p>
-            <a href="#contact" class="btn">Naročite se</a>
+    <!-- 2. HERO SEKCIJA -->
+    <section id="domov" class="hero">
+        <div class="hero-content">
+            <h1>Les po meri vašega doma</h1>
+            <p>Kakovostna notranja oprema iz masivnega lesa, izdelana z občutkom in natančnostjo.</p>
+            <a href="#kontakt" class="btn">Zahtevaj ponudbo</a>
         </div>
     </section>
 
-    <!-- 
-        ========================================================================
-        O NAS / PREDNOSTI
-        ========================================================================
-    -->
-    <section id="about" class="section-padding">
+    <!-- 3. O NAS / PREDNOSTI -->
+    <section id="o-nas" class="section fade-in-section">
         <div class="container">
-            <div class="text-center fade-in-section">
-                <h2 class="section-title">Zakaj izbrati nas?</h2>
-                <p class="section-subtitle">V studiu Glamur verjamemo, da je vsaka stranka edinstvena. Zato vam nudimo popolnoma personaliziran pristop.</p>
+            <div class="section-header">
+                <span>Tradicija & Kvaliteta</span>
+                <h2>Zakaj izbrati Leseni Dotik?</h2>
+                <p>Združujemo tradicionalno mizarstvo s sodobnimi oblikovalskimi trendi.</p>
             </div>
 
             <div class="features-grid">
-                <!-- Kartica 1: Strokovnost -->
-                <div class="feature-card fade-in-section">
-                    <!-- SVG Ikona: Škarje/Zvezda -->
-                    <svg class="feature-icon" viewBox="0 0 24 24">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    <h3>Strokovnost</h3>
-                    <p>Naša ekipa se redno izobražuje v tujini in sledi najnovejšim trendom striženja in barvanja.</p>
+                <!-- Kartica 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <!-- Ikona Roke/Izdelava (Zamenjano: Roka) -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" /></svg>
+                    </div>
+                    <h3>Ročna izdelava</h3>
+                    <p>Vsak kos pohištva je unikaten, ročno obdelan in prilagojen vašim željam ter prostoru.</p>
                 </div>
 
-                <!-- Kartica 2: Kozmetika -->
-                <div class="feature-card fade-in-section">
-                    <!-- SVG Ikona: Kapljica/Steklenička -->
-                    <svg class="feature-icon" viewBox="0 0 24 24">
-                        <path d="M12 22c4.97 0 9-4.03 9-9c0-4.97-9-13-9-13S3 8.03 3 13c0 4.97 4.03 9 9 9z"/>
-                    </svg>
-                    <h3>Vrhunska kozmetika</h3>
-                    <p>Uporabljamo le certificirane, naravi prijazne produkte, ki vašim lasem povrnejo sijaj.</p>
+                <!-- Kartica 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <!-- Ikona Svet/Naravno (Zamenjano: Globus) -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /><path stroke-linecap="round" stroke-linejoin="round" d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" /></svg>
+                    </div>
+                    <h3>Naravni materiali</h3>
+                    <p>Uporabljamo le najboljši masivni les in ekološka olja, ki zagotavljajo trajnost in zdravje.</p>
                 </div>
 
-                <!-- Kartica 3: Osebni pristop -->
-                <div class="feature-card fade-in-section">
-                    <!-- SVG Ikona: Srce -->
-                    <svg class="feature-icon" viewBox="0 0 24 24">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                    </svg>
-                    <h3>Osebni pristop</h3>
-                    <p>Vzamemo si čas za posvet in svetovanje, da skupaj najdemo stil, ki vam najbolj pristaja.</p>
+                <!-- Kartica 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <!-- Ikona Ure/Izkušnje (Zamenjano: Ura) -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    </div>
+                    <h3>Dolgoletne izkušnje</h3>
+                    <p>Z vami smo od ideje in izrisa do končne montaže. Zanesljivost je naše vodilo.</p>
+                </div>
+
+                <!-- Kartica 4 (NOVA) -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <!-- Ikona Kruh (Nova ikona: Hlebec kruha) -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 13c.667 0 1.333.333 2 1s1.333 1.333 2 2v2a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-2c0-.667.667-1.333 2-2s1.333-1 2-1" /><path stroke-linecap="round" stroke-linejoin="round" d="M19 13a7 7 0 0 0-14 0" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 13v-3" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 13v-3" /></svg>
+                    </div>
+                    <h3>Domač kruh</h3>
+                    <p>Vsako stranko ob zaključku montaže presenetimo s sveže pečenim hlebcem domačega kruha.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 
-        ========================================================================
-        STORITVE
-        ========================================================================
-    -->
-    <section id="services" class="section-padding services">
+    <!-- 4. STORITVE -->
+    <section id="storitve" class="section bg-beige fade-in-section">
         <div class="container">
-            <div class="text-center fade-in-section">
-                <h2 class="section-title">Naše Storitve</h2>
-                <p class="section-subtitle">Od klasičnega striženja do modernih tehnik barvanja.</p>
+            <div class="section-header">
+                <span>Naša ponudba</span>
+                <h2>Kaj ustvarjamo za vas?</h2>
             </div>
 
             <div class="services-grid">
-                <!-- Storitev 1 -->
-                <div class="service-card fade-in-section">
-                    <!-- ZAMENJAJ SRC S SLIKO STORITVE (600x400) -->
-                    <img src="https://placehold.co/600x400?text=Žensko+striženje" alt="Žensko striženje" class="service-img">
+                <!-- Storitev 1: Kuhinje -->
+                <div class="service-card">
+                    <div class="service-img">
+                        <!-- TukajSlika: Kuhinja -->
+                        <img src="https://placehold.co/600x400/1a1a1a/8a0303?text=Kuhinje+po+meri" alt="Kuhinje po meri">
+                    </div>
                     <div class="service-content">
-                        <h3>Žensko striženje</h3>
-                        <p>Svetovanje, sproščujoče pranje z masažo lasišča, striženje in moderna fen frizura.</p>
+                        <h3>Kuhinje po meri</h3>
+                        <p>Funkcionalne in estetske kuhinje, prilagojene vašemu načinu kuhanja.</p>
+                        <div class="service-details">
+                            Izdelujemo moderne in rustikalne kuhinje. Vključujemo vrhunska okovja (mehko zapiranje), pametne rešitve za shranjevanje in trpežne delovne plošče iz masivnega lesa.
+                        </div>
+                        <button class="service-toggle" onclick="toggleService(this)">
+                            Več informacij
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Storitev 2 -->
-                <div class="service-card fade-in-section">
-                    <img src="https://placehold.co/600x400?text=Barvanje" alt="Barvanje in Balayage" class="service-img">
+                <!-- Storitev 2: Omare -->
+                <div class="service-card">
+                    <div class="service-img">
+                        <!-- TukajSlika: Omare -->
+                        <img src="https://placehold.co/600x400/2a2a2a/8a0303?text=Vgradne+Omare" alt="Vgradne omare">
+                    </div>
                     <div class="service-content">
-                        <h3>Barvanje & Balayage</h3>
-                        <p>Napredne tehnike barvanja (Balayage, Ombre, Babylights), preliv in intenzivna nega.</p>
+                        <h3>Omare in garderobe</h3>
+                        <p>Maksimalen izkoristek prostora z vgradnimi omarami in drsnimi vrati.</p>
+                        <div class="service-details">
+                            Od garderobnih sob do omar v spalnicah in predsobah. Nudimo širok izbor notranjih razporeditev (predali, obešalniki, izvlečne police) in materialov ličnic.
+                        </div>
+                        <button class="service-toggle" onclick="toggleService(this)">
+                            Več informacij
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Storitev 3 -->
-                <div class="service-card fade-in-section">
-                    <img src="https://placehold.co/600x400?text=Poročne+pričeske" alt="Poročne pričeske" class="service-img">
+                <!-- Storitev 3: Stopnice -->
+                <div class="service-card">
+                    <div class="service-img">
+                        <!-- TukajSlika: Stopnice -->
+                        <img src="https://placehold.co/600x400/3a3a3a/ffffff?text=Lesene+Stopnice" alt="Lesene stopnice">
+                    </div>
                     <div class="service-content">
-                        <h3>Poročne pričeske</h3>
-                        <p>Izdelava prečudovite poročne frizure. Vključuje poskusno frizuro in oblikovanje na dan poroke.</p>
+                        <h3>Stopnice</h3>
+                        <p>Masivne lesene stopnice, ki povežejo vaš dom v celoto.</p>
+                        <div class="service-details">
+                            Izdelava samonosilnih stopnic ali oblaganje betonskih stopnic z masivnim lesom (hrast, jesen, bukev). Vključno z izdelavo in montažo ograj.
+                        </div>
+                        <button class="service-toggle" onclick="toggleService(this)">
+                            Več informacij
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
                     </div>
                 </div>
-                
-                <!-- Storitev 4 -->
-                <div class="service-card fade-in-section">
-                    <img src="https://placehold.co/600x400?text=Nega+las" alt="Nega las" class="service-img">
+
+                <!-- Storitev 4: Mize in pohištvo -->
+                <div class="service-card">
+                    <div class="service-img">
+                        <!-- TukajSlika: Miza -->
+                        <img src="https://placehold.co/600x400/4a4a4a/8a0303?text=Mize+in+Pohištvo" alt="Mize in pohištvo">
+                    </div>
                     <div class="service-content">
-                        <h3>Globinska nega</h3>
-                        <p>Obnova poškodovanih las s keratinom in proteini za dolgotrajen sijaj in zdrav videz.</p>
+                        <h3>Mize in ostalo pohištvo</h3>
+                        <p>Jedilne mize, komode, regali in kopalniško pohištvo.</p>
+                        <div class="service-details">
+                            Unikatne jedilne mize iz enega kosa lesa, klubske mizice, TV regali in kopalniški bloki, odporni na vlago. Vse narejeno po vaših merah.
+                        </div>
+                        <button class="service-toggle" onclick="toggleService(this)">
+                            Več informacij
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
                     </div>
                 </div>
-            </div>
-            
-            <div class="text-center" style="margin-top: 40px;">
-                <a href="#contact" class="btn btn-outline">Pošlji povpraševanje</a>
             </div>
         </div>
     </section>
 
-    <!-- 
-        ========================================================================
-        GALERIJA
-        ========================================================================
-    -->
-    <section id="gallery" class="section-padding">
+    <!-- 5. URNIK IN OSEBNA IZKAZNICA -->
+    <section id="urnik" class="section fade-in-section">
         <div class="container">
-            <h2 class="section-title text-center fade-in-section">Galerija Zadovoljnih Strank</h2>
-            <div class="gallery-grid" style="margin-top: 40px;">
-                <!-- ZAMENJAJ URL-JE SLIK (6 slik) -->
-                <div class="gallery-item fade-in-section"><img src="https://placehold.co/500x500?text=Frizura+1" alt="Frizura 1"></div>
-                <div class="gallery-item fade-in-section"><img src="https://placehold.co/500x500?text=Frizura+2" alt="Frizura 2"></div>
-                <div class="gallery-item fade-in-section"><img src="https://placehold.co/500x500?text=Frizura+3" alt="Frizura 3"></div>
-                <div class="gallery-item fade-in-section"><img src="https://placehold.co/500x500?text=Frizura+4" alt="Frizura 4"></div>
-                <div class="gallery-item fade-in-section"><img src="https://placehold.co/500x500?text=Frizura+5" alt="Frizura 5"></div>
-                <div class="gallery-item fade-in-section"><img src="https://placehold.co/500x500?text=Frizura+6" alt="Frizura 6"></div>
+            <div class="section-header">
+                <span>Informacije</span>
+                <h2>Podatki o podjetju</h2>
+            </div>
+
+            <div class="business-info-wrapper">
+                <!-- Urnik -->
+                <div class="info-box">
+                    <h3>Delovni čas</h3>
+                    <ul class="schedule-list">
+                        <li>
+                            <span>Ponedeljek - Petek:</span>
+                            <span>8:00 – 16:00</span>
+                        </li>
+                        <li>
+                            <span>Sobota:</span>
+                            <span>Po dogovoru</span>
+                        </li>
+                        <li>
+                            <span>Nedelja in prazniki:</span>
+                            <span>Zaprto</span>
+                        </li>
+                    </ul>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; color: #888;">*Za obisk delavnice nas prosim predhodno pokličite.</p>
+                </div>
+
+                <!-- Osebna Izkaznica (Pravni podatki) -->
+                <div class="info-box bg-beige" style="border-left-color: var(--color-accent);">
+                    <h3>Osebna izkaznica</h3>
+                    <div class="legal-grid">
+                        <div class="legal-label">Naziv:</div>
+                        <div class="data-full-name">Nalaganje...</div>
+                        
+                        <div class="legal-label">Naslov:</div>
+                        <div class="data-address">Nalaganje...</div>
+                        
+                        <div class="legal-label">Davčna št.:</div>
+                        <div class="data-tax">Nalaganje...</div>
+                        
+                        <div class="legal-label">Matična št.:</div>
+                        <div class="data-reg">Nalaganje...</div>
+                        
+                        <div class="legal-label">TRR:</div>
+                        <div class="data-iban">Nalaganje...</div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    
-
-    <!-- 
-        ========================================================================
-        KONTAKT & LOKACIJA
-        ========================================================================
-    -->
-    <section id="contact" class="section-padding">
+    <!-- 6. KONTAKT & LOKACIJA -->
+    <section id="kontakt" class="section bg-beige fade-in-section">
         <div class="container">
-            <h2 class="section-title text-center fade-in-section">Stopite v stik</h2>
-            
-            <div class="contact-wrapper fade-in-section">
-                <!-- Levi del: Kontaktni podatki -->
-                <div class="contact-info">
-                    <p style="margin-bottom: 30px;">Imate vprašanje ali se želite naročiti? Pokličite nas ali izpolnite obrazec.</p>
-                    
-                    <div class="contact-item">
-                        <!-- SVG Telefon -->
-                        <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 1.25 0 2.45.2 3.57.57.35.11.74.03 1.02-.24l2.2-2.2z"/></svg>
-                        <a href="#" class="js-phone-link"><b class="js-phone">...</b></a>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <!-- SVG Email -->
-                        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                        <a href="#" class="js-email-link"><span class="js-email">...</span></a>
-                    </div>
+            <div class="section-header">
+                <span>Stopite v stik</span>
+                <h2>Imate idejo za projekt?</h2>
+                <p>Pošljite povpraševanje ali nas pokličite za posvet.</p>
+            </div>
 
+            <div class="contact-container">
+                <!-- Levi del: Podatki -->
+                <div class="contact-details">
+                    <!-- Telefon -->
                     <div class="contact-item">
-                        <!-- SVG Lokacija -->
-                        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                        <span class="js-address">...</span>
-                    </div>
-
-                    <!-- Social Media Links v Kontaktu -->
-                    <div class="contact-item" style="margin-top: 30px; display: block;">
-                        <p style="margin-bottom: 15px; font-size: 1rem; color: #666;">Sledite nam na socialnih omrežjih:</p>
-                        <div class="social-links">
-                            <a href="#" class="js-ig-link" target="_blank" aria-label="Instagram">
-                                <!-- Instagram SVG -->
-                                <svg viewBox="0 0 24 24" style="fill: var(--primary-color); width: 30px; height: 30px;"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
-                            </a>
-                            <a href="#" class="js-fb-link" target="_blank" aria-label="Facebook">
-                                <!-- Facebook SVG -->
-                                <svg viewBox="0 0 24 24" style="fill: var(--primary-color); width: 30px; height: 30px;"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.15 5.96C15.21 5.96 16.12 6.04 16.12 6.04V8.51H15.01C13.77 8.51 13.38 9.28 13.38 10.07V12.06H16.15L15.71 14.96H13.38V21.96C18.16 21.21 21.82 17.06 21.82 12.06C21.82 6.53 17.32 2.04 12 2.04Z" /></svg>
-                            </a>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                        <div>
+                            <span style="display:block; font-size: 0.8rem; opacity: 0.8;">Pokličite nas</span>
+                            <a href="#" class="data-phone-link">Nalaganje...</a>
                         </div>
                     </div>
 
-                    <!-- Gumb za Google Forms -->
-                    <div style="margin-top: 40px;">
-                        <a href="#" class="btn js-gform-link" target="_blank">Izpolni Obrazec za Naročanje</a>
+                    <!-- Email -->
+                    <div class="contact-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        <div>
+                            <span style="display:block; font-size: 0.8rem; opacity: 0.8;">Pišite nam</span>
+                            <a href="#" class="data-email-link">Nalaganje...</a>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Desni del: Google Maps (Slika/Iframe) -->
-                <div class="map-container">
-                    <!-- Placeholder za mapo. Ko boš imel pravi iframe, ga prilepi namesto <img> -->
-                     <iframe class="map-frame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2768.123456789!2d14.505!3d46.056!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDbCsDAzJzIxLjYiTiAxNMKwMzAnMTguMCJF!5e0!3m2!1sen!2ssi!4v1600000000000!5m2!1sen!2ssi" allowfullscreen="" loading="lazy"></iframe>
-                </div>
-            </div>
-        </div>
-    </section>
+                    <!-- Lokacija -->
+                    <div class="contact-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        <div>
+                            <span style="display:block; font-size: 0.8rem; opacity: 0.8;">Obiščite nas</span>
+                            <span class="data-address">Nalaganje...</span>
+                        </div>
+                    </div>
 
-    <!-- 
-        ========================================================================
-        URNIK & INFO (OSEBNA IZKAZNICA)
-        ========================================================================
-    -->
-    <section class="section-padding info-section">
-        <div class="container info-grid">
-            
-            <!-- Urnik -->
-            <div class="opening-hours fade-in-section">
-                <h3>Delovni Čas</h3>
-                <ul class="hours-list">
-                    <li><span>Ponedeljek - Petek</span> <span>09:00 - 19:00</span></li>
-                    <li><span>Sobota</span> <span>08:00 - 13:00</span></li>
-                    <li><span>Nedelja in Prazniki</span> <span>Zaprto</span></li>
-                </ul>
-                <div style="margin-top: 20px; font-style: italic; font-size: 0.9rem;">
-                    * Zaželeno je predhodno naročilo preko telefona.
-                </div>
-            </div>
-
-            <!-- Osebna Izkaznica Podjetja -->
-            <div class="business-card fade-in-section">
-                <h3>Podatki o podjetju</h3>
-                <div class="business-data">
-                    <p><strong>Naziv:</strong> <span class="js-full-name">Nalaganje...</span></p>
-                    <p><strong>Naslov:</strong> <span class="js-address">Nalaganje...</span></p>
-                    <p><strong>Matična št.:</strong> <span class="js-maticna">Nalaganje...</span></p>
-                    <p><strong>Davčna št.:</strong> <span class="js-davcna">Nalaganje...</span></p>
-                    <p><strong>Zavezanec za DDV:</strong> NE</p>
-                    <p><strong>TRR:</strong> <span class="js-trr">Nalaganje...</span></p>
-                    <p><strong>Email:</strong> <span class="js-email">Nalaganje...</span></p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- 
-        ========================================================================
-        FOOTER
-        ========================================================================
-    -->
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div>
-                    <h2 style="color: #ffffff;">GLAMUR</h2>
-                    <p style="color: #ffffff;">Vaša destinacija za lepoto in sprostitev v osrčju Ljubljane.</p>
-                </div>
-                <div>
-                    <h2 style="color: #ffffff;">Sledite nam</h2>
+                    <!-- Socialna omrežja -->
                     <div class="social-links">
-                        <a href="#" class="js-ig-link" target="_blank" aria-label="Instagram">
-                            <!-- Instagram SVG -->
-                            <svg viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
+                        <a href="#" target="_blank" class="data-fb" aria-label="Facebook">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
                         </a>
-                        <a href="#" class="js-fb-link" target="_blank" aria-label="Facebook">
-                            <!-- Facebook SVG -->
-                            <svg viewBox="0 0 24 24"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.15 5.96C15.21 5.96 16.12 6.04 16.12 6.04V8.51H15.01C13.77 8.51 13.38 9.28 13.38 10.07V12.06H16.15L15.71 14.96H13.38V21.96C18.16 21.21 21.82 17.06 21.82 12.06C21.82 6.53 17.32 2.04 12 2.04Z" /></svg>
+                        <a href="#" target="_blank" class="data-ig" aria-label="Instagram">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                         </a>
                     </div>
+
+                    <!-- Gumb za Google Forms -->
+                    <div class="form-btn-wrapper">
+                        <a href="#" target="_blank" class="btn data-form-link" style="width: 100%; text-align: center;">Pošlji povpraševanje (Obrazec)</a>
+                    </div>
+                </div>
+
+                <!-- Desni del: Google Maps -->
+                <div class="map-wrapper">
+                    <!-- Google Maps Iframe Placeholder -->
+                    <!-- POMEMBNO: Če imate API ključ ali embed kodo, zamenjajte src spodaj. Trenutno kaže generično lokacijo. -->
+                    <iframe 
+                        src="https://maps.google.com/maps?q=Gozdna%20pot%2012%2C%201234%20Menge%C5%A1&t=&z=13&ie=UTF8&iwloc=&output=embed" 
+                        allowfullscreen="" loading="lazy">
+                    </iframe>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- 7. FOOTER -->
+    <footer>
+        <div class="container footer-content">
+            <div class="logo" style="font-size: 1.2rem;">Leseni<span>Dotik</span></div>
             
-            <div class="footer-bottom">
-                <p>&copy; <span class="js-year">2024</span> <span class="js-full-name">...</span> Vse pravice pridržane.</p>
-                <div class="footer-links">
-                    <a onclick="openModal('modal-terms')">Splošni pogoji</a>
-                    <a onclick="openModal('modal-privacy')">Politika zasebnosti</a>
-                </div>
-                <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 10px;">Izdelava spletnih strani: SpletnaVizitka</p>
+            <div class="footer-links">
+                <a href="#" onclick="openModal('terms-modal'); return false;">Splošni pogoji</a>
+                <a href="#" onclick="openModal('privacy-modal'); return false;">Politika zasebnosti</a>
+            </div>
+
+            <div>
+                © <span id="year"></span> <span class="data-full-name">Leseni Dotik d.o.o.</span> Vse pravice pridržane.
+            </div>
+            
+            <div style="font-size: 0.8rem; opacity: 0.5;">
+                Izdelava spletnih strani: GarmutWeb
             </div>
         </div>
     </footer>
 
-    <!-- 
-        ========================================================================
-        STICKY CALL BUTTON
-        ========================================================================
-    -->
-    <a href="#" class="sticky-btn js-phone-link" aria-label="Pokliči nas">
-        <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg>
+    <!-- STICKY ELEMENTI -->
+    <!-- Gumb za klic -->
+    <a href="#" class="sticky-call data-phone-link" aria-label="Pokliči nas">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
     </a>
 
-    <!-- 
-        ========================================================================
-        MODALI (SKRITI DIV-i)
-        ========================================================================
-    -->
+    <!-- Nazaj na vrh -->
+    <div class="back-to-top" id="backToTop" onclick="window.scrollTo(0,0)">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    </div>
+
+    <!-- 8. MODALI IN SKRITI ELEMENTI -->
     
     <!-- Cookie Banner -->
-    <div id="cookie-banner" class="cookie-banner">
-        <div>
-            Spletna stran uporablja nujne piškotke za zagotavljanje boljše uporabniške izkušnje.
-        </div>
-        <div>
-            <button class="btn btn-outline" style="border-color: white; color: white; margin-left: 20px;" onclick="acceptCookies()">V redu</button>
+    <div class="cookie-banner" id="cookieBanner">
+        <div class="container cookie-content">
+            <p>Spletna stran uporablja nujne piškotke za zagotavljanje boljše uporabniške izkušnje. Z nadaljevanjem uporabe se strinjate z njihovo uporabo.</p>
+            <button class="btn" onclick="acceptCookies()" style="padding: 8px 20px; font-size: 0.9rem;">V redu</button>
         </div>
     </div>
 
-    <!-- Modal Splošni Pogoji -->
-    <div id="modal-terms" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('modal-terms')">&times;</span>
-            <h2>Splošni pogoji poslovanja</h2>
-            <p>Tukaj vnesite besedilo splošnih pogojev poslovanja.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    <!-- Modal: Splošni pogoji -->
+    <div id="terms-modal" class="modal-overlay" onclick="closeModal(event, 'terms-modal')">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal(null, 'terms-modal')">&times;</button>
+            <h3>Splošni pogoji poslovanja</h3>
+            <p><strong>1. Uvod</strong><br>Ti splošni pogoji urejajo poslovanje podjetja Leseni Dotik d.o.o...</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. (Tukaj vstavite celotno besedilo splošnih pogojev).</p>
+            <p><strong>2. Naročila</strong><br>Naročila so zavezujoča po potrditvi ponudbe in plačilu avansa...</p>
         </div>
     </div>
 
-    <!-- Modal Politika Zasebnosti -->
-    <div id="modal-privacy" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('modal-privacy')">&times;</span>
-            <h2>Politika zasebnosti (GDPR)</h2>
-            <p>Upravitelj osebnih podatkov je Frizerski studio Glamur, Ana Kovač s.p.</p>
-            <p>Podatki, ki jih zbiramo preko obrazcev, se uporabljajo izključno za namen komunikacije s stranko in niso posredovani tretjim osebam.</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    <!-- Modal: Politika zasebnosti -->
+    <div id="privacy-modal" class="modal-overlay" onclick="closeModal(event, 'privacy-modal')">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal(null, 'privacy-modal')">&times;</button>
+            <h3>Politika zasebnosti (GDPR)</h3>
+            <p><strong>1. Upravljavec podatkov</strong><br>Upravljavec osebnih podatkov je Leseni Dotik d.o.o.</p>
+            <p><strong>2. Namen zbiranja</strong><br>Vaše podatke (ime, email, telefon) zbiramo izključno za namen priprave ponudbe in komunikacije glede vašega povpraševanja.</p>
+            <p>Podatkov ne posredujemo tretjim osebam. (Tukaj vstavite celotno besedilo GDPR politike).</p>
         </div>
     </div>
 
-
-    <!-- 
-        ========================================================================
-        JAVASCRIPT (LOGIKA)
-        ========================================================================
-    -->
+    <!-- 9. JAVASCRIPT CONFIG & LOGIKA -->
     <script>
-        /* * 1. KONFIGURACIJA PODATKOV 
-         * Spremeni podatke tukaj in spremenili se bodo povsod na strani!
-         */
+        /* ===========================================================
+           A. PODATKI PODJETJA (CONFIG)
+           Spremeni podatke samo tukaj in posodobili se bodo povsod.
+        =========================================================== */
         const companyData = {
-            name: "Frizerski Studio Glamur",
-            fullLegalName: "Frizerski studio Glamur, Ana Kovač s.p.",
-            address: "Cankarjeva cesta 10, 1000 Ljubljana",
-            phone: "+386 40 777 888",
-            phoneClean: "+38640777888", // Format za klicanje (brez presledkov)
-            email: "info@studio-glamur.si",
-            maticna: "87654321",
-            davcna: "SI12345678",
-            trr: "SI56 0000 1111 2222 333",
-            gFormLink: "https://docs.google.com/forms/d/e/1FAIpQLSfD_PLACEHOLDER_LINK/viewform",
-            facebook: "https://facebook.com/studioglamur",
-            instagram: "https://instagram.com/studio.glamur"
+            nameShort: "Leseni Dotik",
+            nameFull: "Leseni Dotik, obdelava lesa in notranja oprema, d.o.o.",
+            address: "Gozdna pot 12, 1234 Mengeš",
+            phone: "+386 41 789 321",
+            email: "info@lesenidotik.si",
+            taxId: "SI98765432",   // Zavezanec za DDV
+            regId: "87654321",    // Matična
+            iban: "SI56 0310 2000 1234 567",
+            social: {
+                fb: "https://www.facebook.com/lesenidotik",
+                ig: "https://www.instagram.com/lesenidotik"
+            },
+            formsLink: "https://forms.gle/lesenidotik-povprasevanje"
         };
 
-        /* * 2. INJECT DATA FUNCTION 
-         * Poišče vse elemente z določenimi razredi in vstavi podatke
-         */
-        function injectData() {
-            // Text data
-            document.querySelectorAll('.js-full-name').forEach(el => el.innerText = companyData.fullLegalName);
-            document.querySelectorAll('.js-address').forEach(el => el.innerText = companyData.address);
-            document.querySelectorAll('.js-phone').forEach(el => el.innerText = companyData.phone);
-            document.querySelectorAll('.js-email').forEach(el => el.innerText = companyData.email);
-            document.querySelectorAll('.js-maticna').forEach(el => el.innerText = companyData.maticna);
-            document.querySelectorAll('.js-davcna').forEach(el => el.innerText = companyData.davcna);
-            document.querySelectorAll('.js-trr').forEach(el => el.innerText = companyData.trr);
-            document.querySelector('.js-year').innerText = new Date().getFullYear();
+        /* ===========================================================
+           B. FUNKCIJE ZA POLNJENJE PODATKOV
+        =========================================================== */
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Polnjenje teksta
+            setText('.data-full-name', companyData.nameFull);
+            setText('.data-address', companyData.address);
+            setText('.data-tax', companyData.taxId);
+            setText('.data-reg', companyData.regId);
+            setText('.data-iban', companyData.iban);
+            
+            // 2. Polnjenje in nastavljanje linkov
+            // Telefon
+            document.querySelectorAll('.data-phone-link').forEach(el => {
+                el.href = `tel:${companyData.phone.replace(/\s/g, '')}`;
+                
+                // Tekst nastavimo SAMO, če to NI sticky gumb, da ne povozimo SVG ikone
+                if (!el.classList.contains('sticky-call')) {
+                    el.textContent = companyData.phone;
+                }
+            });
 
-            // Links (href attributes)
-            document.querySelectorAll('.js-phone-link').forEach(el => el.href = `tel:${companyData.phoneClean}`);
-            document.querySelectorAll('.js-email-link').forEach(el => el.href = `mailto:${companyData.email}`);
-            document.querySelectorAll('.js-gform-link').forEach(el => el.href = companyData.gFormLink);
-            document.querySelectorAll('.js-fb-link').forEach(el => el.href = companyData.facebook);
-            document.querySelectorAll('.js-ig-link').forEach(el => el.href = companyData.instagram);
-        }
+            // Email
+            document.querySelectorAll('.data-email-link').forEach(el => {
+                el.textContent = companyData.email;
+                el.href = `mailto:${companyData.email}`;
+            });
 
-        /* * 3. MOBILNI MENI
-         */
-        const hamburger = document.getElementById('hamburger-btn');
-        const navMenu = document.getElementById('nav-menu');
-        const navLinks = document.querySelectorAll('.nav-link');
+            // Socialna omrežja
+            setHref('.data-fb', companyData.social.fb);
+            setHref('.data-ig', companyData.social.ig);
+            
+            // Google Forms
+            setHref('.data-form-link', companyData.formsLink);
 
-        hamburger.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
+            // Letnica v nogi
+            document.getElementById('year').textContent = new Date().getFullYear();
         });
 
-        // Zapri meni ko klikneš na povezavo
-        navLinks.forEach(link => {
+        // Pomožni funkciji
+        function setText(selector, value) {
+            document.querySelectorAll(selector).forEach(el => el.textContent = value);
+        }
+        function setHref(selector, value) {
+            document.querySelectorAll(selector).forEach(el => el.href = value);
+        }
+
+        /* ===========================================================
+           C. UI LOGIKA (Navigacija, Modali, Animacije)
+        =========================================================== */
+        
+        // 1. Mobilna Navigacija
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Zapri meni ob kliku na povezavo
+        document.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', () => {
-                navMenu.classList.remove('active');
+                navLinks.classList.remove('active');
             });
         });
 
-        /* * 4. ANIMACIJE NA SCROLL (Intersection Observer)
-         */
-        const observerOptions = {
-            threshold: 0.1 // Element se pokaže ko je 10% viden
-        };
+        // 2. Scroll Efekti (Back to top & Animations)
+        const backToTopBtn = document.getElementById('backToTop');
+        const observerOptions = { threshold: 0.1 };
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -1058,45 +1299,88 @@
             observer.observe(section);
         });
 
-        /* * 5. MODAL LOGIC
-         */
+        window.addEventListener('scroll', () => {
+            // Prikaz gumba "Nazaj na vrh"
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+
+        // 3. Storitve Toggle (Accordion v kartici)
+        function toggleService(btn) {
+            const details = btn.previousElementSibling; // Element .service-details
+            details.classList.toggle('open');
+            btn.classList.toggle('active');
+            
+            if(details.classList.contains('open')) {
+                btn.innerHTML = 'Manj informacij <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;margin-left:5px;transform:rotate(180deg)"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+            } else {
+                btn.innerHTML = 'Več informacij <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;margin-left:5px;"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+            }
+        }
+
+        // 4. Modalna okna logika
         function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
+            document.getElementById(modalId).classList.add('open');
             document.body.style.overflow = 'hidden'; // Prepreči scrollanje ozadja
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        // Zapri modal če klikneš izven vsebine
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
+        function closeModal(event, modalId) {
+            // Zapri če klikneš na X ali na overlay (temno ozadje)
+            if (event === null || event.target.classList.contains('modal-overlay')) {
+                document.getElementById(modalId).classList.remove('open');
                 document.body.style.overflow = 'auto';
             }
         }
 
-        /* * 6. COOKIE BANNER
-         */
-        function checkCookies() {
-            if (!localStorage.getItem('cookiesAccepted')) {
-                document.getElementById('cookie-banner').classList.add('active');
-            }
+        // 5. Cookie Banner Logika
+        const cookieBanner = document.getElementById('cookieBanner');
+        
+        if (!localStorage.getItem('cookiesAccepted')) {
+            // Pokaži po kratkem zamiku
+            setTimeout(() => {
+                cookieBanner.classList.add('show');
+            }, 1000);
         }
 
         function acceptCookies() {
             localStorage.setItem('cookiesAccepted', 'true');
-            document.getElementById('cookie-banner').classList.remove('active');
+            cookieBanner.classList.remove('show');
         }
 
-        /* * INIT - POGENI VSE FUNKCIJE
-         */
-        window.addEventListener('DOMContentLoaded', () => {
-            injectData();
-            checkCookies();
-        });
+        // 6. Schema.org JSON-LD (SEO)
+        const schemaData = {
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness", // Ali Carpenter/HomeGoodsStore
+            "name": companyData.nameFull,
+            "image": "https://placehold.co/1200x630/0a0a0a/800000?text=Leseni+Dotik+Gothic",
+            "telephone": companyData.phone,
+            "email": companyData.email,
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "Gozdna pot 12",
+                "addressLocality": "Mengeš",
+                "postalCode": "1234",
+                "addressCountry": "SI"
+            },
+            "openingHoursSpecification": [
+                {
+                    "@type": "OpeningHoursSpecification",
+                    "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                    "opens": "08:00",
+                    "closes": "16:00"
+                }
+            ],
+            "url": "https://www.lesenidotik.si",
+            "priceRange": "$$"
+        };
+
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.text = JSON.stringify(schemaData);
+        document.head.appendChild(script);
 
     </script>
 </body>
