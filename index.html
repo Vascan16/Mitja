@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Euro Coin Tracker</title>
+    <title>Evro Zbiratelj</title>
     
-    <!-- Popravljeni in delujoči povezavi (brez napačnih številk verzij) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* Custom scrollbar and minor tweaks */
         body { font-family: system-ui, -apple-system, sans-serif; }
         .coin-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .coin-card:hover { transform: translateY(-8px); }
@@ -18,9 +16,8 @@
 </head>
 <body class="min-h-screen bg-slate-50 pb-16">
 
-    <!-- Header Dashboard -->
+    <!-- Glavna nadzorna plošča -->
     <header class="bg-slate-900 text-white pt-10 pb-10 px-4 sm:px-6 md:px-8 rounded-b-[2.5rem] shadow-2xl relative overflow-hidden border-b-4 border-yellow-500">
-        <!-- Background decoration -->
         <div class="absolute top-0 right-0 opacity-5 pointer-events-none transform translate-x-1/4 -translate-y-1/4">
             <i data-lucide="circle" class="w-[500px] h-[500px]" stroke-width="8"></i>
         </div>
@@ -30,33 +27,33 @@
                 <div>
                     <h1 class="text-3xl md:text-5xl font-extrabold flex items-center gap-3 tracking-tight">
                         <i data-lucide="euro" class="text-yellow-400 drop-shadow-md w-10 h-10"></i>
-                        Euro Collector
+                        Evro Zbiratelj
                     </h1>
-                    <p class="text-slate-400 mt-2 text-md md:text-lg font-medium">Your personal 2€ tracking dashboard</p>
+                    <p class="text-slate-400 mt-2 text-md md:text-lg font-medium">Tvoja osebna nadzorna plošča za 2€ kovance</p>
                 </div>
                 
                 <div class="flex flex-col sm:items-end gap-3 w-full sm:w-auto">
-                    <!-- Total Value Badge -->
-                    <div class="bg-gradient-to-r from-yellow-500 to-yellow-400 text-yellow-950 px-5 py-2.5 rounded-2xl shadow-lg font-black text-2xl flex items-center justify-center gap-2 border-2 border-yellow-300 w-full sm:w-auto transform transition-transform hover:scale-105" title="Total Face Value of Collected Coins">
+                    <!-- Značka za skupno vrednost -->
+                    <div class="bg-gradient-to-r from-yellow-500 to-yellow-400 text-yellow-950 px-5 py-2.5 rounded-2xl shadow-lg font-black text-2xl flex items-center justify-center gap-2 border-2 border-yellow-300 w-full sm:w-auto transform transition-transform hover:scale-105" title="Skupna nominalna vrednost zbranih kovancev">
                         <i data-lucide="wallet" class="w-6 h-6 opacity-80"></i>
                         <span id="total-value">€0.00</span>
                     </div>
                     <button onclick="resetCollection()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm border border-slate-700 w-full sm:w-auto">
                         <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                        Reset Progress
+                        Ponastavi zbirko
                     </button>
                 </div>
             </div>
 
-            <!-- Dual Progress Stats -->
+            <!-- Statistika napredka -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
-                <!-- Global & Regular Stats -->
+                <!-- Redni kovanci -->
                 <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-6 shadow-inner relative overflow-hidden">
                     <div class="flex justify-between items-center mb-4">
                         <div class="text-slate-300 font-bold text-sm uppercase tracking-wider flex items-center gap-2">
                             <i data-lucide="globe" class="text-blue-400 w-4 h-4"></i>
-                            Eurozone Standard Coins
+                            Evrski redni kovanci
                         </div>
                         <i data-lucide="award" id="reg-award" class="text-yellow-400 animate-pulse hidden w-6 h-6"></i>
                     </div>
@@ -69,12 +66,12 @@
                     </div>
                 </div>
 
-                <!-- Slovenian Stats (Themed!) -->
+                <!-- Slovenski spominski kovanci -->
                 <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-6 shadow-inner relative overflow-hidden">
                     <div class="flex justify-between items-center mb-4">
                         <div class="text-slate-300 font-bold text-sm uppercase tracking-wider flex items-center gap-2">
                             <i data-lucide="star" class="text-yellow-400 w-4 h-4"></i>
-                            Slovenian Commemoratives
+                            Slovenski spominski kovanci
                         </div>
                         <i data-lucide="trophy" id="sl-award" class="text-yellow-400 animate-pulse hidden w-6 h-6"></i>
                     </div>
@@ -82,7 +79,7 @@
                         <div class="text-5xl font-black text-white" id="sl-collected">0</div>
                         <div class="text-xl text-slate-400 font-medium mb-1">/ <span id="sl-total">0</span></div>
                     </div>
-                    <!-- Slovenian Flag Themed Progress Bar -->
+                    <!-- Vrstica napredka v barvah slovenske zastave -->
                     <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden shadow-inner flex">
                         <div id="sl-bar-white" class="bg-white h-full transition-all duration-1000 ease-out" style="width: 0%"></div>
                         <div id="sl-bar-blue" class="bg-blue-500 h-full transition-all duration-1000 ease-out" style="width: 0%"></div>
@@ -96,14 +93,14 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 mt-8">
         
-        <!-- Universal Search & Filters -->
+        <!-- Iskanje in filtri -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-10 flex flex-col md:flex-row gap-4 sticky top-4 z-40 backdrop-blur-md bg-white/90">
             <div class="flex-1 relative">
                 <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
                 <input 
                     type="text" 
                     id="searchInput"
-                    placeholder="Search by title, year, or country..." 
+                    placeholder="Išči po nazivu, letniku ali državi..." 
                     class="w-full pl-12 pr-4 py-3 bg-slate-100 border-none rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
                 />
             </div>
@@ -112,34 +109,34 @@
                     id="statusFilter"
                     class="px-5 py-3 bg-slate-100 border-none rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700 cursor-pointer min-w-[160px]"
                 >
-                    <option value="All">All Coins</option>
-                    <option value="Collected">Collected</option>
-                    <option value="Missing">Missing</option>
+                    <option value="All">Vsi kovanci</option>
+                    <option value="Collected">Zbrani</option>
+                    <option value="Missing">Manjkajoči</option>
                 </select>
             </div>
         </div>
 
-        <!-- SECTION 1: Regular Eurozone Coins -->
+        <!-- SEKCIJA 1: Redni evrokovanci -->
         <section class="mb-16">
             <div class="flex items-center gap-3 mb-6">
                 <div class="p-3 bg-blue-100 text-blue-600 rounded-xl">
                     <i data-lucide="globe" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-slate-800 tracking-tight">Eurozone Standard Issues</h2>
-                    <p class="text-slate-500 font-medium text-sm">The 24 regular national circulation coins (including multiple series)</p>
+                    <h2 class="text-2xl font-black text-slate-800 tracking-tight">Evrski redni kovanci</h2>
+                    <p class="text-slate-500 font-medium text-sm">Redni nacionalni kovanci iz obtoka (vključno z več serijami)</p>
                 </div>
                 <span id="reg-complete-badge" class="hidden ml-auto bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
-                    <i data-lucide="check-circle" class="w-4 h-4"></i> Complete
+                    <i data-lucide="check-circle" class="w-4 h-4"></i> Zbrano
                 </span>
             </div>
 
             <div id="regular-coins-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-                <!-- Coins generated by JavaScript -->
+                <!-- Vsebina se generira samodejno -->
             </div>
         </section>
 
-        <!-- SECTION 2: Slovenian Commemoratives -->
+        <!-- SEKCIJA 2: Slovenski spominski kovanci -->
         <section class="mb-10">
             <div class="flex items-center gap-3 mb-6">
                 <div class="p-3 bg-blue-100 text-blue-800 rounded-xl relative overflow-hidden">
@@ -149,109 +146,109 @@
                     <i data-lucide="star" class="w-6 h-6 relative z-10"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black text-slate-800 tracking-tight">Slovenian Commemoratives</h2>
-                    <p class="text-slate-500 font-medium text-sm">Special issues from 2007 to 2026</p>
+                    <h2 class="text-2xl font-black text-slate-800 tracking-tight">Slovenski spominski kovanci</h2>
+                    <p class="text-slate-500 font-medium text-sm">Posebne izdaje od leta 2007 do 2026</p>
                 </div>
                 <span id="sl-complete-badge" class="hidden ml-auto bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
-                    <i data-lucide="check-circle" class="w-4 h-4"></i> Complete
+                    <i data-lucide="check-circle" class="w-4 h-4"></i> Zbrano
                 </span>
             </div>
 
             <div id="slovenian-coins-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-                <!-- Coins generated by JavaScript -->
+                <!-- Vsebina se generira samodejno -->
             </div>
         </section>
 
     </main>
 
-    <!-- JavaScript Application Logic -->
+    <!-- JavaScript Logika -->
     <script>
-        // --- 1. DATASET ---
+        // --- 1. PODATKOVNA BAZA ---
         const COINS = [
-            // REGULAR COINS
-            { id: 'reg-ad', type: 'Regular', year: 'Standard', country: 'Andorra', inscription: 'ANDORRA', flag: '🇦🇩', title: 'Standard 2€ - Coat of Arms', icon: 'landmark', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Andorra.jpg?width=200', description: 'Features the coat of arms of Andorra with the national motto "virtus unita fortior" (virtue united is stronger).' },
-            { id: 'reg-at', type: 'Regular', year: 'Standard', country: 'Austria', inscription: 'ÖSTERREICH', flag: '🇦🇹', title: 'Standard 2€ - Bertha von Suttner', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2e_oes.png?width=200', description: 'Features a portrait of Bertha von Suttner, Nobel Peace Prize laureate.' },
+            // REDNI KOVANCI
+            { id: 'reg-ad', type: 'Regular', year: 'Redna izdaja', country: 'Andora', inscription: 'ANDORRA', flag: '🇦🇩', title: 'Redni 2€ - Grb Andore', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Andorra.jpg', description: 'Prikazuje grb Andore z nacionalnim geslom "virtus unita fortior" (vrline združene so močnejše).' },
+            { id: 'reg-at', type: 'Regular', year: 'Redna izdaja', country: 'Avstrija', inscription: 'ÖSTERREICH', flag: '🇦🇹', title: 'Redni 2€ - Bertha von Suttner', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_oes.png', description: 'Prikazuje portret Berthe von Suttner, dobitnice Nobelove nagrade za mir, ki simbolizira zavezanost Avstrije miru.' },
             
-            // Belgium Series
-            { id: 'reg-be-1', type: 'Regular', year: 'Standard', country: 'Belgium', inscription: 'BELGIE', flag: '🇧🇪', title: 'Standard 2€ (1st Series) - King Albert II', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2e_bel.png?width=200', description: '1st series: Features the effigy of King Albert II (1999-2007 design).' },
-            { id: 'reg-be-2', type: 'Regular', year: 'Standard', country: 'Belgium', inscription: 'BELGIE', flag: '🇧🇪', title: 'Standard 2€ (2nd Series) - King Albert II Updated', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Belgium_2euro_2008.jpg?width=200', description: '2nd series: Updated portrait of King Albert II to comply with new EU design rules (2008-2013).' },
-            { id: 'reg-be-3', type: 'Regular', year: 'Standard', country: 'Belgium', inscription: 'BELGIE', flag: '🇧🇪', title: 'Standard 2€ (3rd Series) - King Philippe', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Belgium_2euro_2014ph.jpg?width=200', description: '3rd series: Features the effigy of King Philippe of Belgium in profile looking to the right.' },
+            // Belgija - Serije
+            { id: 'reg-be-1', type: 'Regular', year: 'Redna izdaja', country: 'Belgija', inscription: 'BELGIE', flag: '🇧🇪', title: 'Redni 2€ (1. serija) - Kralj Albert II', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_bel.png', description: '1. serija: Prikazuje portret kralja Alberta II (dizajn 1999-2007).' },
+            { id: 'reg-be-2', type: 'Regular', year: 'Redna izdaja', country: 'Belgija', inscription: 'BELGIE', flag: '🇧🇪', title: 'Redni 2€ (2. serija) - Kralj Albert II (posodobljen)', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Belgium_2euro_2008.jpg', description: '2. serija: Posodobljen portret kralja Alberta II v skladu z novimi pravili EU (2008-2013).' },
+            { id: 'reg-be-3', type: 'Regular', year: 'Redna izdaja', country: 'Belgija', inscription: 'BELGIE', flag: '🇧🇪', title: 'Redni 2€ (3. serija) - Kralj Filip', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Belgium_2euro_2014ph.jpg', description: '3. serija: Prikazuje portret belgijskega kralja Filipa, ki gleda v desno, z njegovim kraljevim monogramom.' },
             
-            { id: 'reg-bg', type: 'Regular', year: 'Standard', country: 'Bulgaria', inscription: 'БЪЛГАРИЯ', flag: '🇧🇬', title: 'Standard 2€ - Paisii Hilendarski', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Bulgaria_2euro.jpg?width=200', description: 'Features Paisii Hilendarski, an important Bulgarian clergyman and key figure of the Bulgarian National Revival.' },
-            { id: 'reg-hr', type: 'Regular', year: 'Standard', country: 'Croatia', inscription: 'HRVATSKA', flag: '🇭🇷', title: 'Standard 2€ - Map of Croatia', icon: 'map', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Croatia_2euro.jpg?width=200', description: 'Features the geographical map of the Republic of Croatia.' },
-            { id: 'reg-cy', type: 'Regular', year: 'Standard', country: 'Cyprus', inscription: 'KYПPOΣ', flag: '🇨🇾', title: 'Standard 2€ - Idol of Pomos', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Cipro.gif?width=200', description: 'Features a cross-shaped idol from the Chalcolithic period (3000 BC).' },
-            { id: 'reg-ee', type: 'Regular', year: 'Standard', country: 'Estonia', inscription: 'EESTI', flag: '🇪🇪', title: 'Standard 2€ - Map of Estonia', icon: 'map', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Estonia.jpg?width=200', description: 'Features a geographical map of Estonia in outline.' },
-            { id: 'reg-fi', type: 'Regular', year: 'Standard', country: 'Finland', inscription: 'SUOMI', flag: '🇫🇮', title: 'Standard 2€ - Cloudberry', icon: 'map', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2e_fin.png?width=200', description: 'Features the fruit and leaves of the cloudberry.' },
+            { id: 'reg-bg', type: 'Regular', year: 'Redna izdaja', country: 'Bolgarija', inscription: 'БЪЛГАРИЯ', flag: '🇧🇬', title: 'Redni 2€ - Pajsij Hilendarski', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Bulgaria_2euro.jpg', description: 'Prikazuje Pajsija Hilendarskega, pomembnega bolgarskega duhovnika in ključno osebnost bolgarskega narodnega preporoda.' },
+            { id: 'reg-hr', type: 'Regular', year: 'Redna izdaja', country: 'Hrvaška', inscription: 'HRVATSKA', flag: '🇭🇷', title: 'Redni 2€ - Zemljevid Hrvaške', icon: 'map', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Croatia_2euro.jpg', description: 'Prikazuje geografski zemljevid Republike Hrvaške z znano šahovnico v ozadju.' },
+            { id: 'reg-cy', type: 'Regular', year: 'Redna izdaja', country: 'Ciper', inscription: 'KYПPOΣ', flag: '🇨🇾', title: 'Redni 2€ - Idol iz Pomosa', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Cipro.gif', description: 'Prikazuje idol v obliki križa iz bakrene dobe (3000 pr. n. št.), najden v vasi Pomos, značilen primer prazgodovinske ciprske umetnosti.' },
+            { id: 'reg-ee', type: 'Regular', year: 'Redna izdaja', country: 'Estonija', inscription: 'EESTI', flag: '🇪🇪', title: 'Redni 2€ - Zemljevid Estonije', icon: 'map', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Estonia.jpg', description: 'Prikazuje geografski zemljevid Estonije v obrisu, ki simbolizira nacionalno enotnost in identiteto.' },
+            { id: 'reg-fi', type: 'Regular', year: 'Redna izdaja', country: 'Finska', inscription: 'SUOMI', flag: '🇫🇮', title: 'Redni 2€ - Barjevska robida', icon: 'map', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_fin.png', description: 'Prikazuje sadež in liste barjevske robide (znane tudi kot nordijska robida), ki predstavlja finsko naravo.' },
             
-            // France Series
-            { id: 'reg-fr-1', type: 'Regular', year: 'Standard', country: 'France', inscription: 'RF', flag: '🇫🇷', title: 'Standard 2€ (1st Series) - Tree of Life', icon: 'map', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2e_fra.png?width=200', description: '1st series: Features a tree drawn by Joaquin Jimenez, symbolizing life, continuity, and growth.' },
-            { id: 'reg-fr-2', type: 'Regular', year: 'Standard', country: 'France', inscription: 'RF', flag: '🇫🇷', title: 'Standard 2€ (2nd Series) - Oak and Olive', icon: 'map', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/PFUE2022_-_2_euros_(cropped).jpg?width=200', description: '2nd series (2022-): New design featuring an oak and olive tree branches forming a hexagon.' },
+            // Francija - Serije
+            { id: 'reg-fr-1', type: 'Regular', year: 'Redna izdaja', country: 'Francija', inscription: 'RF', flag: '🇫🇷', title: 'Redni 2€ (1. serija) - Drevo življenja', icon: 'map', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_fra.png', description: '1. serija: Prikazuje drevo, ki ga je narisal Joaquin Jimenez in simbolizira življenje ter kontinuiteto, ujeto v šesterokotnik, ki predstavlja meje Francije.' },
+            { id: 'reg-fr-2', type: 'Regular', year: 'Redna izdaja', country: 'Francija', inscription: 'RF', flag: '🇫🇷', title: 'Redni 2€ (2. serija) - Hrast in oljka', icon: 'map', imageUrl: 'https://de.wikipedia.org/wiki/Special:FilePath/PFUE2022_-_2_euros_(cropped).jpg', description: '2. serija (od leta 2022): Nov dizajn, ki prikazuje prepletene veje hrasta (simbol moči) in oljke (simbol miru), ki tvorijo šesterokotnik.' },
             
-            { id: 'reg-de', type: 'Regular', year: 'Standard', country: 'Germany', inscription: 'BUNDESREP.', flag: '🇩🇪', title: 'Standard 2€ - Eagle', icon: 'bird', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2e_ger.png?width=200', description: 'Features the traditional symbol of German sovereignty, the heraldic eagle.' },
-            { id: 'reg-gr', type: 'Regular', year: 'Standard', country: 'Greece', inscription: 'ΕΛΛΗΝΙΚΗ', flag: '🇬🇷', title: 'Standard 2€ - Europa and the Bull', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Grecia.gif?width=200', description: 'Depicts a scene from Spartan mythology where Europa is being abducted by Zeus.' },
-            { id: 'reg-ie', type: 'Regular', year: 'Standard', country: 'Ireland', inscription: 'ÉIRE', flag: '🇮🇪', title: 'Standard 2€ - Celtic Harp', icon: 'music', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_euro_Irlanda.jpg?width=200', description: 'Features the Celtic harp, a traditional symbol of Ireland.' },
-            { id: 'reg-it', type: 'Regular', year: 'Standard', country: 'Italy', inscription: 'RI', flag: '🇮🇹', title: 'Standard 2€ - Dante Alighieri', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Italia.jpg?width=200', description: 'Features a portrait drawn by Raphael of Dante Alighieri.' },
-            { id: 'reg-lv', type: 'Regular', year: 'Standard', country: 'Latvia', inscription: 'LATVIJA', flag: '🇱🇻', title: 'Standard 2€ - Latvian Maiden', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_eur_LV.jpg?width=200', description: 'Features the profile of a Latvian maiden, originally used on the 1929 5-lats silver coin.' },
-            { id: 'reg-lt', type: 'Regular', year: 'Standard', country: 'Lithuania', inscription: 'LIETUVA', flag: '🇱🇹', title: 'Standard 2€ - Vytis (Knight)', icon: 'swords', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Lituania_%E2%82%AC2.jpg?width=200', description: 'Features Vytis, the heroic knight on horseback holding a sword and shield.' },
-            { id: 'reg-lu', type: 'Regular', year: 'Standard', country: 'Luxembourg', inscription: 'LËTZEBUERG', flag: '🇱🇺', title: 'Standard 2€ - Grand Duke Henri', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Lussemburgo.jpg?width=200', description: 'Features the effigy of His Royal Highness, Grand Duke Henri.' },
-            { id: 'reg-mt', type: 'Regular', year: 'Standard', country: 'Malta', inscription: 'MALTA', flag: '🇲🇹', title: 'Standard 2€ - Maltese Cross', icon: 'landmark', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_Euro_Malta.jpg?width=200', description: 'Features the eight-pointed Maltese Cross.' },
+            { id: 'reg-de', type: 'Regular', year: 'Redna izdaja', country: 'Nemčija', inscription: 'BUNDESREP.', flag: '🇩🇪', title: 'Redni 2€ - Nemški orel', icon: 'bird', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_ger.png', description: 'Prikazuje tradicionalni simbol nemške suverenosti, heraldičnega orla, obdanega z zvezdami Evrope.' },
+            { id: 'reg-gr', type: 'Regular', year: 'Redna izdaja', country: 'Grčija', inscription: 'ΕΛΛΗΝΙΚΗ', flag: '🇬🇷', title: 'Redni 2€ - Evropa in bik', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Grecia.gif', description: 'Prikazuje prizor iz mitologije, kjer Zevs, ki je prevzel obliko bika, ugrabi Evropo.' },
+            { id: 'reg-ie', type: 'Regular', year: 'Redna izdaja', country: 'Irska', inscription: 'ÉIRE', flag: '🇮🇪', title: 'Redni 2€ - Keltska harfa', icon: 'music', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_Irlanda.jpg', description: 'Prikazuje keltsko harfo, tradicionalni simbol Irske z dolgo zgodovino, skupaj z besedo "Éire".' },
+            { id: 'reg-it', type: 'Regular', year: 'Redna izdaja', country: 'Italija', inscription: 'RI', flag: '🇮🇹', title: 'Redni 2€ - Dante Alighieri', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Italia.jpg', description: 'Prikazuje portret slovitega italijanskega pesnika Danteja Alighierija, avtorja Božanske komedije, ki ga je naslikal Rafael.' },
+            { id: 'reg-lv', type: 'Regular', year: 'Redna izdaja', country: 'Latvija', inscription: 'LATVIJA', flag: '🇱🇻', title: 'Redni 2€ - Latvijska deklica', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_eur_LV.jpg', description: 'Prikazuje profil latvijske deklice, podobo, ki je bila prvotno uporabljena na srebrniku za 5 latov iz leta 1929 in simbolizira Latvijo.' },
+            { id: 'reg-lt', type: 'Regular', year: 'Redna izdaja', country: 'Litva', inscription: 'LIETUVA', flag: '🇱🇹', title: 'Redni 2€ - Vytis (Vitez)', icon: 'swords', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Lituania_%E2%82%AC2.jpg', description: 'Prikazuje Vytisa, junaškega viteza na konju, ki drži meč in ščit, kar je zgodovinski grb Litve.' },
+            { id: 'reg-lu', type: 'Regular', year: 'Redna izdaja', country: 'Luksemburg', inscription: 'LËTZEBUERG', flag: '🇱🇺', title: 'Redni 2€ - Veliki vojvoda Henri', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Lussemburgo.jpg', description: 'Prikazuje portret Njegove kraljeve visokosti, velikega vojvode Henrija, obrnjenega v desno.' },
+            { id: 'reg-mt', type: 'Regular', year: 'Redna izdaja', country: 'Malta', inscription: 'MALTA', flag: '🇲🇹', title: 'Redni 2€ - Malteški križ', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_Euro_Malta.jpg', description: 'Prikazuje osemkraki malteški križ, simbol, povezan s Suverenim vojaškim malteškim redom.' },
             
-            // Monaco Series
-            { id: 'reg-mc-1', type: 'Regular', year: 'Standard', country: 'Monaco', inscription: 'MONACO', flag: '🇲🇨', title: 'Standard 2€ (1st Series) - Prince Rainier III', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Monaco_2001.jpg?width=200', description: '1st series (2001-2005): Features Prince Rainier III.' },
-            { id: 'reg-mc-2', type: 'Regular', year: 'Standard', country: 'Monaco', inscription: 'MONACO', flag: '🇲🇨', title: 'Standard 2€ (2nd Series) - Prince Albert II', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Monaco_2006.jpg?width=200', description: '2nd series (2006-): Features the effigy of H.S.H. Prince Albert II.' },
+            // Monako - Serije
+            { id: 'reg-mc-1', type: 'Regular', year: 'Redna izdaja', country: 'Monako', inscription: 'MONACO', flag: '🇲🇨', title: 'Redni 2€ (1. serija) - Knez Rainier III', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Monaco_2001.jpg', description: '1. serija (2001-2005): Prikazuje kneza Rainierja III.' },
+            { id: 'reg-mc-2', type: 'Regular', year: 'Redna izdaja', country: 'Monako', inscription: 'MONACO', flag: '🇲🇨', title: 'Redni 2€ (2. serija) - Knez Albert II', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Monaco_2006.jpg', description: '2. serija (2006-): Prikazuje portret N.S.V. kneza Alberta II.' },
             
-            // Netherlands Series
-            { id: 'reg-nl-1', type: 'Regular', year: 'Standard', country: 'Netherlands', inscription: 'NEDERLAND', flag: '🇳🇱', title: 'Standard 2€ (1st Series) - Queen Beatrix', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2e_nl.png?width=200', description: '1st series: Features the stylized profile of Queen Beatrix.' },
-            { id: 'reg-nl-2', type: 'Regular', year: 'Standard', country: 'Netherlands', inscription: 'NEDERLAND', flag: '🇳🇱', title: 'Standard 2€ (2nd Series) - King Willem-Alexander', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Paesi_Bassi_serie_2014.jpg?width=200', description: '2nd series (2014-): Features the faceted portrait of King Willem-Alexander.' },
+            // Nizozemska - Serije
+            { id: 'reg-nl-1', type: 'Regular', year: 'Redna izdaja', country: 'Nizozemska', inscription: 'NEDERLAND', flag: '🇳🇱', title: 'Redni 2€ (1. serija) - Kraljica Beatrix', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_nl.png', description: '1. serija: Prikazuje stiliziran profil nizozemske kraljice Beatrix.' },
+            { id: 'reg-nl-2', type: 'Regular', year: 'Redna izdaja', country: 'Nizozemska', inscription: 'NEDERLAND', flag: '🇳🇱', title: 'Redni 2€ (2. serija) - Kralj Willem-Alexander', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Paesi_Bassi_serie_2014.jpg', description: '2. serija (2014-): Prikazuje inovativen in fasetiran portret kralja Willema-Alexandra.' },
             
-            { id: 'reg-pt', type: 'Regular', year: 'Standard', country: 'Portugal', inscription: 'PORTUGAL', flag: '🇵🇹', title: 'Standard 2€ - Royal Seals', icon: 'landmark', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2e_por.png?width=200', description: 'Features the royal seal of 1144 belonging to Afonso Henriques.' },
-            { id: 'reg-sm', type: 'Regular', year: 'Standard', country: 'San Marino', inscription: 'SAN MARINO', flag: '🇸🇲', title: 'Standard 2€ - Government Palace', icon: 'landmark', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_San_Marino.gif?width=200', description: 'Features the Palazzo Pubblico (Government Palace).' },
-            { id: 'reg-sk', type: 'Regular', year: 'Standard', country: 'Slovakia', inscription: 'SLOVENSKO', flag: '🇸🇰', title: 'Standard 2€ - Double Cross on Hills', icon: 'landmark', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Slovacchia.png?width=200', description: 'Features a double cross elevated on three hills, identical to the national coat of arms.' },
-            { id: 'reg-si', type: 'Regular', year: 'Standard', country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: 'Standard 2€ - France Prešeren', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Si2.1eur.jpg?width=200', description: 'Features a profile of Slovenia’s national poet France Prešeren.' },
+            { id: 'reg-pt', type: 'Regular', year: 'Redna izdaja', country: 'Portugalska', inscription: 'PORTUGAL', flag: '🇵🇹', title: 'Redni 2€ - Kraljevi pečati', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_por.png', description: 'Prikazuje kraljevi pečat iz leta 1144, ki je pripadal Afonsu Henriquesu, prvemu portugalskemu kralju, obdanem s sedmimi gradovi in petimi ščitki.' },
+            { id: 'reg-sm', type: 'Regular', year: 'Redna izdaja', country: 'San Marino', inscription: 'SAN MARINO', flag: '🇸🇲', title: 'Redni 2€ - Vladna palača', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_San_Marino.gif', description: 'Prikazuje palačo Palazzo Pubblico (Vladno palačo) v San Marinu.' },
+            { id: 'reg-sk', type: 'Regular', year: 'Redna izdaja', country: 'Slovaška', inscription: 'SLOVENSKO', flag: '🇸🇰', title: 'Redni 2€ - Dvojni križ na hribih', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Slovacchia.png', description: 'Prikazuje državni grb - dvojni križ, ki se dviga s treh hribov (Tatre, Fatra, Matra).' },
+            { id: 'reg-si', type: 'Regular', year: 'Redna izdaja', country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: 'Redni 2€ - France Prešeren', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Si2.1eur.jpg', description: 'Prikazuje profil največjega slovenskega pesnika Franceta Prešerna in rokopis verza "Živé naj vsi naródi" iz njegove Zdravljice, ki je tudi slovenska himna.' },
             
-            // Spain Series
-            { id: 'reg-es-1', type: 'Regular', year: 'Standard', country: 'Spain', inscription: 'ESPAÑA', flag: '🇪🇸', title: 'Standard 2€ (1st Series) - King Juan Carlos I', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Spagna.gif?width=200', description: '1st series: Features King Juan Carlos I (1999-2009).' },
-            { id: 'reg-es-2', type: 'Regular', year: 'Standard', country: 'Spain', inscription: 'ESPAÑA', flag: '🇪🇸', title: 'Standard 2€ (2nd Series) - Juan Carlos I Updated', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Spain_2euro_2014.jpg?width=200', description: '2nd series: Updated King Juan Carlos I to comply with new EU rules (2010-2014).' },
-            { id: 'reg-es-3', type: 'Regular', year: 'Standard', country: 'Spain', inscription: 'ESPAÑA', flag: '🇪🇸', title: 'Standard 2€ (3rd Series) - King Felipe VI', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Spain_2euro_2015.jpg?width=200', description: '3rd series (2015-): Features His Majesty King Felipe VI.' },
+            // Španija - Serije
+            { id: 'reg-es-1', type: 'Regular', year: 'Redna izdaja', country: 'Španija', inscription: 'ESPAÑA', flag: '🇪🇸', title: 'Redni 2€ (1. serija) - Kralj Juan Carlos I', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Spagna.gif', description: '1. serija: Prikazuje portret španskega kralja Juana Carlosa I (1999-2009).' },
+            { id: 'reg-es-2', type: 'Regular', year: 'Redna izdaja', country: 'Španija', inscription: 'ESPAÑA', flag: '🇪🇸', title: 'Redni 2€ (2. serija) - Juan Carlos I posodobljen', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Spain_2euro_2014.jpg', description: '2. serija: Posodobljen portret v skladu z novimi pravili EU, umaknjeni obrisi (2010-2014).' },
+            { id: 'reg-es-3', type: 'Regular', year: 'Redna izdaja', country: 'Španija', inscription: 'ESPAÑA', flag: '🇪🇸', title: 'Redni 2€ (3. serija) - Kralj Filip VI', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Spain_2euro_2015.jpg', description: '3. serija (2015-): Prikazuje portret Njegovega veličanstva kralja Filipa VI.' },
             
-            // Vatican Series
-            { id: 'reg-va-1', type: 'Regular', year: 'Standard', country: 'Vatican', inscription: 'VATICANO', flag: '🇻🇦', title: 'Standard 2€ (1st Series) - Pope John Paul II', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_1.png?width=200', description: '1st series: Effigy of Pope John Paul II.' },
-            { id: 'reg-va-2', type: 'Regular', year: 'Standard', country: 'Vatican', inscription: 'VATICANO', flag: '🇻🇦', title: 'Standard 2€ (2nd Series) - Sede Vacante', icon: 'landmark', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_2.png?width=200', description: '2nd series (2005): Issued during the Sede Vacante, showing the emblem of the Apostolic Chamber.' },
-            { id: 'reg-va-3', type: 'Regular', year: 'Standard', country: 'Vatican', inscription: 'VATICANO', flag: '🇻🇦', title: 'Standard 2€ (3rd Series) - Pope Benedict XVI', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_3a.png?width=200', description: '3rd series: Effigy of Pope Benedict XVI.' },
-            { id: 'reg-va-4', type: 'Regular', year: 'Standard', country: 'Vatican', inscription: 'VATICANO', flag: '🇻🇦', title: 'Standard 2€ (4th Series) - Pope Francis', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Vaticano_2014.png?width=200', description: '4th series: Effigy of Pope Francis.' },
-            { id: 'reg-va-5', type: 'Regular', year: 'Standard', country: 'Vatican', inscription: 'VATICANO', flag: '🇻🇦', title: 'Standard 2€ (5th Series) - Coat of Arms', icon: 'landmark', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_euros_Vatican5.png?width=200', description: '5th series (2017-): Features the coat of arms of Pope Francis, replacing the effigy.' },
+            // Vatikan - Serije
+            { id: 'reg-va-1', type: 'Regular', year: 'Redna izdaja', country: 'Vatikan', inscription: 'VATICANO', flag: '🇻🇦', title: 'Redni 2€ (1. serija) - Papež Janez Pavel II', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_1.png', description: '1. serija: Prikazuje profil papeža Janeza Pavla II.' },
+            { id: 'reg-va-2', type: 'Regular', year: 'Redna izdaja', country: 'Vatikan', inscription: 'VATICANO', flag: '🇻🇦', title: 'Redni 2€ (2. serija) - Sede Vacante', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_2.png', description: '2. serija (2005): Izdana v času Sede Vacante (praznega sedeža), prikazuje grb kardinala komornika.' },
+            { id: 'reg-va-3', type: 'Regular', year: 'Redna izdaja', country: 'Vatikan', inscription: 'VATICANO', flag: '🇻🇦', title: 'Redni 2€ (3. serija) - Papež Benedikt XVI', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_3a.png', description: '3. serija: Prikazuje profil papeža Benedikta XVI.' },
+            { id: 'reg-va-4', type: 'Regular', year: 'Redna izdaja', country: 'Vatikan', inscription: 'VATICANO', flag: '🇻🇦', title: 'Redni 2€ (4. serija) - Papež Frančišek', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Vaticano_2014.png', description: '4. serija: Prikazuje profil papeža Frančiška.' },
+            { id: 'reg-va-5', type: 'Regular', year: 'Redna izdaja', country: 'Vatikan', inscription: 'VATICANO', flag: '🇻🇦', title: 'Redni 2€ (5. serija) - Papeški grb', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euros_Vatican5.png', description: '5. serija (2017-): Portret zamenja grb suverena Vatikana, papeža Frančiška.' },
 
-            // SLOVENIAN COMMEMORATIVES
-            { id: 'sl-2007-rome', type: 'Commemorative', year: 2007, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '50th Anniversary of the Treaty of Rome', icon: 'book-open', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Slovenia_2_euro_coin_2007.png?width=200', description: 'A joint European issue depicting the Treaty document signed by the six founding countries against a background reminiscent of Michelangelo\'s paving of the Piazza del Campidoglio.' },
-            { id: 'sl-2008-trubar', type: 'Commemorative', year: 2008, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '500th Anniversary of Primož Trubar', icon: 'user', description: 'Features a profile of Primož Trubar, Protestant reformer and the author of the first printed book in the Slovene language. It includes the inscription "Stati inu obstati" (To stand and withstand).' },
-            { id: 'sl-2009-emu', type: 'Commemorative', year: 2009, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '10 Years of Economic and Monetary Union', icon: 'globe', description: 'A joint European issue featuring a primitive stick figure merging into the € symbol, conveying the idea of the single currency as a shared European project.' },
-            { id: 'sl-2010-botanical', type: 'Commemorative', year: 2010, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '200 Years of the Botanical Garden in Ljubljana', icon: 'map', description: 'Features the Rebrinčevolistna Hladnikovka flower to celebrate 200 years of the Botanical Garden in Ljubljana, the oldest continuously operating cultural, scientific and educational institution in Slovenia.' },
-            { id: 'sl-2011-rozman', type: 'Commemorative', year: 2011, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '100th Anniversary of Franc Rozman Stane', icon: 'user', description: 'Features a stylized portrait of Franc Rozman Stane, a Slovenian Partisan commander and national hero, alongside a five-pointed star.' },
-            { id: 'sl-2012-euro', type: 'Commemorative', year: 2012, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '10 Years of Euro Cash', icon: 'globe', description: 'A joint European issue commemorating the 10th anniversary of Euro banknotes and coins, showing the Euro symbol at the center of the globe.' },
-            { id: 'sl-2013-postojna', type: 'Commemorative', year: 2013, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '800 Years of Postojna Cave Discovery', icon: 'map', description: 'Depicts a stylized spiral representing the intricate subterranean passages of Postojna Cave, marking 800 years since the first known visit to the cave system.' },
-            { id: 'sl-2014-barbara', type: 'Commemorative', year: 2014, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '600th Anniversary of Crowning of Barbara of Celje', icon: 'user', description: 'Features a portrait of Barbara of Celje, Queen of Hungary and Bohemia, holding her scepter and surrounded by three stars representing the Counts of Celje.' },
-            { id: 'sl-2015-emona', type: 'Commemorative', year: 2015, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '2000 Years of Emona (Ljubljana)', icon: 'building-2', description: 'Shows a composition of geometric shapes and letters forming the word "EMONA" (the ancient Roman settlement that became Ljubljana) along with the Roman numerals for 14 AD.' },
-            { id: 'sl-2015-euflag', type: 'Commemorative', year: 2015, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '30 Years of the EU Flag', icon: 'globe', description: 'A joint European issue commemorating the 30th anniversary of the EU flag, depicting twelve stars transforming into human figures embracing the birth of a new Europe.' },
-            { id: 'sl-2016-independence', type: 'Commemorative', year: 2016, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '25 Years of Independence', icon: 'landmark', description: 'Features a diagonally etched line from France Prešeren\'s poem "Zdravljica" to mark the 25th anniversary of Slovenia\'s independence from Yugoslavia.' },
-            { id: 'sl-2017-euro10', type: 'Commemorative', year: 2017, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '10 Years of the Euro in Slovenia', icon: 'globe', description: 'Depicts ten flying swallows—a symbol of spring and renewal in Slovenian folklore—forming a circle to symbolize the 10th anniversary of adopting the Euro.' },
-            { id: 'sl-2018-bees', type: 'Commemorative', year: 2018, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: 'World Bee Day', icon: 'bird', description: 'Features a globe shaped like a honeycomb to celebrate the establishment of the very first UN World Bee Day, an initiative proudly led by Slovenia.' },
-            { id: 'sl-2019-uni', type: 'Commemorative', year: 2019, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '100th Anniversary of the University of Ljubljana', icon: 'building-2', description: 'Depicts the central facade of the main building of the University of Ljubljana, with a solid square replacing the letter "O" in the inscription.' },
-            { id: 'sl-2020-bohoric', type: 'Commemorative', year: 2020, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '500th Anniversary of Adam Bohorič', icon: 'book-open', description: 'Features a multilingual inscription from Adam Bohorič\'s grammar book "Arcticae horulae succisivae", celebrating the 500th anniversary of his birth.' },
-            { id: 'sl-2021-museum', type: 'Commemorative', year: 2021, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '200th Anniversary of the Provincial Museum of Carniola', icon: 'landmark', description: 'Features an illustration of the Situla from Vače, one of the most important archaeological treasures of Slovenia, representing 200 years of the National Museum.' },
-            { id: 'sl-2022-plecnik', type: 'Commemorative', year: 2022, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '150th Anniversary of Jože Plečnik', icon: 'building-2', description: 'Depicts a stunning architectural detail from the grand reading room window of the National and University Library in Ljubljana, honoring architect Jože Plečnik.' },
-            { id: 'sl-2022-erasmus', type: 'Commemorative', year: 2022, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '35 Years of the Erasmus Programme', icon: 'book-open', description: 'A joint European issue showing a portrait of Erasmus of Rotterdam writing, overlaid with lines linking to different points, celebrating 35 years of the student exchange program.' },
-            { id: 'sl-2023-plemelj', type: 'Commemorative', year: 2023, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '150th Anniversary of Josip Plemelj', icon: 'user', description: 'Features an equation and graphic shapes representing the mathematical work of Josip Plemelj, the first Chancellor of the University of Ljubljana.' },
-            { id: 'sl-2024-library', type: 'Commemorative', year: 2024, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '250th anniversary of the National Library', icon: 'book-open', description: 'Commemorates the 250th anniversary of the National and University Library (NUK), a cornerstone of Slovenian knowledge and cultural heritage.' },
-            { id: 'sl-2025-miki', type: 'Commemorative', year: 2025, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '100th Birthday of Miki Muster', icon: 'user', description: 'Celebrates the 100th birthday of Miki Muster, the pioneering Slovenian animator, illustrator, and comic book artist beloved by generations.' },
-            { id: 'sl-2026-cankar', type: 'Commemorative', year: 2026, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '150th anniversary of the birth of Ivan Cankar', icon: 'book-open', description: 'Honors the 150th anniversary of the birth of Ivan Cankar, a celebrated Slovenian writer, playwright, and political activist who deeply influenced national literature.' }
+            // SLOVENSKI SPOMINSKI KOVANCI
+            { id: 'sl-2007-rome', type: 'Commemorative', year: 2007, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '50. obletnica Rimske pogodbe', icon: 'book-open', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/%E2%82%AC2_commemorative_coin_Slovenia_2007_TOR.jpg', description: 'Skupna evropska izdaja, ki prikazuje dokument pogodbe s podpisi šestih držav ustanoviteljic v ozadju, ki spominja na Michelangelov tlak na rimskem trgu Campidoglio.' },
+            { id: 'sl-2008-trubar', type: 'Commemorative', year: 2008, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '500. obletnica rojstva Primoža Trubarja', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Trubar2008.png', description: 'Prikazuje profil Primoža Trubarja, protestantskega reformatorja in avtorja prve slovenske tiskane knjige. Vključuje njegov slavni citat "Stati inu obstati".' },
+            { id: 'sl-2009-emu', type: 'Commemorative', year: 2009, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '10 let Ekonomske in monetarne unije', icon: 'globe', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_EMU2009.png', description: 'Skupna evropska izdaja, ki prikazuje primitivno človeško figuro, združeno s simbolom €, kar predstavlja enotno valuto kot skupni evropski projekt.' },
+            { id: 'sl-2010-botanical', type: 'Commemorative', year: 2010, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '200 let Botaničnega vrta v Ljubljani', icon: 'map', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Botani%C4%8Dni_vrt2010.png', description: 'Prikazuje cvet rastline rebrinčevolistna hladnikovka v čast praznovanja 200. obletnice Botaničnega vrta v Ljubljani, najstarejše neprekinjeno delujoče kulturne, znanstvene in izobraževalne ustanove v Sloveniji.' },
+            { id: 'sl-2011-rozman', type: 'Commemorative', year: 2011, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '100. obletnica rojstva Franca Rozmana - Staneta', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Stane2011.png', description: 'Prikazuje stiliziran portret Franca Rozmana - Staneta, partizanskega komandanta in narodnega heroja, skupaj s petokrako zvezdo.' },
+            { id: 'sl-2012-euro', type: 'Commemorative', year: 2012, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '10 let evrskih gotovinskih plačil', icon: 'globe', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_evrogotovina2012.png', description: 'Skupna evropska izdaja ob 10. obletnici evrskih bankovcev in kovancev, ki prikazuje simbol evra v središču globusa.' },
+            { id: 'sl-2013-postojna', type: 'Commemorative', year: 2013, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '800 let obiskovanja Postojnske jame', icon: 'map', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Postojnska2013.png', description: 'Prikazuje stilizirano spiralo, ki predstavlja zapletene podzemne prehode Postojnske jame in obeležuje 800 let od prvega zabeleženega obiska jame.' },
+            { id: 'sl-2014-barbara', type: 'Commemorative', year: 2014, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '600. obletnica kronanja Barbare Celjske', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Barbara2014.png', description: 'Prikazuje portret Barbare Celjske, kraljice Ogrske in Češke, ki drži žezlo in je obdana s tremi zvezdami, ki predstavljajo Celjske grofe.' },
+            { id: 'sl-2015-emona', type: 'Commemorative', year: 2015, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '2000 let Emone (Ljubljane)', icon: 'building-2', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Emona2015.png', description: 'Prikazuje kompozicijo geometrijskih likov in črk, ki tvorijo besedo "EMONA" (starodavna rimska naselbina, ki je postala Ljubljana), skupaj z rimsko številko za leto 14 n.š.' },
+            { id: 'sl-2015-euflag', type: 'Commemorative', year: 2015, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '30 let zastave EU', icon: 'globe', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_zastavaEU2015.png', description: 'Skupna evropska izdaja ob 30. obletnici zastave Evropske unije, ki prikazuje dvanajst zvezd, ki se preminjajo v človeške figure in slavijo novo Evropo.' },
+            { id: 'sl-2016-independence', type: 'Commemorative', year: 2016, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '25 let neodvisnosti Republike Slovenije', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_osamosvojitev2016.png', description: 'Prikazuje diagonalno vrezan verz iz Prešernove "Zdravljice" v obeležitev 25. obletnice samostojnosti Slovenije.' },
+            { id: 'sl-2017-euro10', type: 'Commemorative', year: 2017, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '10 let evra v Sloveniji', icon: 'globe', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_evro2017.png', description: 'Prikazuje deset letečih lastovk – simbol pomladi in obnove v slovenski folklori –, ki tvorijo krog v počastitev 10. obletnice prevzema evra.' },
+            { id: 'sl-2018-bees', type: 'Commemorative', year: 2018, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: 'Svetovni dan čebel', icon: 'bird', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_%C4%8Debele2018.png', description: 'Prikazuje globus v obliki satja v čast razglasitvi prvega Svetovnega dneva čebel pod okriljem ZN, kar je bila iniciativa Slovenije.' },
+            { id: 'sl-2019-uni', type: 'Commemorative', year: 2019, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '100. obletnica Univerze v Ljubljani', icon: 'building-2', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Uni-LJ2019.png', description: 'Prikazuje osrednje pročelje glavne stavbe Univerze v Ljubljani, kjer polni kvadrat nadomešča črko "O" v napisu.' },
+            { id: 'sl-2020-bohoric', type: 'Commemorative', year: 2020, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '500. obletnica rojstva Adama Bohoriča', icon: 'book-open', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Bohori%C4%8D2020.png', description: 'Prikazuje večjezični napis iz Bohoričeve slovnice "Zimske urice proste" (Arcticae horulae succisivae) ob praznovanju 500. obletnice njegovega rojstva.' },
+            { id: 'sl-2021-museum', type: 'Commemorative', year: 2021, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '200 let Deželnega muzeja za Kranjsko', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_muzej2021.png', description: 'Prikazuje ilustracijo Vaške situle, enega najpomembnejših arheoloških zakladov Slovenije, in predstavlja 200 let delovanja Narodnega muzeja.' },
+            { id: 'sl-2022-plecnik', type: 'Commemorative', year: 2022, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '150. obletnica rojstva Jožeta Plečnika', icon: 'building-2', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_plecnik2022.png', description: 'Prikazuje osupljiv arhitekturni detajl z velikega okna velike čitalnice Narodne in univerzitetne knjižnice v Ljubljani v poklon arhitektu Jožetu Plečniku.' },
+            { id: 'sl-2022-erasmus', type: 'Commemorative', year: 2022, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '35 let programa Erasmus', icon: 'book-open', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_erasmus2022.png', description: 'Skupna evropska izdaja, ki prikazuje portret Erazma Rotterdamskega, prekritega s črtami, ki se povezujejo, v čast 35. obletnici programa študijske izmenjave.' },
+            { id: 'sl-2023-plemelj', type: 'Commemorative', year: 2023, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '150. obletnica rojstva Josipa Plemlja', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Plemelj2023.png', description: 'Prikazuje enačbo in grafične oblike, ki ponazarjajo matematično delo Josipa Plemlja, prvega rektorja Univerze v Ljubljani.' },
+            { id: 'sl-2024-library', type: 'Commemorative', year: 2024, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '250. obletnica Narodne in univerzitetne knjižnice', icon: 'book-open', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_NUK2024.png', description: 'Obeležuje 250. obletnico Narodne in univerzitetne knjižnice (NUK), temeljne ustanove slovenskega znanja in kulturne dediščine.' },
+            { id: 'sl-2025-miki', type: 'Commemorative', year: 2025, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '100. obletnica rojstva Mikija Mustra', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Muster2025.png', description: 'Praznuje 100. rojstni dan Mikija Mustra, pionirja slovenskega stripa, animatorja in ilustratorja, priljubljenega pri mnogih generacijah.' },
+            { id: 'sl-2026-cankar', type: 'Commemorative', year: 2026, country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '150. obletnica rojstva Ivana Cankarja', icon: 'book-open', imageUrl: 'https://upload.wikimedia.org/wikipedia/it/7/7e/2_euro_commemorativo_2026_slovenia_cankar.webp', description: 'Prikazuje počastitev 150. obletnice rojstva Ivana Cankarja, znamenitega slovenskega pisatelja, dramatika in političnega aktivista, ki je globoko zaznamoval slovensko literaturo.' }
         ];
 
-        // --- 2. STATE MANAGEMENT & LOCAL STORAGE ---
+        // --- 2. UPRAVLJANJE STANJA IN LOKALNA SHRAMBA ---
         let collectedCoins = new Set();
         let searchQuery = "";
         let statusFilter = "All";
 
-        // Varno nalaganje podatkov (Try-Catch prepreči zrušitev kode, če brskalnik blokira lokalno shrambo)
+        // Varno nalaganje podatkov
         try {
             const savedData = localStorage.getItem('euro-collection');
             if (savedData) {
@@ -271,7 +268,6 @@
             }
         }
 
-        // Toggle coin collected state
         function toggleCoin(id) {
             if (collectedCoins.has(id)) {
                 collectedCoins.delete(id);
@@ -282,27 +278,26 @@
             renderApp();
         }
 
-        // Reset progress
         function resetCollection() {
-            if (confirm("Are you sure you want to reset your entire collection?")) {
+            if (confirm("Ali ste prepričani, da želite ponastaviti celotno zbirko?")) {
                 collectedCoins.clear();
                 saveToLocal();
                 renderApp();
             }
         }
 
-        // --- HELPER ZA ZASTAVE (Zanesljiv prikaz na Windows računalnikih) ---
+        // --- POMOŽNA FUNKCIJA ZA ZASTAVE ---
         function getFlagImg(coin) {
             let code = 'eu';
             if (coin.id.startsWith('reg-')) {
                 code = coin.id.split('-')[1];
-            } else if (coin.country === 'Slovenia') {
+            } else if (coin.country === 'Slovenija') {
                 code = 'si';
             }
             return `<img src="https://flagcdn.com/${code}.svg" alt="${coin.country}" class="w-5 h-3.5 object-cover rounded-[2px] shadow-[0_0_2px_rgba(0,0,0,0.2)]">`;
         }
 
-        // --- MODAL LOGIC FOR COIN DESCRIPTIONS ---
+        // --- LOGIKA ZA MODALNO OKNO ---
         let currentModalCoinId = null;
 
         function openModal(id) {
@@ -310,13 +305,11 @@
             const coin = COINS.find(c => c.id === id);
             const isCollected = collectedCoins.has(id);
             
-            // Populate Modal Content
             document.getElementById('modal-title').innerText = coin.title;
             document.getElementById('modal-country').innerHTML = `<div class="flex items-center gap-2">${getFlagImg(coin)} <span class="text-base">${coin.country}</span></div>`;
-            document.getElementById('modal-badge').innerText = coin.type === 'Regular' ? 'Standard Issue' : `Commemorative · ${coin.year}`;
+            document.getElementById('modal-badge').innerText = coin.type === 'Regular' ? 'Redna izdaja' : `Spominski · ${coin.year}`;
             document.getElementById('modal-description').innerText = coin.description;
 
-            // Populate Modal Graphic
             const graphicHTML = coin.imageUrl 
                 ? `<div class="w-full h-full rounded-full overflow-hidden border-[4px] border-[#cbd5e1] shadow-[inset_0_0_15px_rgba(0,0,0,0.4)] relative bg-[#cbd5e1]">
                      <img src="${coin.imageUrl}" alt="${coin.title}" class="w-full h-full object-cover mix-blend-multiply opacity-90" />
@@ -325,10 +318,8 @@
                 : getCoinSVG(coin);
             document.getElementById('modal-graphic').innerHTML = graphicHTML;
 
-            // Sync Button State
             updateModalButton(isCollected);
 
-            // Trigger Display & Animations
             const modal = document.getElementById('coin-modal');
             const content = document.getElementById('coin-modal-content');
             modal.classList.remove('hidden');
@@ -366,17 +357,16 @@
             const btn = document.getElementById('modal-toggle-btn');
             if (isCollected) {
                 btn.className = "w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md text-lg bg-green-100 text-green-700 hover:bg-green-200";
-                btn.innerHTML = `<i data-lucide="check-circle" class="w-6 h-6"></i> Collected`;
+                btn.innerHTML = `<i data-lucide="check-circle" class="w-6 h-6"></i> Zbrano`;
             } else {
                 btn.className = "w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md text-lg bg-slate-900 text-white hover:bg-slate-800 hover:-translate-y-1";
-                btn.innerHTML = `<i data-lucide="plus-circle" class="w-6 h-6"></i> Mark as Collected`;
+                btn.innerHTML = `<i data-lucide="plus-circle" class="w-6 h-6"></i> Označi kot zbrano`;
             }
             lucide.createIcons();
         }
 
-        // --- 3. RENDERING SVG COIN (Fallback when no image) ---
+        // --- 3. RENDERING SVG KOVANCA ---
         function getCoinSVG(coin) {
-            // Skrij tekst "Standard" znotraj SVG slike (ker je predolg in ne izgleda lepo)
             const svgYear = coin.type === 'Regular' ? '' : coin.year;
             
             return `
@@ -413,7 +403,7 @@
             `;
         }
 
-        // --- 4. BUILD COIN CARDS ---
+        // --- 4. SESTAVLJANJE KARTIC KOVANCEV ---
         function generateCoinHTML(coin) {
             const isCollected = collectedCoins.has(coin.id);
             
@@ -436,7 +426,7 @@
                    </div>`
                 : getCoinSVG(coin);
 
-            const yearLabel = coin.type === 'Regular' ? 'Standard Issue' : coin.year;
+            const yearLabel = coin.type === 'Regular' ? 'Redna izdaja' : coin.year;
 
             return `
                 <div onclick="openModal('${coin.id}')" class="coin-card group relative rounded-2xl p-4 cursor-pointer border-2 flex flex-col select-none ${cardClass}">
@@ -465,7 +455,7 @@
             `;
         }
 
-        // --- 5. RENDER THE WHOLE APP ---
+        // --- 5. RENDERIRANJE CELOTNE APLIKACIJE ---
         function renderApp() {
             const filteredCoins = COINS.filter(coin => {
                 const matchesSearch = coin.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -481,11 +471,11 @@
 
             document.getElementById('regular-coins-grid').innerHTML = regularFiltered.length > 0 
                 ? regularFiltered.map(generateCoinHTML).join('')
-                : '<div class="col-span-full text-center py-8 text-slate-400 font-medium border border-dashed border-slate-200 rounded-xl">No regular coins found.</div>';
+                : '<div class="col-span-full text-center py-8 text-slate-400 font-medium border border-dashed border-slate-200 rounded-xl">Noben redni kovanec ne ustreza iskanju.</div>';
             
             document.getElementById('slovenian-coins-grid').innerHTML = slovenianFiltered.length > 0 
                 ? slovenianFiltered.map(generateCoinHTML).join('')
-                : '<div class="col-span-full text-center py-8 text-slate-400 font-medium border border-dashed border-slate-200 rounded-xl">No Slovenian coins found.</div>';
+                : '<div class="col-span-full text-center py-8 text-slate-400 font-medium border border-dashed border-slate-200 rounded-xl">Noben slovenski kovanec ne ustreza iskanju.</div>';
 
             const regTotal = COINS.filter(c => c.type === 'Regular').length;
             const regCollected = COINS.filter(c => c.type === 'Regular' && collectedCoins.has(c.id)).length;
@@ -518,7 +508,7 @@
             lucide.createIcons();
         }
 
-        // --- 6. EVENT LISTENERS ---
+        // --- 6. POSLUŠALCI DOGODKOV ---
         document.getElementById('searchInput').addEventListener('input', (e) => {
             searchQuery = e.target.value;
             renderApp();
@@ -533,7 +523,7 @@
 
     </script>
 
-    <!-- Modal HTML Structure -->
+    <!-- HTML Struktura za Modalno okno -->
     <div id="coin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300" onclick="if(event.target === this) closeModal()">
         <div class="bg-white rounded-[2rem] p-6 sm:p-8 max-w-md w-full mx-4 relative shadow-2xl transform scale-95 transition-transform duration-300" id="coin-modal-content">
             <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-full p-2 transition-colors z-10">
@@ -549,7 +539,7 @@
                 
                 <div class="bg-slate-50 rounded-2xl p-5 text-left border border-slate-100 mb-6 shadow-inner">
                     <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-1">
-                        <i data-lucide="info" class="w-3 h-3"></i> Official Description
+                        <i data-lucide="info" class="w-3 h-3"></i> Uradni opis
                     </h4>
                     <p id="modal-description" class="text-slate-700 text-sm leading-relaxed font-medium"></p>
                 </div>
