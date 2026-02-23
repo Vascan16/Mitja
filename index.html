@@ -144,15 +144,15 @@
 
     <!-- Mobilna Spodnja Navigacija -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-slate-200 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] z-40 bottom-nav flex justify-around items-center px-1 pt-2 pb-2 transition-transform">
-        <button id="tab-countries" onclick="switchView('countries')" class="flex-1 flex flex-col items-center gap-1 p-2 text-blue-600 font-bold">
+        <button id="tab-countries" onclick="switchView('countries')" class="flex-1 flex flex-col items-center gap-1 p-2 text-blue-600 font-bold transition-all">
             <div class="bg-blue-100 p-1.5 rounded-xl"><i data-lucide="layout-grid" class="w-5 h-5"></i></div>
             <span class="text-[10px] uppercase tracking-wider">Države</span>
         </button>
-        <button id="tab-timeline" onclick="switchView('timeline')" class="flex-1 flex flex-col items-center gap-1 p-2 text-slate-400 font-medium">
+        <button id="tab-timeline" onclick="switchView('timeline')" class="flex-1 flex flex-col items-center gap-1 p-2 text-slate-400 font-medium transition-all">
             <div class="bg-transparent p-1.5 rounded-xl"><i data-lucide="clock" class="w-5 h-5"></i></div>
             <span class="text-[10px] uppercase tracking-wider">Slovenija</span>
         </button>
-        <button onclick="resetCollection()" class="flex-1 flex flex-col items-center gap-1 p-2 text-slate-400 font-medium hover:text-red-500">
+        <button onclick="resetCollection()" class="flex-1 flex flex-col items-center gap-1 p-2 text-slate-400 font-medium hover:text-red-500 transition-all">
             <div class="bg-transparent p-1.5 rounded-xl"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
             <span class="text-[10px] uppercase tracking-wider">Izbriši</span>
         </button>
@@ -239,23 +239,60 @@
         const UNIQUE_COUNTRIES = [...new Set(regularCoins.map(c => c.country))];
 
         // --- 2. UPRAVLJANJE STANJA ---
-        let collectedCoins = new Set();
+        // Preurejeno iz preprostega seznama v Objekt, kjer se hrani tudi OHRANJENOST
+        let collectedCoins = {};
 
         try {
-            const savedData = localStorage.getItem('euro-collection-v3');
-            if (savedData) collectedCoins = new Set(JSON.parse(savedData));
+            const savedData = localStorage.getItem('euro-collection-v4');
+            if (savedData) {
+                collectedCoins = JSON.parse(savedData);
+            } else {
+                // Avtomatska migracija vaših starih podatkov (če obstajajo)! 
+                // Ne boste izgubili nobenega kovanca!
+                const oldData = localStorage.getItem('euro-collection-v3');
+                if (oldData) {
+                    const parsed = JSON.parse(oldData);
+                    parsed.forEach(id => { collectedCoins[id] = 'mint'; }); // Vsi stari so označeni kot 'Odlično'
+                }
+            }
         } catch (e) { console.warn("Lokalna shramba ni na voljo."); }
 
         function saveToLocal() {
-            try { localStorage.setItem('euro-collection-v3', JSON.stringify(Array.from(collectedCoins))); } 
+            try { localStorage.setItem('euro-collection-v4', JSON.stringify(collectedCoins)); } 
             catch (e) {}
         }
 
+        // Dodajanje / Odstranjevanje kovanca
         function toggleCoin(id) {
-            if (collectedCoins.has(id)) collectedCoins.delete(id);
-            else collectedCoins.add(id);
+            if (collectedCoins[id]) {
+                delete collectedCoins[id];
+            } else {
+                collectedCoins[id] = 'mint'; // Ob dodajanju je privzeto "Odlično"
+            }
             saveToLocal();
             renderApp();
+            
+            // Osveži modalno okno, če je odprto
+            const modalTitle = document.getElementById('modal-title').innerText;
+            if (modalTitle && UNIQUE_COUNTRIES.includes(modalTitle) && document.getElementById('coin-modal').classList.contains('opacity-0') === false) {
+                openCountryModal(modalTitle);
+            }
+        }
+
+        // NOVO: Spreminjanje ohranjenosti (Odlično -> Zamenjaj -> Odlično)
+        function toggleCondition(id, e) {
+            e.stopPropagation(); // Zelo pomembno: prepreči, da bi se kovanec odznačil ob kliku na gumb za stanje!
+            if (collectedCoins[id]) {
+                collectedCoins[id] = collectedCoins[id] === 'mint' ? 'poor' : 'mint';
+                saveToLocal();
+                renderApp();
+                
+                // Osveži modalno okno, če je odprto
+                const modalTitle = document.getElementById('modal-title').innerText;
+                if (modalTitle && UNIQUE_COUNTRIES.includes(modalTitle) && document.getElementById('coin-modal').classList.contains('opacity-0') === false) {
+                    openCountryModal(modalTitle);
+                }
+            }
         }
 
         // --- LOGIKA ZA BRISANJE ZBIRKE (MODAL) ---
@@ -280,7 +317,7 @@
         }
 
         function executeReset() {
-            collectedCoins.clear();
+            collectedCoins = {}; // Počisti celoten objekt
             saveToLocal();
             renderApp();
             hideResetConfirm();
@@ -293,7 +330,6 @@
             const modal = document.getElementById('zoom-modal');
             modal.classList.remove('hidden');
             
-            // Osvežimo ikone za zoom modal (če slučajno niso naložene)
             lucide.createIcons();
 
             requestAnimationFrame(() => {
@@ -312,7 +348,6 @@
             document.getElementById('view-countries').style.display = viewName === 'countries' ? 'block' : 'none';
             document.getElementById('view-timeline').style.display = viewName === 'timeline' ? 'block' : 'none';
             
-            // Aktivne barve gumbov na dnu
             const tabC = document.getElementById('tab-countries');
             const tabT = document.getElementById('tab-timeline');
             
@@ -329,7 +364,7 @@
             }
         }
 
-        // --- POMOŽNA FUNKCIJA ZA ZASTAVE (Fallback fix) ---
+        // --- POMOŽNA FUNKCIJA ZA ZASTAVE ---
         function getFlagImg(countryName) {
             const map = {
                 'Andora': 'ad', 'Avstrija': 'at', 'Belgija': 'be', 'Bolgarija': 'bg', 'Hrvaška': 'hr',
@@ -349,44 +384,56 @@
 
             UNIQUE_COUNTRIES.forEach(country => {
                 const countryCoins = regularCoins.filter(c => c.country === country);
-                const collectedCount = countryCoins.filter(c => collectedCoins.has(c.id)).length;
+                const collectedCount = countryCoins.filter(c => !!collectedCoins[c.id]).length;
                 const totalCount = countryCoins.length;
                 
                 const isCovered = collectedCount > 0;
                 const isCompleted = collectedCount === totalCount;
                 
-                // Vedno prikažemo sliko PRVEGA kovanca (serije) te države "navzven"
+                // Preveri, če ima katerikoli izmed zbranih kovancev v tej državi status 'poor' (Zamenjaj)
+                const needsReplacement = countryCoins.some(c => collectedCoins[c.id] === 'poor');
+                
                 const firstCoinImg = countryCoins[0].imageUrl;
                 
                 let borderClass = 'border-slate-200 bg-white';
                 let checkBadge = '';
+                let statusTextClass = 'text-slate-400';
                 
                 if (isCompleted) { 
+                    // Prikaz, ko so vsi kovanci zbrani (Zelena)
                     borderClass = 'border-green-400 bg-green-50/40 shadow-green-100'; 
                     checkBadge = `<div class="absolute -top-2 -right-2 bg-green-500 text-white rounded-full p-1 shadow-md z-20"><i data-lucide="check" class="w-3 h-3"></i></div>`;
+                    statusTextClass = 'text-green-600';
                 } else if (isCovered) { 
+                    // Prikaz, ko je zbran vsaj en kovanec (Modra)
                     borderClass = 'border-blue-400 bg-blue-50/30 shadow-blue-50'; 
                     checkBadge = `<div class="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1 shadow-md z-20"><i data-lucide="check" class="w-3 h-3"></i></div>`;
+                    statusTextClass = 'text-blue-600';
+                }
+
+                // Diskreten znakec za zamenjavo (oranžen krogec zgoraj levo), kartica pa ostane modra/zelena
+                let replacementBadge = '';
+                if (needsReplacement) {
+                    replacementBadge = `<div class="absolute -top-2 -left-2 bg-orange-500 text-white rounded-full p-1 shadow-md z-20" title="Išče se lepši kovanec"><i data-lucide="refresh-cw" class="w-3 h-3"></i></div>`;
                 }
 
                 html += `
                 <div onclick="openCountryModal('${country}')" class="card-hover cursor-pointer border-2 rounded-2xl p-3 flex flex-col items-center text-center relative ${borderClass} shadow-sm">
                     ${checkBadge}
+                    ${replacementBadge}
                     
                     <div class="relative w-14 h-14 sm:w-16 sm:h-16 mb-2">
-                        <!-- Kovanec -->
                         <div class="w-full h-full rounded-full overflow-hidden border-[3px] border-[#cbd5e1] shadow-[inset_0_0_8px_rgba(0,0,0,0.3)] relative bg-[#cbd5e1]">
                              <img src="${firstCoinImg}" alt="${country}" class="w-full h-full object-cover mix-blend-multiply opacity-90" loading="lazy" />
                              <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-full"></div>
                         </div>
-                        <!-- Zastavica (Badge) -->
                         <div class="absolute -bottom-1 -right-1 w-6 h-4 border border-white rounded shadow-sm overflow-hidden z-10">
                             ${getFlagImg(country)}
                         </div>
                     </div>
                     
                     <h3 class="text-xs sm:text-sm font-bold text-slate-800 leading-tight mb-1 truncate w-full px-1">${country}</h3>
-                    <div class="text-[9px] sm:text-[10px] font-black ${isCompleted ? 'text-green-600' : 'text-slate-400'} bg-white/80 px-2 py-0.5 rounded-lg border border-slate-100 w-full truncate">
+                    <div class="text-[9px] sm:text-[10px] font-black ${statusTextClass} bg-white/80 px-2 py-0.5 rounded-lg border border-slate-100 w-full truncate">
                         ${collectedCount} / ${totalCount} serij
                     </div>
                 </div>
@@ -395,34 +442,62 @@
             grid.innerHTML = html;
         }
 
-        // --- 5. RENDER SLO ČASOVNICE Z ZOOM-OM ---
+        // --- 5. RENDER SLO ČASOVNICE Z OHRANJENOSTJO ---
         function renderTimeline() {
             const container = document.getElementById('slo-timeline');
             const sloCoins = COINS.filter(c => c.type === 'Commemorative'); 
             
             let html = '';
             sloCoins.forEach((coin) => {
-                const isCollected = collectedCoins.has(coin.id);
+                const isCollected = !!collectedCoins[coin.id];
+                const state = collectedCoins[coin.id]; // 'mint' ali 'poor'
+                
                 const nodeClass = isCollected ? 'timeline-node active' : 'timeline-node';
-                const cardBorder = isCollected ? 'border-blue-400 bg-gradient-to-r from-blue-50/60 to-white' : 'border-slate-200 bg-white hover:border-slate-300';
-                const yearBadge = isCollected ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500';
+                
+                let cardBorder = 'border-slate-200 bg-white hover:border-slate-300';
+                let yearBadge = 'bg-slate-100 text-slate-500';
+                let replacementBadge = '';
+                
+                if (isCollected) {
+                    // Kartica ohrani lepo modro barvo zbrane zbirke
+                    cardBorder = 'border-blue-400 bg-gradient-to-r from-blue-50/60 to-white shadow-blue-50';
+                    yearBadge = 'bg-blue-100 text-blue-700';
+                    
+                    // Samo diskreten znak se prikaže, če kovanec potrebuje zamenjavo
+                    if (state === 'poor') {
+                        replacementBadge = `<div class="absolute -top-2 -left-2 bg-orange-500 text-white rounded-full p-1 shadow-md z-20" title="Išče se lepši kovanec"><i data-lucide="refresh-cw" class="w-3 h-3"></i></div>`;
+                    }
+                }
                 
                 const toggleBtn = isCollected 
                     ? `<div class="bg-blue-500 text-white rounded-full p-1.5 shadow-sm transform transition-transform active:scale-90"><i data-lucide="check" class="w-5 h-5"></i></div>` 
                     : `<div class="border-2 border-slate-300 rounded-full w-8 h-8 transition-colors hover:border-blue-400"></div>`;
 
+                // NOVO: Renderiranje značke za ohranjenost
+                let conditionBadge = '';
+                if (isCollected) {
+                    const badgeClass = state === 'poor' 
+                        ? 'bg-orange-100 text-orange-700 border-orange-200 hover:bg-orange-200' 
+                        : 'bg-yellow-100 text-yellow-700 border-yellow-200 hover:bg-yellow-200';
+                    const icon = state === 'poor' ? 'refresh-cw' : 'sparkles';
+                    const text = state === 'poor' ? 'Zamenjaj' : 'Odlično';
+                    
+                    conditionBadge = `
+                        <div onclick="toggleCondition('${coin.id}', event)" class="${badgeClass} border px-2 py-1 rounded-lg text-[9px] sm:text-[10px] font-bold flex items-center gap-1.5 shadow-sm transition-transform active:scale-90 z-20 mt-2 w-max cursor-pointer" title="Spremeni ohranjenost kovanca">
+                            <i data-lucide="${icon}" class="w-3 h-3"></i> ${text}
+                        </div>
+                    `;
+                }
+
                 html += `
                 <div class="relative mb-5">
                     <div class="${nodeClass}"></div>
-                    <div onclick="toggleCoin('${coin.id}')" class="card-hover cursor-pointer border-2 rounded-2xl p-3 sm:p-4 flex items-center gap-3 sm:gap-4 ${cardBorder} shadow-sm transition-all duration-300">
-                        
-                        <!-- Slika kovanca z gumbom za povečavo -->
+                    <div onclick="toggleCoin('${coin.id}')" class="card-hover cursor-pointer border-2 rounded-2xl p-3 sm:p-4 flex items-center gap-3 sm:gap-4 ${cardBorder} shadow-sm transition-all duration-300 relative">
+                        ${replacementBadge}
                         <div class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 relative group" onclick="openZoom('${coin.imageUrl}', '${coin.title}'); event.stopPropagation();">
                             <div class="w-full h-full rounded-full overflow-hidden border-[3px] border-[#cbd5e1] shadow-inner relative bg-[#cbd5e1] transition-transform duration-300 group-hover:scale-105">
                                  <img src="${coin.imageUrl}" alt="${coin.title}" class="w-full h-full object-cover mix-blend-multiply opacity-90" loading="lazy" />
                                  <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-full"></div>
-                                 
-                                 <!-- Zoom Overlay -->
                                  <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full">
                                      <i data-lucide="zoom-in" class="w-5 h-5 text-white"></i>
                                  </div>
@@ -433,6 +508,7 @@
                             <div class="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest mb-1.5 ${yearBadge}">${coin.year}</div>
                             <h3 class="text-sm sm:text-base font-bold text-slate-800 leading-tight mb-1 truncate">${coin.title}</h3>
                             <p class="text-[11px] sm:text-xs text-slate-500 line-clamp-2">${coin.description}</p>
+                            ${conditionBadge}
                         </div>
                         
                         <div class="flex-shrink-0 pl-1">
@@ -445,7 +521,7 @@
             container.innerHTML = html;
         }
 
-        // --- 6. MODALNO OKNO DRŽAV (Pregled serij Z ZOOM-OM) ---
+        // --- 6. MODALNO OKNO DRŽAV Z OHRANJENOSTJO ---
         function openCountryModal(countryName) {
             const coinsOfCountry = regularCoins.filter(c => c.country === countryName);
             
@@ -454,22 +530,47 @@
             
             let listHtml = '<div class="space-y-3 mt-4 pb-2">';
             coinsOfCountry.forEach(coin => {
-                const isCol = collectedCoins.has(coin.id);
-                const itemClass = isCol ? 'bg-green-50 border-green-400 shadow-sm' : 'bg-slate-50 border-slate-200 hover:border-blue-300';
-                const checkIcon = isCol 
-                    ? `<i data-lucide="check-circle" class="text-green-600 w-6 h-6 fill-green-200 drop-shadow-sm"></i>` 
-                    : `<i data-lucide="circle" class="text-slate-300 w-6 h-6"></i>`;
+                const isCol = !!collectedCoins[coin.id];
+                const state = collectedCoins[coin.id];
                 
-                listHtml += `
-                <div onclick="toggleCoin('${coin.id}'); event.stopPropagation(); openCountryModal('${countryName}');" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-3 transition-all active:scale-95 ${itemClass}">
+                let itemClass = 'bg-slate-50 border-slate-200 hover:border-blue-300';
+                let checkIcon = `<i data-lucide="circle" class="text-slate-300 w-6 h-6"></i>`;
+                let replacementBadge = '';
+                
+                // NOVO: Renderiranje značke za ohranjenost v modalnem oknu
+                let conditionBadge = '';
+                
+                if (isCol) {
+                    // Kartica serije ostane prijetno zelena
+                    itemClass = 'bg-green-50 border-green-400 shadow-sm';
                     
-                    <!-- Slika kovanca z gumbom za povečavo -->
+                    // Diskreten znak v kotu
+                    if (state === 'poor') {
+                        replacementBadge = `<div class="absolute -top-2 -left-2 bg-orange-500 text-white rounded-full p-1 shadow-md z-20"><i data-lucide="refresh-cw" class="w-3 h-3"></i></div>`;
+                    }
+                    
+                    checkIcon = `<i data-lucide="check-circle" class="text-green-600 w-6 h-6 fill-green-200 drop-shadow-sm"></i>`;
+                    
+                    const badgeClass = state === 'poor' 
+                        ? 'bg-orange-100 text-orange-700 border-orange-200 hover:bg-orange-200' 
+                        : 'bg-yellow-100 text-yellow-700 border-yellow-200 hover:bg-yellow-200';
+                    const icon = state === 'poor' ? 'refresh-cw' : 'sparkles';
+                    const text = state === 'poor' ? 'Zamenjaj' : 'Odlično';
+                    
+                    conditionBadge = `
+                        <div onclick="toggleCondition('${coin.id}', event);" class="${badgeClass} border px-2 py-1 rounded-lg text-[9px] font-bold flex items-center gap-1 shadow-sm transition-transform active:scale-90 z-20 mt-1.5 w-max cursor-pointer" title="Spremeni ohranjenost">
+                            <i data-lucide="${icon}" class="w-3 h-3"></i> ${text}
+                        </div>
+                    `;
+                }
+
+                listHtml += `
+                <div onclick="toggleCoin('${coin.id}'); event.stopPropagation();" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-3 transition-all active:scale-95 relative ${itemClass}">
+                    ${replacementBadge}
                     <div class="w-12 h-12 flex-shrink-0 relative group" onclick="openZoom('${coin.imageUrl}', '${coin.title}'); event.stopPropagation();">
                         <div class="w-full h-full rounded-full overflow-hidden border-[2px] border-[#cbd5e1] shadow-inner relative bg-[#cbd5e1] transition-transform group-hover:scale-105">
                             <img src="${coin.imageUrl}" alt="Serija" class="w-full h-full object-cover mix-blend-multiply opacity-90" />
                             <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-full"></div>
-                            
-                            <!-- Zoom Overlay -->
                             <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full">
                                 <i data-lucide="zoom-in" class="w-4 h-4 text-white"></i>
                             </div>
@@ -479,6 +580,7 @@
                     <div class="text-left flex-1 min-w-0">
                         <div class="text-xs font-bold text-slate-800 mb-0.5 truncate">${coin.year}</div>
                         <div class="text-[10px] text-slate-500 leading-tight line-clamp-2">${coin.description}</div>
+                        ${conditionBadge}
                     </div>
                     <div class="flex-shrink-0">
                         ${checkIcon}
@@ -515,8 +617,7 @@
             // Števci
             let regCollectedCountries = 0;
             UNIQUE_COUNTRIES.forEach(country => { 
-                // Če ima vsaj 1 zbran kovanec te države
-                if (regularCoins.filter(c => c.country === country).some(c => collectedCoins.has(c.id))) {
+                if (regularCoins.filter(c => c.country === country).some(c => !!collectedCoins[c.id])) {
                     regCollectedCountries++;
                 }
             });
@@ -524,7 +625,7 @@
 
             const sloCoins = COINS.filter(c => c.type === 'Commemorative');
             const slTotal = sloCoins.length;
-            const slCollected = sloCoins.filter(c => collectedCoins.has(c.id)).length;
+            const slCollected = sloCoins.filter(c => !!collectedCoins[c.id]).length;
             const slPercent = Math.round((slCollected / slTotal) * 100) || 0;
 
             // Update DOM statistika
@@ -534,7 +635,7 @@
             document.getElementById('sl-collected').innerText = slCollected;
             document.getElementById('sl-total').innerText = slTotal;
             
-            const totalValue = (collectedCoins.size) * 2;
+            const totalValue = (Object.keys(collectedCoins).length) * 2;
             document.getElementById('total-value').innerText = `€${totalValue}.00`;
 
             document.getElementById('sl-bar-white').style.width = `${slPercent / 3}%`;
