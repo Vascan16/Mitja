@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Euro Coin Tracker</title>
     
-    <!-- Load Tailwind CSS for styling (Version Frozen to 3.4.3) -->
-    <script src="https://cdn.tailwindcss.com/3.4.3"></script>
-    
-    <!-- Load Lucide Icons for the graphics (Version Frozen to 0.344.0) -->
-    <script src="https://unpkg.com/lucide@0.344.0"></script>
+    <!-- Popravljeni in delujoči povezavi (brez napačnih številk verzij) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         /* Custom scrollbar and minor tweaks */
@@ -129,7 +127,7 @@
                 </div>
                 <div>
                     <h2 class="text-2xl font-black text-slate-800 tracking-tight">Eurozone Standard Issues</h2>
-                    <p class="text-slate-500 font-medium text-sm">The 24 regular national circulation coins</p>
+                    <p class="text-slate-500 font-medium text-sm">The 24 regular national circulation coins (including multiple series)</p>
                 </div>
                 <span id="reg-complete-badge" class="hidden ml-auto bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
                     <i data-lucide="check-circle" class="w-4 h-4"></i> Complete
@@ -171,33 +169,60 @@
         // --- 1. DATASET ---
         const COINS = [
             // REGULAR COINS
-            { id: 'reg-ad', type: 'Regular', year: 'Standard', country: 'Andorra', inscription: 'ANDORRA', flag: '🇦🇩', title: 'Standard 2€ - Coat of Arms', icon: 'landmark', imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/0/0a/Andorra_2_euro_coin.png/200px-Andorra_2_euro_coin.png', description: 'Features the coat of arms of Andorra with the national motto "virtus unita fortior" (virtue united is stronger).' },
-            { id: 'reg-at', type: 'Regular', year: 'Standard', country: 'Austria', inscription: 'ÖSTERREICH', flag: '🇦🇹', title: 'Standard 2€ - Bertha von Suttner', icon: 'user', imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/1/14/Austria_2_euro_coin.png/200px-Austria_2_euro_coin.png', description: 'Features a portrait of Bertha von Suttner, Nobel Peace Prize laureate, symbolizing Austria\'s historical commitment to peace.' },
-            { id: 'reg-be', type: 'Regular', year: 'Standard', country: 'Belgium', inscription: 'BELGIE', flag: '🇧🇪', title: 'Standard 2€ - King Philippe', icon: 'user', description: 'Features the effigy of King Philippe of Belgium in profile looking to the right, along with his royal monogram.' },
-            { id: 'reg-hr', type: 'Regular', year: 'Standard', country: 'Croatia', inscription: 'HRVATSKA', flag: '🇭🇷', title: 'Standard 2€ - Map of Croatia', icon: 'map', description: 'Features the geographical map of the Republic of Croatia superimposed against a background of the national checkerboard pattern.' },
-            { id: 'reg-cy', type: 'Regular', year: 'Standard', country: 'Cyprus', inscription: 'KYПPOΣ', flag: '🇨🇾', title: 'Standard 2€ - Idol of Pomos', icon: 'user', description: 'Features a cross-shaped idol from the Chalcolithic period (3000 BC) found in Pomos, a characteristic example of prehistoric Cypriot art.' },
-            { id: 'reg-ee', type: 'Regular', year: 'Standard', country: 'Estonia', inscription: 'EESTI', flag: '🇪🇪', title: 'Standard 2€ - Map of Estonia', icon: 'map', description: 'Features a geographical map of Estonia in outline, symbolizing national unity and identity.' },
-            { id: 'reg-fi', type: 'Regular', year: 'Standard', country: 'Finland', inscription: 'SUOMI', flag: '🇫🇮', title: 'Standard 2€ - Cloudberry', icon: 'map', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/db/Pi%C3%A8ce_de_2_euros_comm%C3%A9morative.jpg', description: 'Features the fruit and leaves of the cloudberry, designed by Raimo Heino, representing Finland\'s distinct northern nature.' },
-            { id: 'reg-fr', type: 'Regular', year: 'Standard', country: 'France', inscription: 'RF', flag: '🇫🇷', title: 'Standard 2€ - Tree of Life', icon: 'map', description: 'Features a tree drawn by Joaquin Jimenez, symbolizing life, continuity, and growth, contained within a hexagon representing France\'s borders.' },
-            { id: 'reg-de', type: 'Regular', year: 'Standard', country: 'Germany', inscription: 'BUNDESREP.', flag: '🇩🇪', title: 'Standard 2€ - Eagle', icon: 'bird', description: 'Features the traditional symbol of German sovereignty, the heraldic eagle, surrounded by the stars of Europe.' },
-            { id: 'reg-gr', type: 'Regular', year: 'Standard', country: 'Greece', inscription: 'ΕΛΛΗΝΙΚΗ', flag: '🇬🇷', title: 'Standard 2€ - Europa and the Bull', icon: 'user', description: 'Depicts a scene from Spartan mythology where Europa is being abducted by Zeus, who has taken the form of a bull.' },
-            { id: 'reg-ie', type: 'Regular', year: 'Standard', country: 'Ireland', inscription: 'ÉIRE', flag: '🇮🇪', title: 'Standard 2€ - Celtic Harp', icon: 'music', description: 'Features the Celtic harp, a traditional symbol of Ireland dating back centuries, alongside the word "Éire".' },
-            { id: 'reg-it', type: 'Regular', year: 'Standard', country: 'Italy', inscription: 'RI', flag: '🇮🇹', title: 'Standard 2€ - Dante Alighieri', icon: 'user', description: 'Features a portrait drawn by Raphael of Dante Alighieri, the famous Italian poet and author of the Divine Comedy.' },
-            { id: 'reg-lv', type: 'Regular', year: 'Standard', country: 'Latvia', inscription: 'LATVIJA', flag: '🇱🇻', title: 'Standard 2€ - Latvian Maiden', icon: 'user', description: 'Features the profile of a Latvian maiden, originally used on the 5-lats silver coin in 1929, symbolizing the Republic of Latvia.' },
-            { id: 'reg-lt', type: 'Regular', year: 'Standard', country: 'Lithuania', inscription: 'LIETUVA', flag: '🇱🇹', title: 'Standard 2€ - Vytis (Knight)', icon: 'swords', description: 'Features Vytis, the heroic knight on horseback holding a sword and shield, which is the historical coat of arms of Lithuania.' },
-            { id: 'reg-lu', type: 'Regular', year: 'Standard', country: 'Luxembourg', inscription: 'LËTZEBUERG', flag: '🇱🇺', title: 'Standard 2€ - Grand Duke Henri', icon: 'user', description: 'Features the effigy of His Royal Highness, Grand Duke Henri, looking to the right.' },
-            { id: 'reg-mt', type: 'Regular', year: 'Standard', country: 'Malta', inscription: 'MALTA', flag: '🇲🇹', title: 'Standard 2€ - Maltese Cross', icon: 'landmark', description: 'Features the eight-pointed Maltese Cross, an emblem associated with the Sovereign Military Order of Malta during their rule.' },
-            { id: 'reg-mc', type: 'Regular', year: 'Standard', country: 'Monaco', inscription: 'MONACO', flag: '🇲🇨', title: 'Standard 2€ - Prince Albert II', icon: 'user', description: 'Features the effigy of H.S.H. Prince Albert II of Monaco.' },
-            { id: 'reg-nl', type: 'Regular', year: 'Standard', country: 'Netherlands', inscription: 'NEDERLAND', flag: '🇳🇱', title: 'Standard 2€ - King Willem-Alexander', icon: 'user', description: 'Features the stylized portrait of King Willem-Alexander, composed of faceted planes.' },
-            { id: 'reg-pt', type: 'Regular', year: 'Standard', country: 'Portugal', inscription: 'PORTUGAL', flag: '🇵🇹', title: 'Standard 2€ - Royal Seals', icon: 'landmark', description: 'Features the royal seal of 1144 belonging to Afonso Henriques, the first King of Portugal, surrounded by seven castles and five escutcheons.' },
-            { id: 'reg-sm', type: 'Regular', year: 'Standard', country: 'San Marino', inscription: 'SAN MARINO', flag: '🇸🇲', title: 'Standard 2€ - Saint Marinus', icon: 'user', description: 'Features a portrait of Saint Marinus, the founder of the Republic, based on a painting by Giovan Battista Urbinelli.' },
-            { id: 'reg-sk', type: 'Regular', year: 'Standard', country: 'Slovakia', inscription: 'SLOVENSKO', flag: '🇸🇰', title: 'Standard 2€ - Double Cross on Hills', icon: 'landmark', description: 'Features a double cross elevated on three hills, identical to the national coat of arms of Slovakia.' },
-            { id: 'reg-si', type: 'Regular', year: 'Standard', country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: 'Standard 2€ - France Prešeren', icon: 'user', description: 'Features a profile of Slovenia’s national poet France Prešeren, alongside a line from his famous poem "Zdravljica" which is the national anthem.' },
-            { id: 'reg-es', type: 'Regular', year: 'Standard', country: 'Spain', inscription: 'ESPAÑA', flag: '🇪🇸', title: 'Standard 2€ - King Felipe VI', icon: 'user', description: 'Features the portrait of His Majesty King Felipe VI of Spain.' },
-            { id: 'reg-va', type: 'Regular', year: 'Standard', country: 'Vatican', inscription: 'VATICANO', flag: '🇻🇦', title: 'Standard 2€ - Pope Francis / Coat of Arms', icon: 'landmark', description: 'Features the coat of arms of the Sovereign of the Vatican City State, Pope Francis.' },
+            { id: 'reg-ad', type: 'Regular', year: 'Standard', country: 'Andorra', inscription: 'ANDORRA', flag: '🇦🇩', title: 'Standard 2€ - Coat of Arms', icon: 'landmark', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Andorra.jpg?width=200', description: 'Features the coat of arms of Andorra with the national motto "virtus unita fortior" (virtue united is stronger).' },
+            { id: 'reg-at', type: 'Regular', year: 'Standard', country: 'Austria', inscription: 'ÖSTERREICH', flag: '🇦🇹', title: 'Standard 2€ - Bertha von Suttner', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2e_oes.png?width=200', description: 'Features a portrait of Bertha von Suttner, Nobel Peace Prize laureate.' },
+            
+            // Belgium Series
+            { id: 'reg-be-1', type: 'Regular', year: 'Standard', country: 'Belgium', inscription: 'BELGIE', flag: '🇧🇪', title: 'Standard 2€ (1st Series) - King Albert II', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2e_bel.png?width=200', description: '1st series: Features the effigy of King Albert II (1999-2007 design).' },
+            { id: 'reg-be-2', type: 'Regular', year: 'Standard', country: 'Belgium', inscription: 'BELGIE', flag: '🇧🇪', title: 'Standard 2€ (2nd Series) - King Albert II Updated', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Belgium_2euro_2008.jpg?width=200', description: '2nd series: Updated portrait of King Albert II to comply with new EU design rules (2008-2013).' },
+            { id: 'reg-be-3', type: 'Regular', year: 'Standard', country: 'Belgium', inscription: 'BELGIE', flag: '🇧🇪', title: 'Standard 2€ (3rd Series) - King Philippe', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Belgium_2euro_2014ph.jpg?width=200', description: '3rd series: Features the effigy of King Philippe of Belgium in profile looking to the right.' },
+            
+            { id: 'reg-bg', type: 'Regular', year: 'Standard', country: 'Bulgaria', inscription: 'БЪЛГАРИЯ', flag: '🇧🇬', title: 'Standard 2€ - Paisii Hilendarski', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Bulgaria_2euro.jpg?width=200', description: 'Features Paisii Hilendarski, an important Bulgarian clergyman and key figure of the Bulgarian National Revival.' },
+            { id: 'reg-hr', type: 'Regular', year: 'Standard', country: 'Croatia', inscription: 'HRVATSKA', flag: '🇭🇷', title: 'Standard 2€ - Map of Croatia', icon: 'map', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Croatia_2euro.jpg?width=200', description: 'Features the geographical map of the Republic of Croatia.' },
+            { id: 'reg-cy', type: 'Regular', year: 'Standard', country: 'Cyprus', inscription: 'KYПPOΣ', flag: '🇨🇾', title: 'Standard 2€ - Idol of Pomos', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Cipro.gif?width=200', description: 'Features a cross-shaped idol from the Chalcolithic period (3000 BC).' },
+            { id: 'reg-ee', type: 'Regular', year: 'Standard', country: 'Estonia', inscription: 'EESTI', flag: '🇪🇪', title: 'Standard 2€ - Map of Estonia', icon: 'map', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Estonia.jpg?width=200', description: 'Features a geographical map of Estonia in outline.' },
+            { id: 'reg-fi', type: 'Regular', year: 'Standard', country: 'Finland', inscription: 'SUOMI', flag: '🇫🇮', title: 'Standard 2€ - Cloudberry', icon: 'map', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2e_fin.png?width=200', description: 'Features the fruit and leaves of the cloudberry.' },
+            
+            // France Series
+            { id: 'reg-fr-1', type: 'Regular', year: 'Standard', country: 'France', inscription: 'RF', flag: '🇫🇷', title: 'Standard 2€ (1st Series) - Tree of Life', icon: 'map', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2e_fra.png?width=200', description: '1st series: Features a tree drawn by Joaquin Jimenez, symbolizing life, continuity, and growth.' },
+            { id: 'reg-fr-2', type: 'Regular', year: 'Standard', country: 'France', inscription: 'RF', flag: '🇫🇷', title: 'Standard 2€ (2nd Series) - Oak and Olive', icon: 'map', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/PFUE2022_-_2_euros_(cropped).jpg?width=200', description: '2nd series (2022-): New design featuring an oak and olive tree branches forming a hexagon.' },
+            
+            { id: 'reg-de', type: 'Regular', year: 'Standard', country: 'Germany', inscription: 'BUNDESREP.', flag: '🇩🇪', title: 'Standard 2€ - Eagle', icon: 'bird', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2e_ger.png?width=200', description: 'Features the traditional symbol of German sovereignty, the heraldic eagle.' },
+            { id: 'reg-gr', type: 'Regular', year: 'Standard', country: 'Greece', inscription: 'ΕΛΛΗΝΙΚΗ', flag: '🇬🇷', title: 'Standard 2€ - Europa and the Bull', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Grecia.gif?width=200', description: 'Depicts a scene from Spartan mythology where Europa is being abducted by Zeus.' },
+            { id: 'reg-ie', type: 'Regular', year: 'Standard', country: 'Ireland', inscription: 'ÉIRE', flag: '🇮🇪', title: 'Standard 2€ - Celtic Harp', icon: 'music', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_euro_Irlanda.jpg?width=200', description: 'Features the Celtic harp, a traditional symbol of Ireland.' },
+            { id: 'reg-it', type: 'Regular', year: 'Standard', country: 'Italy', inscription: 'RI', flag: '🇮🇹', title: 'Standard 2€ - Dante Alighieri', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Italia.jpg?width=200', description: 'Features a portrait drawn by Raphael of Dante Alighieri.' },
+            { id: 'reg-lv', type: 'Regular', year: 'Standard', country: 'Latvia', inscription: 'LATVIJA', flag: '🇱🇻', title: 'Standard 2€ - Latvian Maiden', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_eur_LV.jpg?width=200', description: 'Features the profile of a Latvian maiden, originally used on the 1929 5-lats silver coin.' },
+            { id: 'reg-lt', type: 'Regular', year: 'Standard', country: 'Lithuania', inscription: 'LIETUVA', flag: '🇱🇹', title: 'Standard 2€ - Vytis (Knight)', icon: 'swords', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Lituania_%E2%82%AC2.jpg?width=200', description: 'Features Vytis, the heroic knight on horseback holding a sword and shield.' },
+            { id: 'reg-lu', type: 'Regular', year: 'Standard', country: 'Luxembourg', inscription: 'LËTZEBUERG', flag: '🇱🇺', title: 'Standard 2€ - Grand Duke Henri', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Lussemburgo.jpg?width=200', description: 'Features the effigy of His Royal Highness, Grand Duke Henri.' },
+            { id: 'reg-mt', type: 'Regular', year: 'Standard', country: 'Malta', inscription: 'MALTA', flag: '🇲🇹', title: 'Standard 2€ - Maltese Cross', icon: 'landmark', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_Euro_Malta.jpg?width=200', description: 'Features the eight-pointed Maltese Cross.' },
+            
+            // Monaco Series
+            { id: 'reg-mc-1', type: 'Regular', year: 'Standard', country: 'Monaco', inscription: 'MONACO', flag: '🇲🇨', title: 'Standard 2€ (1st Series) - Prince Rainier III', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Monaco_2001.jpg?width=200', description: '1st series (2001-2005): Features Prince Rainier III.' },
+            { id: 'reg-mc-2', type: 'Regular', year: 'Standard', country: 'Monaco', inscription: 'MONACO', flag: '🇲🇨', title: 'Standard 2€ (2nd Series) - Prince Albert II', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Monaco_2006.jpg?width=200', description: '2nd series (2006-): Features the effigy of H.S.H. Prince Albert II.' },
+            
+            // Netherlands Series
+            { id: 'reg-nl-1', type: 'Regular', year: 'Standard', country: 'Netherlands', inscription: 'NEDERLAND', flag: '🇳🇱', title: 'Standard 2€ (1st Series) - Queen Beatrix', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2e_nl.png?width=200', description: '1st series: Features the stylized profile of Queen Beatrix.' },
+            { id: 'reg-nl-2', type: 'Regular', year: 'Standard', country: 'Netherlands', inscription: 'NEDERLAND', flag: '🇳🇱', title: 'Standard 2€ (2nd Series) - King Willem-Alexander', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Paesi_Bassi_serie_2014.jpg?width=200', description: '2nd series (2014-): Features the faceted portrait of King Willem-Alexander.' },
+            
+            { id: 'reg-pt', type: 'Regular', year: 'Standard', country: 'Portugal', inscription: 'PORTUGAL', flag: '🇵🇹', title: 'Standard 2€ - Royal Seals', icon: 'landmark', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2e_por.png?width=200', description: 'Features the royal seal of 1144 belonging to Afonso Henriques.' },
+            { id: 'reg-sm', type: 'Regular', year: 'Standard', country: 'San Marino', inscription: 'SAN MARINO', flag: '🇸🇲', title: 'Standard 2€ - Government Palace', icon: 'landmark', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_San_Marino.gif?width=200', description: 'Features the Palazzo Pubblico (Government Palace).' },
+            { id: 'reg-sk', type: 'Regular', year: 'Standard', country: 'Slovakia', inscription: 'SLOVENSKO', flag: '🇸🇰', title: 'Standard 2€ - Double Cross on Hills', icon: 'landmark', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Slovacchia.png?width=200', description: 'Features a double cross elevated on three hills, identical to the national coat of arms.' },
+            { id: 'reg-si', type: 'Regular', year: 'Standard', country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: 'Standard 2€ - France Prešeren', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Si2.1eur.jpg?width=200', description: 'Features a profile of Slovenia’s national poet France Prešeren.' },
+            
+            // Spain Series
+            { id: 'reg-es-1', type: 'Regular', year: 'Standard', country: 'Spain', inscription: 'ESPAÑA', flag: '🇪🇸', title: 'Standard 2€ (1st Series) - King Juan Carlos I', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Spagna.gif?width=200', description: '1st series: Features King Juan Carlos I (1999-2009).' },
+            { id: 'reg-es-2', type: 'Regular', year: 'Standard', country: 'Spain', inscription: 'ESPAÑA', flag: '🇪🇸', title: 'Standard 2€ (2nd Series) - Juan Carlos I Updated', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Spain_2euro_2014.jpg?width=200', description: '2nd series: Updated King Juan Carlos I to comply with new EU rules (2010-2014).' },
+            { id: 'reg-es-3', type: 'Regular', year: 'Standard', country: 'Spain', inscription: 'ESPAÑA', flag: '🇪🇸', title: 'Standard 2€ (3rd Series) - King Felipe VI', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Spain_2euro_2015.jpg?width=200', description: '3rd series (2015-): Features His Majesty King Felipe VI.' },
+            
+            // Vatican Series
+            { id: 'reg-va-1', type: 'Regular', year: 'Standard', country: 'Vatican', inscription: 'VATICANO', flag: '🇻🇦', title: 'Standard 2€ (1st Series) - Pope John Paul II', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_1.png?width=200', description: '1st series: Effigy of Pope John Paul II.' },
+            { id: 'reg-va-2', type: 'Regular', year: 'Standard', country: 'Vatican', inscription: 'VATICANO', flag: '🇻🇦', title: 'Standard 2€ (2nd Series) - Sede Vacante', icon: 'landmark', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_2.png?width=200', description: '2nd series (2005): Issued during the Sede Vacante, showing the emblem of the Apostolic Chamber.' },
+            { id: 'reg-va-3', type: 'Regular', year: 'Standard', country: 'Vatican', inscription: 'VATICANO', flag: '🇻🇦', title: 'Standard 2€ (3rd Series) - Pope Benedict XVI', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_3a.png?width=200', description: '3rd series: Effigy of Pope Benedict XVI.' },
+            { id: 'reg-va-4', type: 'Regular', year: 'Standard', country: 'Vatican', inscription: 'VATICANO', flag: '🇻🇦', title: 'Standard 2€ (4th Series) - Pope Francis', icon: 'user', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_%E2%82%AC_Vaticano_2014.png?width=200', description: '4th series: Effigy of Pope Francis.' },
+            { id: 'reg-va-5', type: 'Regular', year: 'Standard', country: 'Vatican', inscription: 'VATICANO', flag: '🇻🇦', title: 'Standard 2€ (5th Series) - Coat of Arms', icon: 'landmark', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/2_euros_Vatican5.png?width=200', description: '5th series (2017-): Features the coat of arms of Pope Francis, replacing the effigy.' },
 
             // SLOVENIAN COMMEMORATIVES
-            { id: 'sl-2007-rome', type: 'Commemorative', year: 2007, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '50th Anniversary of the Treaty of Rome', icon: 'book-open', imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/6/64/Slovenia_2_euro_coin_2007.png/200px-Slovenia_2_euro_coin_2007.png', description: 'A joint European issue depicting the Treaty document signed by the six founding countries against a background reminiscent of Michelangelo\'s paving of the Piazza del Campidoglio.' },
+            { id: 'sl-2007-rome', type: 'Commemorative', year: 2007, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '50th Anniversary of the Treaty of Rome', icon: 'book-open', imageUrl: 'https://commons.wikimedia.org/wiki/Special:FilePath/Slovenia_2_euro_coin_2007.png?width=200', description: 'A joint European issue depicting the Treaty document signed by the six founding countries against a background reminiscent of Michelangelo\'s paving of the Piazza del Campidoglio.' },
             { id: 'sl-2008-trubar', type: 'Commemorative', year: 2008, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '500th Anniversary of Primož Trubar', icon: 'user', description: 'Features a profile of Primož Trubar, Protestant reformer and the author of the first printed book in the Slovene language. It includes the inscription "Stati inu obstati" (To stand and withstand).' },
             { id: 'sl-2009-emu', type: 'Commemorative', year: 2009, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '10 Years of Economic and Monetary Union', icon: 'globe', description: 'A joint European issue featuring a primitive stick figure merging into the € symbol, conveying the idea of the single currency as a shared European project.' },
             { id: 'sl-2010-botanical', type: 'Commemorative', year: 2010, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '200 Years of the Botanical Garden in Ljubljana', icon: 'map', description: 'Features the Rebrinčevolistna Hladnikovka flower to celebrate 200 years of the Botanical Garden in Ljubljana, the oldest continuously operating cultural, scientific and educational institution in Slovenia.' },
@@ -226,18 +251,24 @@
         let searchQuery = "";
         let statusFilter = "All";
 
-        // Load from browser storage
-        const savedData = localStorage.getItem('euro-collection');
-        if (savedData) {
-            try {
+        // Varno nalaganje podatkov (Try-Catch prepreči zrušitev kode, če brskalnik blokira lokalno shrambo)
+        try {
+            const savedData = localStorage.getItem('euro-collection');
+            if (savedData) {
                 const parsed = JSON.parse(savedData);
                 collectedCoins = new Set(parsed);
-            } catch (e) { console.error("Could not load data"); }
+            }
+        } catch (e) { 
+            console.warn("Lokalna shramba ni na voljo v tem brskalniku/okolju."); 
         }
 
-        // Save to browser storage
+        // Varno shranjevanje podatkov
         function saveToLocal() {
-            localStorage.setItem('euro-collection', JSON.stringify(Array.from(collectedCoins)));
+            try {
+                localStorage.setItem('euro-collection', JSON.stringify(Array.from(collectedCoins)));
+            } catch (e) {
+                console.warn("Podatkov ni bilo mogoče shraniti.");
+            }
         }
 
         // Toggle coin collected state
@@ -263,7 +294,6 @@
         // --- HELPER ZA ZASTAVE (Zanesljiv prikaz na Windows računalnikih) ---
         function getFlagImg(coin) {
             let code = 'eu';
-            // Izlušči kodo države iz ID-ja (npr. 'reg-ad' -> 'ad') ali uporabi 'si' za slovenske spominske
             if (coin.id.startsWith('reg-')) {
                 code = coin.id.split('-')[1];
             } else if (coin.country === 'Slovenia') {
@@ -303,9 +333,8 @@
             const content = document.getElementById('coin-modal-content');
             modal.classList.remove('hidden');
             
-            lucide.createIcons(); // Process injected icons
+            lucide.createIcons();
 
-            // Wait a micro-tick for the browser to render 'display:block' before animating opacity
             requestAnimationFrame(() => {
                 modal.classList.remove('opacity-0');
                 content.classList.remove('scale-95');
@@ -317,26 +346,22 @@
             const modal = document.getElementById('coin-modal');
             const content = document.getElementById('coin-modal-content');
             
-            // Reverse animation
             modal.classList.add('opacity-0');
             content.classList.remove('scale-100');
             content.classList.add('scale-95');
             
-            // Hide element after animation finishes
             setTimeout(() => {
                 modal.classList.add('hidden');
                 currentModalCoinId = null;
             }, 300);
         }
 
-        // Handles toggling while inside the detail modal
         function toggleFromModal() {
             if (!currentModalCoinId) return;
             toggleCoin(currentModalCoinId);
             updateModalButton(collectedCoins.has(currentModalCoinId));
         }
 
-        // Visually updates the big button in the modal
         function updateModalButton(isCollected) {
             const btn = document.getElementById('modal-toggle-btn');
             if (isCollected) {
@@ -351,6 +376,9 @@
 
         // --- 3. RENDERING SVG COIN (Fallback when no image) ---
         function getCoinSVG(coin) {
+            // Skrij tekst "Standard" znotraj SVG slike (ker je predolg in ne izgleda lepo)
+            const svgYear = coin.type === 'Regular' ? '' : coin.year;
+            
             return `
                 <div class="relative w-full h-full">
                     <svg viewBox="0 0 100 100" class="absolute inset-0 w-full h-full drop-shadow-md z-0">
@@ -373,12 +401,11 @@
                             ).join('')}
                         </g>
                         <g transform="translate(50,50)">
-                            <text x="0" y="15" text-anchor="middle" font-size="9" font-weight="bold" fill="#854d0e">${coin.year}</text>
+                            <text x="0" y="15" text-anchor="middle" font-size="9" font-weight="bold" fill="#854d0e">${svgYear}</text>
                             <text x="0" y="25" text-anchor="middle" font-size="${coin.inscription.length > 7 ? 4.5 : 6}" font-weight="bold" fill="#854d0e" letter-spacing="0.5">${coin.inscription}</text>
                         </g>
                     </svg>
                     
-                    <!-- HTML Icon layered securely on top of the SVG -->
                     <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none" style="padding-bottom: 22%;">
                         <i data-lucide="${coin.icon}" class="w-[32%] h-[32%] text-yellow-800 opacity-90" stroke-width="1.5"></i>
                     </div>
@@ -390,7 +417,6 @@
         function generateCoinHTML(coin) {
             const isCollected = collectedCoins.has(coin.id);
             
-            // Build classes based on state
             const cardClass = isCollected 
                 ? 'bg-gradient-to-br from-white to-green-50 border-green-400 shadow-green-200/50' 
                 : 'bg-white border-slate-100 shadow-md hover:border-blue-300';
@@ -399,12 +425,10 @@
                 ? 'scale-100 drop-shadow-xl'
                 : 'scale-90 opacity-85 group-hover:scale-100 group-hover:opacity-100 drop-shadow-md';
 
-            // Checkmark or Empty Circle
             const iconHTML = isCollected
                 ? `<i data-lucide="check-circle" class="text-green-500 fill-green-100 drop-shadow-sm w-7 h-7"></i>`
                 : `<i data-lucide="circle" class="text-slate-200 group-hover:text-blue-300 transition-colors w-7 h-7"></i>`;
 
-            // Inner coin graphic (Real Photo or SVG)
             const graphicHTML = coin.imageUrl 
                 ? `<div class="w-[92%] h-[92%] rounded-full overflow-hidden border-[4px] border-[#cbd5e1] shadow-[inset_0_0_15px_rgba(0,0,0,0.4)] relative bg-[#cbd5e1]">
                      <img src="${coin.imageUrl}" alt="${coin.title}" class="w-full h-full object-cover mix-blend-multiply opacity-90" />
@@ -417,7 +441,6 @@
             return `
                 <div onclick="openModal('${coin.id}')" class="coin-card group relative rounded-2xl p-4 cursor-pointer border-2 flex flex-col select-none ${cardClass}">
                     
-                    <!-- Quick Toggle (Uses stopPropagation to prevent modal from opening when you just want to check it off) -->
                     <div onclick="event.stopPropagation(); toggleCoin('${coin.id}')" class="absolute top-3 right-3 z-10 transition-transform duration-300 active:scale-75 hover:scale-110">
                         ${iconHTML}
                     </div>
@@ -444,7 +467,6 @@
 
         // --- 5. RENDER THE WHOLE APP ---
         function renderApp() {
-            // Filter logic
             const filteredCoins = COINS.filter(coin => {
                 const matchesSearch = coin.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                                       coin.country.toLowerCase().includes(searchQuery.toLowerCase());
@@ -457,7 +479,6 @@
             const regularFiltered = filteredCoins.filter(c => c.type === 'Regular');
             const slovenianFiltered = filteredCoins.filter(c => c.type === 'Commemorative');
 
-            // Render Grids
             document.getElementById('regular-coins-grid').innerHTML = regularFiltered.length > 0 
                 ? regularFiltered.map(generateCoinHTML).join('')
                 : '<div class="col-span-full text-center py-8 text-slate-400 font-medium border border-dashed border-slate-200 rounded-xl">No regular coins found.</div>';
@@ -466,7 +487,6 @@
                 ? slovenianFiltered.map(generateCoinHTML).join('')
                 : '<div class="col-span-full text-center py-8 text-slate-400 font-medium border border-dashed border-slate-200 rounded-xl">No Slovenian coins found.</div>';
 
-            // Calculate Stats
             const regTotal = COINS.filter(c => c.type === 'Regular').length;
             const regCollected = COINS.filter(c => c.type === 'Regular' && collectedCoins.has(c.id)).length;
             const regPercent = Math.round((regCollected / regTotal) * 100);
@@ -475,7 +495,6 @@
             const slCollected = COINS.filter(c => c.type === 'Commemorative' && collectedCoins.has(c.id)).length;
             const slPercent = Math.round((slCollected / slTotal) * 100);
 
-            // Update DOM Stats
             document.getElementById('reg-collected').innerText = regCollected;
             document.getElementById('reg-total').innerText = regTotal;
             document.getElementById('reg-bar').style.width = `${regPercent}%`;
@@ -483,23 +502,19 @@
             document.getElementById('sl-collected').innerText = slCollected;
             document.getElementById('sl-total').innerText = slTotal;
             
-            // Update Total Money Value
             const totalValue = (regCollected + slCollected) * 2;
             document.getElementById('total-value').innerText = `€${totalValue}.00`;
 
-            // Split Slovenian progress bar into 3 parts (White, Blue, Red)
             document.getElementById('sl-bar-white').style.width = `${slPercent / 3}%`;
             document.getElementById('sl-bar-blue').style.width = `${slPercent / 3}%`;
             document.getElementById('sl-bar-red').style.width = `${slPercent / 3}%`;
 
-            // Trophies and badges
             document.getElementById('reg-award').classList.toggle('hidden', regPercent !== 100);
             document.getElementById('reg-complete-badge').classList.toggle('hidden', regPercent !== 100);
             
             document.getElementById('sl-award').classList.toggle('hidden', slPercent !== 100);
             document.getElementById('sl-complete-badge').classList.toggle('hidden', slPercent !== 100);
 
-            // Re-initialize icons since we injected new HTML strings
             lucide.createIcons();
         }
 
@@ -514,29 +529,24 @@
             renderApp();
         });
 
-        // Start the app on load
         window.onload = renderApp;
 
     </script>
 
-    <!-- Modal HTML Structure (Hidden by default) -->
+    <!-- Modal HTML Structure -->
     <div id="coin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300" onclick="if(event.target === this) closeModal()">
         <div class="bg-white rounded-[2rem] p-6 sm:p-8 max-w-md w-full mx-4 relative shadow-2xl transform scale-95 transition-transform duration-300" id="coin-modal-content">
-            <!-- Close Button -->
             <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-full p-2 transition-colors z-10">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
             
-            <!-- Graphic -->
             <div id="modal-graphic" class="w-32 h-32 mx-auto mb-6 relative pointer-events-none"></div>
             
-            <!-- Details -->
             <div class="text-center">
                 <div id="modal-badge" class="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-bold tracking-widest mb-3 uppercase"></div>
                 <h2 id="modal-title" class="text-2xl font-black text-slate-800 leading-tight mb-2"></h2>
                 <div id="modal-country" class="text-sm font-semibold text-slate-500 mb-6 flex items-center justify-center gap-2"></div>
                 
-                <!-- Description Box -->
                 <div class="bg-slate-50 rounded-2xl p-5 text-left border border-slate-100 mb-6 shadow-inner">
                     <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-1">
                         <i data-lucide="info" class="w-3 h-3"></i> Official Description
@@ -544,7 +554,6 @@
                     <p id="modal-description" class="text-slate-700 text-sm leading-relaxed font-medium"></p>
                 </div>
                 
-                <!-- Action Button -->
                 <button id="modal-toggle-btn" onclick="toggleFromModal()" class="w-full"></button>
             </div>
         </div>
