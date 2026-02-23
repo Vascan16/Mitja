@@ -1,1391 +1,542 @@
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Euro Coin Tracker</title>
     
-    <!-- SEO METADATA (Izpolni opis) -->
-    <meta name="description" content="Kakovostna notranja oprema iz masivnega lesa. Kuhinje, omare, stopnice in pohištvo po meri. Ročna izdelava, Leseni Dotik Mengeš.">
-    <meta name="keywords" content="mizarstvo, masivni les, pohištvo po meri, kuhinje, Mengeš, notranja oprema">
-    <meta name="author" content="Leseni Dotik d.o.o.">
+    <!-- Load Tailwind CSS for styling (Version Frozen to 3.4.3) -->
+    <script src="https://cdn.tailwindcss.com/3.4.3"></script>
     
-    <!-- OPEN GRAPH (Za socialna omrežja) -->
-    <meta property="og:title" content="Leseni Dotik | Les po meri vašega doma">
-    <meta property="og:description" content="Kakovostna notranja oprema iz masivnega lesa, izdelana z občutkom in natančnostjo.">
-    <meta property="og:image" content="https://placehold.co/1200x630/0a0a0a/800000?text=Leseni+Dotik+Gothic">
-    <meta property="og:url" content="https://www.lesenidotik.si">
-    <meta property="og:type" content="website">
-
-    <!-- DINAMIČEN NASLOV (JS ga bo povozil, ampak za backup) -->
-    <title>Leseni Dotik | Mizarstvo in notranja oprema</title>
-
-    <!-- FAVICON PLACEHOLDER -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪵</text></svg>">
-
-    <!-- FONTS: Cinzel (Gotski naslovi) + Inter (Tekst) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Load Lucide Icons for the graphics (Version Frozen to 0.344.0) -->
+    <script src="https://unpkg.com/lucide@0.344.0"></script>
 
     <style>
-        /* -----------------------------------------------------------
-           1. CSS SPREMENLJIVKE (CONFIG) & RESET - GOTSKI STIL
-           Dark Mode + Crimson Accents
-        ----------------------------------------------------------- */
-        :root {
-            /* Barvna paleta: Gotska / Dark Mode */
-            --color-bg-main: #0a0a0a;     /* Skoraj črna - Glavno ozadje */
-            --color-bg-alt: #141414;      /* Zelo temno siva - Sekundarno ozadje */
-            --color-card-bg: #1f1f1f;     /* Temno siva - Kartice */
-            
-            --color-primary: #e0e0e0;     /* Svetlo siva/Srebrna - Glavni tekst */
-            --color-primary-muted: #a0a0a0; /* Zamolkla siva - Stranski tekst */
-            
-            --color-accent: #8a0303;      /* "Blood Red" / Temno rdeča - Poudarki */
-            --color-accent-hover: #b30000; /* Svetlejša rdeča za hover */
-            
-            --color-border: #333333;      /* Robovi */
-            
-            /* Pisave */
-            --font-heading: 'Cinzel', serif; /* Gotski/Klasični stil */
-            --font-body: 'Inter', sans-serif;
-
-            /* Razmiki in dimenzije */
-            --container-width: 1200px;
-            --header-height: 80px;
-            --border-radius: 4px; /* Bolj ostr robovi za gotski stil */
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.7); /* Močnejše sence */
-        }
-
-        /* Osnovni Reset */
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            scroll-padding-top: var(--header-height);
-        }
-
-        body {
-            font-family: var(--font-body);
-            color: var(--color-primary);
-            background-color: var(--color-bg-main);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        h1, h2, h3, h4 {
-            font-family: var(--font-heading);
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 1rem;
-            color: var(--color-primary);
-            text-transform: uppercase; /* Gotski napisi so pogosto velike črke */
-            letter-spacing: 1px;
-        }
-        
-        h2 {
-            border-bottom: 2px solid var(--color-accent);
-            display: inline-block;
-            padding-bottom: 10px;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-            transition: color 0.3s ease;
-        }
-
-        ul {
-            list-style: none;
-        }
-
-        img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            filter: brightness(0.9) contrast(1.1); /* Rahlo temnejše slike */
-        }
-
-        /* Utility classes */
-        .container {
-            width: 90%;
-            max-width: var(--container-width);
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        .section {
-            padding: 5rem 0;
-        }
-
-        .bg-beige {
-            /* Preimenovano logično v kodi, ampak ohranimo ime class-a za združljivost */
-            background-color: var(--color-bg-alt);
-            border-top: 1px solid var(--color-border);
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* Gumbi - Gotski stil */
-        .btn {
-            display: inline-block;
-            padding: 12px 32px;
-            background-color: var(--color-accent);
-            color: #ffffff;
-            font-family: var(--font-heading);
-            font-weight: 700;
-            letter-spacing: 1px;
-            border-radius: 2px; /* Ostri robovi */
-            border: 1px solid var(--color-accent);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(138, 3, 3, 0.3);
-            text-transform: uppercase;
-        }
-
-        .btn:hover {
-            background-color: var(--color-accent-hover);
-            border-color: var(--color-accent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 0 15px rgba(179, 0, 0, 0.5);
-        }
-
-        /* -----------------------------------------------------------
-           2. HEADER & NAVIGACIJA
-        ----------------------------------------------------------- */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: var(--header-height);
-            background-color: rgba(10, 10, 10, 0.95); /* Temno ozadje */
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--color-border);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        .logo {
-            font-family: var(--font-heading);
-            font-size: 1.6rem;
-            font-weight: 900;
-            color: var(--color-primary);
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .logo span {
-            color: var(--color-accent);
-        }
-
-        /* Desktop Nav */
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            font-weight: 500;
-            font-size: 0.95rem;
-            position: relative;
-            color: var(--color-primary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: var(--font-heading);
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -4px;
-            left: 0;
-            background-color: var(--color-accent);
-            transition: width 0.3s;
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        /* Hamburger Menu Icon */
-        .hamburger {
-            display: none;
-            cursor: pointer;
-        }
-
-        /* Mobile Nav Styles */
-        @media (max-width: 768px) {
-            .hamburger {
-                display: block;
-                z-index: 1001;
-            }
-            
-            .nav-links {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                height: 100vh;
-                width: 80%;
-                max-width: 300px;
-                background-color: var(--color-bg-alt);
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                gap: 2rem;
-                transition: right 0.3s ease-in-out;
-                box-shadow: -5px 0 15px rgba(0,0,0,0.5);
-                border-left: 1px solid var(--color-border);
-            }
-
-            .nav-links.active {
-                right: 0;
-            }
-
-            .nav-links a {
-                font-size: 1.2rem;
-            }
-        }
-
-        /* -----------------------------------------------------------
-           3. HERO SEKCIJA
-        ----------------------------------------------------------- */
-        .hero {
-            height: 100vh;
-            min-height: 600px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: var(--color-white);
-            position: relative;
-            
-            /* Temnejši overlay za gotski efekt */
-            background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(20, 0, 0, 0.6)), url('slike/Slika_ozadje.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            border-bottom: 4px solid var(--color-accent);
-        }
-
-        @media (max-width: 768px) {
-            .hero {
-                background-attachment: scroll;
-            }
-        }
-
-        .hero-content {
-            max-width: 800px;
-            padding: 2rem;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 1s ease forwards;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.5); /* Steklen efekt */
-            backdrop-filter: blur(3px);
-        }
-
-        .hero h1 {
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
-            margin-bottom: 1rem;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(0,0,0,0.8);
-        }
-
-        .hero p {
-            font-size: clamp(1rem, 2vw, 1.25rem);
-            margin-bottom: 2rem;
-            font-weight: 300;
-            color: #ddd;
-        }
-
-        @keyframes fadeUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* -----------------------------------------------------------
-           4. O NAS / PREDNOSTI
-        ----------------------------------------------------------- */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .feature-card {
-            background: var(--color-card-bg);
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s, border-color 0.3s;
-            border: 1px solid var(--color-border);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--color-accent);
-        }
-
-        .feature-icon {
-            width: 70px;
-            height: 70px;
-            background-color: var(--color-bg-main);
-            border: 1px solid var(--color-accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            color: var(--color-accent);
-            box-shadow: 0 0 15px rgba(138, 3, 3, 0.2);
-        }
-
-        .feature-icon svg {
-            width: 35px;
-            height: 35px;
-            stroke: currentColor;
-            stroke-width: 1.5;
-            fill: none;
-        }
-
-        /* -----------------------------------------------------------
-           5. STORITVE
-        ----------------------------------------------------------- */
-        .section-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .section-header span {
-            color: var(--color-accent);
-            font-family: var(--font-heading);
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 1rem;
-            letter-spacing: 2px;
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .service-card {
-            background: var(--color-card-bg);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            border: 1px solid var(--color-border);
-        }
-
-        .service-img {
-            width: 100%;
-            height: 250px;
-            overflow: hidden;
-            border-bottom: 1px solid var(--color-accent);
-        }
-
-        /* TukajSlika - Storitve */
-        .service-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .service-card:hover .service-img img {
-            transform: scale(1.05);
-        }
-
-        .service-content {
-            padding: 1.5rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .service-content h3 {
-            margin-bottom: 0.5rem;
-            color: var(--color-primary);
-        }
-        
-        .service-content p {
-            color: var(--color-primary-muted);
-        }
-
-        .service-details {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-            color: var(--color-primary-muted);
-            border-top: 1px solid #333;
-            padding-top: 0.5rem;
-            margin-top: 0.5rem;
-        }
-        
-        .service-details.open {
-            max-height: 500px;
-        }
-
-        .service-toggle {
-            margin-top: auto;
-            background: none;
-            border: none;
-            color: var(--color-accent);
-            font-weight: 600;
-            cursor: pointer;
-            text-align: left;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-family: var(--font-heading);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-        }
-
-        .service-toggle svg {
-            width: 16px;
-            height: 16px;
-            transition: transform 0.3s;
-        }
-
-        .service-toggle.active svg {
-            transform: rotate(180deg);
-        }
-
-        /* -----------------------------------------------------------
-           6. OSEBNA IZKAZNICA & URNIK
-        ----------------------------------------------------------- */
-        .business-info-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-        }
-
-        @media (max-width: 768px) {
-            .business-info-wrapper {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-        }
-
-        .info-box {
-            background: var(--color-card-bg);
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            border-left: 4px solid var(--color-accent);
-            box-shadow: var(--shadow);
-            border-top: 1px solid var(--color-border);
-            border-right: 1px solid var(--color-border);
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .schedule-list li {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.8rem 0;
-            border-bottom: 1px solid var(--color-border);
-            color: var(--color-primary-muted);
-        }
-
-        .schedule-list li:last-child {
-            border-bottom: none;
-        }
-
-        .schedule-list span:first-child {
-            font-weight: 600;
-            color: var(--color-primary);
-        }
-
-        .legal-grid {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 1rem 2rem;
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: var(--color-primary-muted);
-        }
-
-        .legal-label {
-            font-weight: 600;
-            color: var(--color-accent); /* Rdeči labeli */
-        }
-
-        /* -----------------------------------------------------------
-           7. KONTAKT & MAPA
-        ----------------------------------------------------------- */
-        .contact-container {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 2rem;
-            background: var(--color-card-bg);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--color-border);
-        }
-
-        @media (max-width: 768px) {
-            .contact-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .contact-details {
-            padding: 3rem;
-            background-color: #0f0f0f; /* Še temneje za kontrast */
-            color: var(--color-primary);
-            border-right: 1px solid var(--color-border);
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .contact-item svg {
-            min-width: 24px;
-            width: 24px;
-            height: 24px;
-            stroke: var(--color-accent);
-        }
-        
-        .contact-item a {
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
-        .contact-item a:hover {
-            color: var(--color-accent);
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--color-accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--color-primary);
-            transition: all 0.3s;
-            background: rgba(138, 3, 3, 0.1);
-        }
-
-        .social-links a:hover {
-            background-color: var(--color-accent);
-            color: #fff;
-            box-shadow: 0 0 10px var(--color-accent);
-        }
-
-        .map-wrapper {
-            position: relative;
-            min-height: 400px;
-            background-color: #333;
-        }
-        
-        .map-wrapper iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-            filter: invert(90%) hue-rotate(180deg); /* Dark mode mapa hack */
-        }
-
-        .form-btn-wrapper {
-            margin-top: 2rem;
-        }
-
-        /* -----------------------------------------------------------
-           8. FOOTER
-        ----------------------------------------------------------- */
-        footer {
-            background-color: #000000;
-            color: #666;
-            padding: 3rem 0;
-            font-size: 0.9rem;
-            border-top: 4px solid var(--color-accent);
-        }
-
-        .footer-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            text-align: center;
-        }
-
-        .footer-links a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: #888;
-            transition: color 0.3s;
-        }
-        
-        .footer-links a:hover {
-            color: var(--color-accent);
-        }
-
-        /* -----------------------------------------------------------
-           9. LEBDEČI ELEMENTI (Sticky)
-        ----------------------------------------------------------- */
-        /* Sticky Phone Button */
-        .sticky-call {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 60px;
-            height: 60px;
-            background-color: var(--color-accent);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 15px rgba(138, 3, 3, 0.6);
-            z-index: 900;
-            transition: transform 0.3s;
-            animation: pulse 2s infinite;
-            border: 2px solid #5a0000;
-        }
-
-        .sticky-call:hover {
-            transform: scale(1.1);
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(138, 3, 3, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(138, 3, 3, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(138, 3, 3, 0); }
-        }
-
-        /* Back to top Button */
-        .back-to-top {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 45px;
-            height: 45px;
-            background-color: var(--color-card-bg);
-            color: var(--color-primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            z-index: 899;
-            border: 1px solid var(--color-accent);
-        }
-
-        .back-to-top.visible {
-            opacity: 0.8;
-            visibility: visible;
-        }
-
-        .back-to-top:hover {
-            opacity: 1;
-            background-color: var(--color-accent);
-            color: #fff;
-        }
-
-        /* -----------------------------------------------------------
-           10. MODALI & PIŠKOTKI
-        ----------------------------------------------------------- */
-        /* Cookie Banner */
-        .cookie-banner {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: var(--color-card-bg);
-            box-shadow: 0 -2px 20px rgba(0,0,0,0.5);
-            padding: 1rem 0;
-            z-index: 2000;
-            transform: translateY(100%);
-            transition: transform 0.5s;
-            border-top: 2px solid var(--color-accent);
-            color: var(--color-primary);
-        }
-
-        .cookie-banner.show {
-            transform: translateY(0);
-        }
-
-        .cookie-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        /* Modal Box */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.85); /* Temnejši overlay */
-            z-index: 3000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-
-        .modal-overlay.open {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-box {
-            background-color: var(--color-card-bg);
-            color: var(--color-primary);
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            position: relative;
-            border: 1px solid var(--color-accent);
-            box-shadow: 0 0 30px rgba(0,0,0,0.8);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            cursor: pointer;
-            font-size: 1.5rem;
-            color: var(--color-accent);
-            background: none;
-            border: none;
-        }
-
-        /* -----------------------------------------------------------
-           ANIMACIJE NA SCROLL (Fade In)
-        ----------------------------------------------------------- */
-        .fade-in-section {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-            will-change: opacity, visibility;
-        }
-        
-        .fade-in-section.is-visible {
-            opacity: 1;
-            transform: none;
-        }
-
+        /* Custom scrollbar and minor tweaks */
+        body { font-family: system-ui, -apple-system, sans-serif; }
+        .coin-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .coin-card:hover { transform: translateY(-8px); }
     </style>
 </head>
-<body>
+<body class="min-h-screen bg-slate-50 pb-16">
 
-    <!-- 1. HEADER -->
-    <header>
-        <div class="container nav-container">
-            <!-- Logo tekst -->
-            <a href="#" class="logo">Leseni<span>Dotik</span></a>
-            
-            <!-- Navigacija -->
-            <nav>
-                <ul class="nav-links" id="navLinks">
-                    <li><a href="#domov">Domov</a></li>
-                    <li><a href="#o-nas">O nas</a></li>
-                    <li><a href="#storitve">Storitve</a></li>
-                    <li><a href="#urnik">Urnik</a></li>
-                    <li><a href="#kontakt">Kontakt</a></li>
-                </ul>
-            </nav>
+    <!-- Header Dashboard -->
+    <header class="bg-slate-900 text-white pt-10 pb-10 px-4 sm:px-6 md:px-8 rounded-b-[2.5rem] shadow-2xl relative overflow-hidden border-b-4 border-yellow-500">
+        <!-- Background decoration -->
+        <div class="absolute top-0 right-0 opacity-5 pointer-events-none transform translate-x-1/4 -translate-y-1/4">
+            <i data-lucide="circle" class="w-[500px] h-[500px]" stroke-width="8"></i>
+        </div>
+        
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
+                <div>
+                    <h1 class="text-3xl md:text-5xl font-extrabold flex items-center gap-3 tracking-tight">
+                        <i data-lucide="euro" class="text-yellow-400 drop-shadow-md w-10 h-10"></i>
+                        Euro Collector
+                    </h1>
+                    <p class="text-slate-400 mt-2 text-md md:text-lg font-medium">Your personal 2€ tracking dashboard</p>
+                </div>
+                
+                <div class="flex flex-col sm:items-end gap-3 w-full sm:w-auto">
+                    <!-- Total Value Badge -->
+                    <div class="bg-gradient-to-r from-yellow-500 to-yellow-400 text-yellow-950 px-5 py-2.5 rounded-2xl shadow-lg font-black text-2xl flex items-center justify-center gap-2 border-2 border-yellow-300 w-full sm:w-auto transform transition-transform hover:scale-105" title="Total Face Value of Collected Coins">
+                        <i data-lucide="wallet" class="w-6 h-6 opacity-80"></i>
+                        <span id="total-value">€0.00</span>
+                    </div>
+                    <button onclick="resetCollection()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-sm border border-slate-700 w-full sm:w-auto">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        Reset Progress
+                    </button>
+                </div>
+            </div>
 
-            <!-- Hamburger Ikona (SVG) -->
-            <div class="hamburger" id="hamburger">
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
+            <!-- Dual Progress Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Global & Regular Stats -->
+                <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-6 shadow-inner relative overflow-hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-slate-300 font-bold text-sm uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="globe" class="text-blue-400 w-4 h-4"></i>
+                            Eurozone Standard Coins
+                        </div>
+                        <i data-lucide="award" id="reg-award" class="text-yellow-400 animate-pulse hidden w-6 h-6"></i>
+                    </div>
+                    <div class="flex items-end gap-3 mb-4">
+                        <div class="text-5xl font-black text-white" id="reg-collected">0</div>
+                        <div class="text-xl text-slate-400 font-medium mb-1">/ <span id="reg-total">0</span></div>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden shadow-inner">
+                        <div id="reg-bar" class="bg-blue-500 h-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Slovenian Stats (Themed!) -->
+                <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-3xl p-6 shadow-inner relative overflow-hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-slate-300 font-bold text-sm uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="star" class="text-yellow-400 w-4 h-4"></i>
+                            Slovenian Commemoratives
+                        </div>
+                        <i data-lucide="trophy" id="sl-award" class="text-yellow-400 animate-pulse hidden w-6 h-6"></i>
+                    </div>
+                    <div class="flex items-end gap-3 mb-4">
+                        <div class="text-5xl font-black text-white" id="sl-collected">0</div>
+                        <div class="text-xl text-slate-400 font-medium mb-1">/ <span id="sl-total">0</span></div>
+                    </div>
+                    <!-- Slovenian Flag Themed Progress Bar -->
+                    <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden shadow-inner flex">
+                        <div id="sl-bar-white" class="bg-white h-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                        <div id="sl-bar-blue" class="bg-blue-500 h-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                        <div id="sl-bar-red" class="bg-red-500 h-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </header>
 
-    <!-- 2. HERO SEKCIJA -->
-    <section id="domov" class="hero">
-        <div class="hero-content">
-            <h1>Les po meri vašega doma</h1>
-            <p>Kakovostna notranja oprema iz masivnega lesa, izdelana z občutkom in natančnostjo.</p>
-            <a href="#kontakt" class="btn">Zahtevaj ponudbo</a>
-        </div>
-    </section>
-
-    <!-- 3. O NAS / PREDNOSTI -->
-    <section id="o-nas" class="section fade-in-section">
-        <div class="container">
-            <div class="section-header">
-                <span>Tradicija & Kvaliteta</span>
-                <h2>Zakaj izbrati Leseni Dotik?</h2>
-                <p>Združujemo tradicionalno mizarstvo s sodobnimi oblikovalskimi trendi.</p>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 mt-8">
+        
+        <!-- Universal Search & Filters -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-10 flex flex-col md:flex-row gap-4 sticky top-4 z-40 backdrop-blur-md bg-white/90">
+            <div class="flex-1 relative">
+                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    placeholder="Search by title, year, or country..." 
+                    class="w-full pl-12 pr-4 py-3 bg-slate-100 border-none rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all font-medium text-slate-700"
+                />
             </div>
-
-            <div class="features-grid">
-                <!-- Kartica 1 -->
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <!-- Ikona Roke/Izdelava (Zamenjano: Roka) -->
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" /></svg>
-                    </div>
-                    <h3>Ročna izdelava</h3>
-                    <p>Vsak kos pohištva je unikaten, ročno obdelan in prilagojen vašim željam ter prostoru.</p>
-                </div>
-
-                <!-- Kartica 2 -->
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <!-- Ikona Svet/Naravno (Zamenjano: Globus) -->
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /><path stroke-linecap="round" stroke-linejoin="round" d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" /></svg>
-                    </div>
-                    <h3>Naravni materiali</h3>
-                    <p>Uporabljamo le najboljši masivni les in ekološka olja, ki zagotavljajo trajnost in zdravje.</p>
-                </div>
-
-                <!-- Kartica 3 -->
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <!-- Ikona Ure/Izkušnje (Zamenjano: Ura) -->
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                    </div>
-                    <h3>Dolgoletne izkušnje</h3>
-                    <p>Z vami smo od ideje in izrisa do končne montaže. Zanesljivost je naše vodilo.</p>
-                </div>
-
-                <!-- Kartica 4 (NOVA) -->
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <!-- Ikona Kruh (Nova ikona: Hlebec kruha) -->
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 13c.667 0 1.333.333 2 1s1.333 1.333 2 2v2a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-2c0-.667.667-1.333 2-2s1.333-1 2-1" /><path stroke-linecap="round" stroke-linejoin="round" d="M19 13a7 7 0 0 0-14 0" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 13v-3" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 13v-3" /></svg>
-                    </div>
-                    <h3>Domač kruh</h3>
-                    <p>Vsako stranko ob zaključku montaže presenetimo s sveže pečenim hlebcem domačega kruha.</p>
-                </div>
+            <div class="flex gap-4">
+                <select 
+                    id="statusFilter"
+                    class="px-5 py-3 bg-slate-100 border-none rounded-xl outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700 cursor-pointer min-w-[160px]"
+                >
+                    <option value="All">All Coins</option>
+                    <option value="Collected">Collected</option>
+                    <option value="Missing">Missing</option>
+                </select>
             </div>
         </div>
-    </section>
 
-    <!-- 4. STORITVE -->
-    <section id="storitve" class="section bg-beige fade-in-section">
-        <div class="container">
-            <div class="section-header">
-                <span>Naša ponudba</span>
-                <h2>Kaj ustvarjamo za vas?</h2>
-            </div>
-
-            <div class="services-grid">
-                <!-- Storitev 1: Kuhinje -->
-                <div class="service-card">
-                    <div class="service-img">
-                        <!-- TukajSlika: Kuhinja -->
-                        <img src="https://placehold.co/600x400/1a1a1a/8a0303?text=Kuhinje+po+meri" alt="Kuhinje po meri">
-                    </div>
-                    <div class="service-content">
-                        <h3>Kuhinje po meri</h3>
-                        <p>Funkcionalne in estetske kuhinje, prilagojene vašemu načinu kuhanja.</p>
-                        <div class="service-details">
-                            Izdelujemo moderne in rustikalne kuhinje. Vključujemo vrhunska okovja (mehko zapiranje), pametne rešitve za shranjevanje in trpežne delovne plošče iz masivnega lesa.
-                        </div>
-                        <button class="service-toggle" onclick="toggleService(this)">
-                            Več informacij
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </button>
-                    </div>
+        <!-- SECTION 1: Regular Eurozone Coins -->
+        <section class="mb-16">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-3 bg-blue-100 text-blue-600 rounded-xl">
+                    <i data-lucide="globe" class="w-6 h-6"></i>
                 </div>
-
-                <!-- Storitev 2: Omare -->
-                <div class="service-card">
-                    <div class="service-img">
-                        <!-- TukajSlika: Omare -->
-                        <img src="https://placehold.co/600x400/2a2a2a/8a0303?text=Vgradne+Omare" alt="Vgradne omare">
-                    </div>
-                    <div class="service-content">
-                        <h3>Omare in garderobe</h3>
-                        <p>Maksimalen izkoristek prostora z vgradnimi omarami in drsnimi vrati.</p>
-                        <div class="service-details">
-                            Od garderobnih sob do omar v spalnicah in predsobah. Nudimo širok izbor notranjih razporeditev (predali, obešalniki, izvlečne police) in materialov ličnic.
-                        </div>
-                        <button class="service-toggle" onclick="toggleService(this)">
-                            Več informacij
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </button>
-                    </div>
+                <div>
+                    <h2 class="text-2xl font-black text-slate-800 tracking-tight">Eurozone Standard Issues</h2>
+                    <p class="text-slate-500 font-medium text-sm">The 24 regular national circulation coins</p>
                 </div>
+                <span id="reg-complete-badge" class="hidden ml-auto bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i> Complete
+                </span>
+            </div>
 
-                <!-- Storitev 3: Stopnice -->
-                <div class="service-card">
-                    <div class="service-img">
-                        <!-- TukajSlika: Stopnice -->
-                        <img src="https://placehold.co/600x400/3a3a3a/ffffff?text=Lesene+Stopnice" alt="Lesene stopnice">
+            <div id="regular-coins-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+                <!-- Coins generated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- SECTION 2: Slovenian Commemoratives -->
+        <section class="mb-10">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-3 bg-blue-100 text-blue-800 rounded-xl relative overflow-hidden">
+                    <div class="absolute inset-0 flex flex-col opacity-20">
+                        <div class="h-1/3 bg-white"></div><div class="h-1/3 bg-blue-600"></div><div class="h-1/3 bg-red-600"></div>
                     </div>
-                    <div class="service-content">
-                        <h3>Stopnice</h3>
-                        <p>Masivne lesene stopnice, ki povežejo vaš dom v celoto.</p>
-                        <div class="service-details">
-                            Izdelava samonosilnih stopnic ali oblaganje betonskih stopnic z masivnim lesom (hrast, jesen, bukev). Vključno z izdelavo in montažo ograj.
-                        </div>
-                        <button class="service-toggle" onclick="toggleService(this)">
-                            Več informacij
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </button>
-                    </div>
+                    <i data-lucide="star" class="w-6 h-6 relative z-10"></i>
                 </div>
-
-                <!-- Storitev 4: Mize in pohištvo -->
-                <div class="service-card">
-                    <div class="service-img">
-                        <!-- TukajSlika: Miza -->
-                        <img src="https://placehold.co/600x400/4a4a4a/8a0303?text=Mize+in+Pohištvo" alt="Mize in pohištvo">
-                    </div>
-                    <div class="service-content">
-                        <h3>Mize in ostalo pohištvo</h3>
-                        <p>Jedilne mize, komode, regali in kopalniško pohištvo.</p>
-                        <div class="service-details">
-                            Unikatne jedilne mize iz enega kosa lesa, klubske mizice, TV regali in kopalniški bloki, odporni na vlago. Vse narejeno po vaših merah.
-                        </div>
-                        <button class="service-toggle" onclick="toggleService(this)">
-                            Več informacij
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </button>
-                    </div>
+                <div>
+                    <h2 class="text-2xl font-black text-slate-800 tracking-tight">Slovenian Commemoratives</h2>
+                    <p class="text-slate-500 font-medium text-sm">Special issues from 2007 to 2026</p>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 5. URNIK IN OSEBNA IZKAZNICA -->
-    <section id="urnik" class="section fade-in-section">
-        <div class="container">
-            <div class="section-header">
-                <span>Informacije</span>
-                <h2>Podatki o podjetju</h2>
+                <span id="sl-complete-badge" class="hidden ml-auto bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i> Complete
+                </span>
             </div>
 
-            <div class="business-info-wrapper">
-                <!-- Urnik -->
-                <div class="info-box">
-                    <h3>Delovni čas</h3>
-                    <ul class="schedule-list">
-                        <li>
-                            <span>Ponedeljek - Petek:</span>
-                            <span>8:00 – 16:00</span>
-                        </li>
-                        <li>
-                            <span>Sobota:</span>
-                            <span>Po dogovoru</span>
-                        </li>
-                        <li>
-                            <span>Nedelja in prazniki:</span>
-                            <span>Zaprto</span>
-                        </li>
-                    </ul>
-                    <p style="margin-top: 1rem; font-size: 0.9rem; color: #888;">*Za obisk delavnice nas prosim predhodno pokličite.</p>
-                </div>
-
-                <!-- Osebna Izkaznica (Pravni podatki) -->
-                <div class="info-box bg-beige" style="border-left-color: var(--color-accent);">
-                    <h3>Osebna izkaznica</h3>
-                    <div class="legal-grid">
-                        <div class="legal-label">Naziv:</div>
-                        <div class="data-full-name">Nalaganje...</div>
-                        
-                        <div class="legal-label">Naslov:</div>
-                        <div class="data-address">Nalaganje...</div>
-                        
-                        <div class="legal-label">Davčna št.:</div>
-                        <div class="data-tax">Nalaganje...</div>
-                        
-                        <div class="legal-label">Matična št.:</div>
-                        <div class="data-reg">Nalaganje...</div>
-                        
-                        <div class="legal-label">TRR:</div>
-                        <div class="data-iban">Nalaganje...</div>
-                    </div>
-                </div>
+            <div id="slovenian-coins-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+                <!-- Coins generated by JavaScript -->
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- 6. KONTAKT & LOKACIJA -->
-    <section id="kontakt" class="section bg-beige fade-in-section">
-        <div class="container">
-            <div class="section-header">
-                <span>Stopite v stik</span>
-                <h2>Imate idejo za projekt?</h2>
-                <p>Pošljite povpraševanje ali nas pokličite za posvet.</p>
-            </div>
+    </main>
 
-            <div class="contact-container">
-                <!-- Levi del: Podatki -->
-                <div class="contact-details">
-                    <!-- Telefon -->
-                    <div class="contact-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                        <div>
-                            <span style="display:block; font-size: 0.8rem; opacity: 0.8;">Pokličite nas</span>
-                            <a href="#" class="data-phone-link">Nalaganje...</a>
-                        </div>
-                    </div>
-
-                    <!-- Email -->
-                    <div class="contact-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                        <div>
-                            <span style="display:block; font-size: 0.8rem; opacity: 0.8;">Pišite nam</span>
-                            <a href="#" class="data-email-link">Nalaganje...</a>
-                        </div>
-                    </div>
-
-                    <!-- Lokacija -->
-                    <div class="contact-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                        <div>
-                            <span style="display:block; font-size: 0.8rem; opacity: 0.8;">Obiščite nas</span>
-                            <span class="data-address">Nalaganje...</span>
-                        </div>
-                    </div>
-
-                    <!-- Socialna omrežja -->
-                    <div class="social-links">
-                        <a href="#" target="_blank" class="data-fb" aria-label="Facebook">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-                        </a>
-                        <a href="#" target="_blank" class="data-ig" aria-label="Instagram">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                        </a>
-                    </div>
-
-                    <!-- Gumb za Google Forms -->
-                    <div class="form-btn-wrapper">
-                        <a href="#" target="_blank" class="btn data-form-link" style="width: 100%; text-align: center;">Pošlji povpraševanje (Obrazec)</a>
-                    </div>
-                </div>
-
-                <!-- Desni del: Google Maps -->
-                <div class="map-wrapper">
-                    <!-- Google Maps Iframe Placeholder -->
-                    <!-- POMEMBNO: Če imate API ključ ali embed kodo, zamenjajte src spodaj. Trenutno kaže generično lokacijo. -->
-                    <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2607.680486933813!2d15.281867676002067!3d46.633283854681835!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476f93bf1054d6b9%3A0x2a2fe86440869f0f!2sVas%2016a%2C%202363%20Podvelka!5e1!3m2!1ssl!2ssi!4v1769719143322!5m2!1ssl!2ssi" 
-                        width="600" 
-                        height="450" 
-                        style="border:0;" 
-                        allowfullscreen=""
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 7. FOOTER -->
-    <footer>
-        <div class="container footer-content">
-            <div class="logo" style="font-size: 1.2rem;">Leseni<span>Dotik</span></div>
-            
-            <div class="footer-links">
-                <a href="#" onclick="openModal('terms-modal'); return false;">Splošni pogoji</a>
-                <a href="#" onclick="openModal('privacy-modal'); return false;">Politika zasebnosti</a>
-            </div>
-
-            <div>
-                © <span id="year"></span> <span class="data-full-name">Leseni Dotik d.o.o.</span> Vse pravice pridržane.
-            </div>
-            
-            <div style="font-size: 0.8rem; opacity: 0.5;">
-                Izdelava spletnih strani: GarmutWeb
-            </div>
-        </div>
-    </footer>
-
-    <!-- STICKY ELEMENTI -->
-    <!-- Gumb za klic -->
-    <a href="#" class="sticky-call data-phone-link" aria-label="Pokliči nas">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-    </a>
-
-    <!-- Nazaj na vrh -->
-    <div class="back-to-top" id="backToTop" onclick="window.scrollTo(0,0)">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
-    </div>
-
-    <!-- 8. MODALI IN SKRITI ELEMENTI -->
-    
-    <!-- Cookie Banner -->
-    <div class="cookie-banner" id="cookieBanner">
-        <div class="container cookie-content">
-            <p>Spletna stran uporablja nujne piškotke za zagotavljanje boljše uporabniške izkušnje. Z nadaljevanjem uporabe se strinjate z njihovo uporabo.</p>
-            <button class="btn" onclick="acceptCookies()" style="padding: 8px 20px; font-size: 0.9rem;">V redu</button>
-        </div>
-    </div>
-
-    <!-- Modal: Splošni pogoji -->
-    <div id="terms-modal" class="modal-overlay" onclick="closeModal(event, 'terms-modal')">
-        <div class="modal-box">
-            <button class="modal-close" onclick="closeModal(null, 'terms-modal')">&times;</button>
-            <h3>Splošni pogoji poslovanja</h3>
-            <p><strong>1. Uvod</strong><br>Ti splošni pogoji urejajo poslovanje podjetja Leseni Dotik d.o.o...</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. (Tukaj vstavite celotno besedilo splošnih pogojev).</p>
-            <p><strong>2. Naročila</strong><br>Naročila so zavezujoča po potrditvi ponudbe in plačilu avansa...</p>
-        </div>
-    </div>
-
-    <!-- Modal: Politika zasebnosti -->
-    <div id="privacy-modal" class="modal-overlay" onclick="closeModal(event, 'privacy-modal')">
-        <div class="modal-box">
-            <button class="modal-close" onclick="closeModal(null, 'privacy-modal')">&times;</button>
-            <h3>Politika zasebnosti (GDPR)</h3>
-            <p><strong>1. Upravljavec podatkov</strong><br>Upravljavec osebnih podatkov je Leseni Dotik d.o.o.</p>
-            <p><strong>2. Namen zbiranja</strong><br>Vaše podatke (ime, email, telefon) zbiramo izključno za namen priprave ponudbe in komunikacije glede vašega povpraševanja.</p>
-            <p>Podatkov ne posredujemo tretjim osebam. (Tukaj vstavite celotno besedilo GDPR politike).</p>
-        </div>
-    </div>
-
-    <!-- 9. JAVASCRIPT CONFIG & LOGIKA -->
+    <!-- JavaScript Application Logic -->
     <script>
-        /* ===========================================================
-           A. PODATKI PODJETJA (CONFIG)
-           Spremeni podatke samo tukaj in posodobili se bodo povsod.
-        =========================================================== */
-        const companyData = {
-            nameShort: "Leseni Dotik",
-            nameFull: "Leseni Dotik, obdelava lesa in notranja oprema, d.o.o.",
-            address: "Gozdna pot 12, 1234 Mengeš",
-            phone: "+386 41 789 321",
-            email: "info@lesenidotik.si",
-            taxId: "SI98765432",   // Zavezanec za DDV
-            regId: "87654321",    // Matična
-            iban: "SI56 0310 2000 1234 567",
-            social: {
-                fb: "https://www.facebook.com/lesenidotik",
-                ig: "https://www.instagram.com/lesenidotik"
-            },
-            formsLink: "https://forms.gle/lesenidotik-povprasevanje"
-        };
+        // --- 1. DATASET ---
+        const COINS = [
+            // REGULAR COINS
+            { id: 'reg-ad', type: 'Regular', year: 'Standard', country: 'Andorra', inscription: 'ANDORRA', flag: '🇦🇩', title: 'Standard 2€ - Coat of Arms', icon: 'landmark', imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/0/0a/Andorra_2_euro_coin.png/200px-Andorra_2_euro_coin.png', description: 'Features the coat of arms of Andorra with the national motto "virtus unita fortior" (virtue united is stronger).' },
+            { id: 'reg-at', type: 'Regular', year: 'Standard', country: 'Austria', inscription: 'ÖSTERREICH', flag: '🇦🇹', title: 'Standard 2€ - Bertha von Suttner', icon: 'user', imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/1/14/Austria_2_euro_coin.png/200px-Austria_2_euro_coin.png', description: 'Features a portrait of Bertha von Suttner, Nobel Peace Prize laureate, symbolizing Austria\'s historical commitment to peace.' },
+            { id: 'reg-be', type: 'Regular', year: 'Standard', country: 'Belgium', inscription: 'BELGIE', flag: '🇧🇪', title: 'Standard 2€ - King Philippe', icon: 'user', description: 'Features the effigy of King Philippe of Belgium in profile looking to the right, along with his royal monogram.' },
+            { id: 'reg-hr', type: 'Regular', year: 'Standard', country: 'Croatia', inscription: 'HRVATSKA', flag: '🇭🇷', title: 'Standard 2€ - Map of Croatia', icon: 'map', description: 'Features the geographical map of the Republic of Croatia superimposed against a background of the national checkerboard pattern.' },
+            { id: 'reg-cy', type: 'Regular', year: 'Standard', country: 'Cyprus', inscription: 'KYПPOΣ', flag: '🇨🇾', title: 'Standard 2€ - Idol of Pomos', icon: 'user', description: 'Features a cross-shaped idol from the Chalcolithic period (3000 BC) found in Pomos, a characteristic example of prehistoric Cypriot art.' },
+            { id: 'reg-ee', type: 'Regular', year: 'Standard', country: 'Estonia', inscription: 'EESTI', flag: '🇪🇪', title: 'Standard 2€ - Map of Estonia', icon: 'map', description: 'Features a geographical map of Estonia in outline, symbolizing national unity and identity.' },
+            { id: 'reg-fi', type: 'Regular', year: 'Standard', country: 'Finland', inscription: 'SUOMI', flag: '🇫🇮', title: 'Standard 2€ - Cloudberry', icon: 'map', description: 'Features the fruit and leaves of the cloudberry, designed by Raimo Heino, representing Finland\'s distinct northern nature.' },
+            { id: 'reg-fr', type: 'Regular', year: 'Standard', country: 'France', inscription: 'RF', flag: '🇫🇷', title: 'Standard 2€ - Tree of Life', icon: 'map', description: 'Features a tree drawn by Joaquin Jimenez, symbolizing life, continuity, and growth, contained within a hexagon representing France\'s borders.' },
+            { id: 'reg-de', type: 'Regular', year: 'Standard', country: 'Germany', inscription: 'BUNDESREP.', flag: '🇩🇪', title: 'Standard 2€ - Eagle', icon: 'bird', description: 'Features the traditional symbol of German sovereignty, the heraldic eagle, surrounded by the stars of Europe.' },
+            { id: 'reg-gr', type: 'Regular', year: 'Standard', country: 'Greece', inscription: 'ΕΛΛΗΝΙΚΗ', flag: '🇬🇷', title: 'Standard 2€ - Europa and the Bull', icon: 'user', description: 'Depicts a scene from Spartan mythology where Europa is being abducted by Zeus, who has taken the form of a bull.' },
+            { id: 'reg-ie', type: 'Regular', year: 'Standard', country: 'Ireland', inscription: 'ÉIRE', flag: '🇮🇪', title: 'Standard 2€ - Celtic Harp', icon: 'music', description: 'Features the Celtic harp, a traditional symbol of Ireland dating back centuries, alongside the word "Éire".' },
+            { id: 'reg-it', type: 'Regular', year: 'Standard', country: 'Italy', inscription: 'RI', flag: '🇮🇹', title: 'Standard 2€ - Dante Alighieri', icon: 'user', description: 'Features a portrait drawn by Raphael of Dante Alighieri, the famous Italian poet and author of the Divine Comedy.' },
+            { id: 'reg-lv', type: 'Regular', year: 'Standard', country: 'Latvia', inscription: 'LATVIJA', flag: '🇱🇻', title: 'Standard 2€ - Latvian Maiden', icon: 'user', description: 'Features the profile of a Latvian maiden, originally used on the 5-lats silver coin in 1929, symbolizing the Republic of Latvia.' },
+            { id: 'reg-lt', type: 'Regular', year: 'Standard', country: 'Lithuania', inscription: 'LIETUVA', flag: '🇱🇹', title: 'Standard 2€ - Vytis (Knight)', icon: 'swords', description: 'Features Vytis, the heroic knight on horseback holding a sword and shield, which is the historical coat of arms of Lithuania.' },
+            { id: 'reg-lu', type: 'Regular', year: 'Standard', country: 'Luxembourg', inscription: 'LËTZEBUERG', flag: '🇱🇺', title: 'Standard 2€ - Grand Duke Henri', icon: 'user', description: 'Features the effigy of His Royal Highness, Grand Duke Henri, looking to the right.' },
+            { id: 'reg-mt', type: 'Regular', year: 'Standard', country: 'Malta', inscription: 'MALTA', flag: '🇲🇹', title: 'Standard 2€ - Maltese Cross', icon: 'landmark', description: 'Features the eight-pointed Maltese Cross, an emblem associated with the Sovereign Military Order of Malta during their rule.' },
+            { id: 'reg-mc', type: 'Regular', year: 'Standard', country: 'Monaco', inscription: 'MONACO', flag: '🇲🇨', title: 'Standard 2€ - Prince Albert II', icon: 'user', description: 'Features the effigy of H.S.H. Prince Albert II of Monaco.' },
+            { id: 'reg-nl', type: 'Regular', year: 'Standard', country: 'Netherlands', inscription: 'NEDERLAND', flag: '🇳🇱', title: 'Standard 2€ - King Willem-Alexander', icon: 'user', description: 'Features the stylized portrait of King Willem-Alexander, composed of faceted planes.' },
+            { id: 'reg-pt', type: 'Regular', year: 'Standard', country: 'Portugal', inscription: 'PORTUGAL', flag: '🇵🇹', title: 'Standard 2€ - Royal Seals', icon: 'landmark', description: 'Features the royal seal of 1144 belonging to Afonso Henriques, the first King of Portugal, surrounded by seven castles and five escutcheons.' },
+            { id: 'reg-sm', type: 'Regular', year: 'Standard', country: 'San Marino', inscription: 'SAN MARINO', flag: '🇸🇲', title: 'Standard 2€ - Saint Marinus', icon: 'user', description: 'Features a portrait of Saint Marinus, the founder of the Republic, based on a painting by Giovan Battista Urbinelli.' },
+            { id: 'reg-sk', type: 'Regular', year: 'Standard', country: 'Slovakia', inscription: 'SLOVENSKO', flag: '🇸🇰', title: 'Standard 2€ - Double Cross on Hills', icon: 'landmark', description: 'Features a double cross elevated on three hills, identical to the national coat of arms of Slovakia.' },
+            { id: 'reg-si', type: 'Regular', year: 'Standard', country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: 'Standard 2€ - France Prešeren', icon: 'user', description: 'Features a profile of Slovenia’s national poet France Prešeren, alongside a line from his famous poem "Zdravljica" which is the national anthem.' },
+            { id: 'reg-es', type: 'Regular', year: 'Standard', country: 'Spain', inscription: 'ESPAÑA', flag: '🇪🇸', title: 'Standard 2€ - King Felipe VI', icon: 'user', description: 'Features the portrait of His Majesty King Felipe VI of Spain.' },
+            { id: 'reg-va', type: 'Regular', year: 'Standard', country: 'Vatican', inscription: 'VATICANO', flag: '🇻🇦', title: 'Standard 2€ - Pope Francis / Coat of Arms', icon: 'landmark', description: 'Features the coat of arms of the Sovereign of the Vatican City State, Pope Francis.' },
 
-        /* ===========================================================
-           B. FUNKCIJE ZA POLNJENJE PODATKOV
-        =========================================================== */
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. Polnjenje teksta
-            setText('.data-full-name', companyData.nameFull);
-            setText('.data-address', companyData.address);
-            setText('.data-tax', companyData.taxId);
-            setText('.data-reg', companyData.regId);
-            setText('.data-iban', companyData.iban);
-            
-            // 2. Polnjenje in nastavljanje linkov
-            // Telefon
-            document.querySelectorAll('.data-phone-link').forEach(el => {
-                el.href = `tel:${companyData.phone.replace(/\s/g, '')}`;
-                
-                // Tekst nastavimo SAMO, če to NI sticky gumb, da ne povozimo SVG ikone
-                if (!el.classList.contains('sticky-call')) {
-                    el.textContent = companyData.phone;
-                }
-            });
+            // SLOVENIAN COMMEMORATIVES
+            { id: 'sl-2007-rome', type: 'Commemorative', year: 2007, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '50th Anniversary of the Treaty of Rome', icon: 'book-open', imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/6/64/Slovenia_2_euro_coin_2007.png/200px-Slovenia_2_euro_coin_2007.png', description: 'A joint European issue depicting the Treaty document signed by the six founding countries against a background reminiscent of Michelangelo\'s paving of the Piazza del Campidoglio.' },
+            { id: 'sl-2008-trubar', type: 'Commemorative', year: 2008, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '500th Anniversary of Primož Trubar', icon: 'user', description: 'Features a profile of Primož Trubar, Protestant reformer and the author of the first printed book in the Slovene language. It includes the inscription "Stati inu obstati" (To stand and withstand).' },
+            { id: 'sl-2009-emu', type: 'Commemorative', year: 2009, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '10 Years of Economic and Monetary Union', icon: 'globe', description: 'A joint European issue featuring a primitive stick figure merging into the € symbol, conveying the idea of the single currency as a shared European project.' },
+            { id: 'sl-2010-botanical', type: 'Commemorative', year: 2010, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '200 Years of the Botanical Garden in Ljubljana', icon: 'map', description: 'Features the Rebrinčevolistna Hladnikovka flower to celebrate 200 years of the Botanical Garden in Ljubljana, the oldest continuously operating cultural, scientific and educational institution in Slovenia.' },
+            { id: 'sl-2011-rozman', type: 'Commemorative', year: 2011, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '100th Anniversary of Franc Rozman Stane', icon: 'user', description: 'Features a stylized portrait of Franc Rozman Stane, a Slovenian Partisan commander and national hero, alongside a five-pointed star.' },
+            { id: 'sl-2012-euro', type: 'Commemorative', year: 2012, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '10 Years of Euro Cash', icon: 'globe', description: 'A joint European issue commemorating the 10th anniversary of Euro banknotes and coins, showing the Euro symbol at the center of the globe.' },
+            { id: 'sl-2013-postojna', type: 'Commemorative', year: 2013, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '800 Years of Postojna Cave Discovery', icon: 'map', description: 'Depicts a stylized spiral representing the intricate subterranean passages of Postojna Cave, marking 800 years since the first known visit to the cave system.' },
+            { id: 'sl-2014-barbara', type: 'Commemorative', year: 2014, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '600th Anniversary of Crowning of Barbara of Celje', icon: 'user', description: 'Features a portrait of Barbara of Celje, Queen of Hungary and Bohemia, holding her scepter and surrounded by three stars representing the Counts of Celje.' },
+            { id: 'sl-2015-emona', type: 'Commemorative', year: 2015, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '2000 Years of Emona (Ljubljana)', icon: 'building-2', description: 'Shows a composition of geometric shapes and letters forming the word "EMONA" (the ancient Roman settlement that became Ljubljana) along with the Roman numerals for 14 AD.' },
+            { id: 'sl-2015-euflag', type: 'Commemorative', year: 2015, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '30 Years of the EU Flag', icon: 'globe', description: 'A joint European issue commemorating the 30th anniversary of the EU flag, depicting twelve stars transforming into human figures embracing the birth of a new Europe.' },
+            { id: 'sl-2016-independence', type: 'Commemorative', year: 2016, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '25 Years of Independence', icon: 'landmark', description: 'Features a diagonally etched line from France Prešeren\'s poem "Zdravljica" to mark the 25th anniversary of Slovenia\'s independence from Yugoslavia.' },
+            { id: 'sl-2017-euro10', type: 'Commemorative', year: 2017, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '10 Years of the Euro in Slovenia', icon: 'globe', description: 'Depicts ten flying swallows—a symbol of spring and renewal in Slovenian folklore—forming a circle to symbolize the 10th anniversary of adopting the Euro.' },
+            { id: 'sl-2018-bees', type: 'Commemorative', year: 2018, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: 'World Bee Day', icon: 'bird', description: 'Features a globe shaped like a honeycomb to celebrate the establishment of the very first UN World Bee Day, an initiative proudly led by Slovenia.' },
+            { id: 'sl-2019-uni', type: 'Commemorative', year: 2019, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '100th Anniversary of the University of Ljubljana', icon: 'building-2', description: 'Depicts the central facade of the main building of the University of Ljubljana, with a solid square replacing the letter "O" in the inscription.' },
+            { id: 'sl-2020-bohoric', type: 'Commemorative', year: 2020, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '500th Anniversary of Adam Bohorič', icon: 'book-open', description: 'Features a multilingual inscription from Adam Bohorič\'s grammar book "Arcticae horulae succisivae", celebrating the 500th anniversary of his birth.' },
+            { id: 'sl-2021-museum', type: 'Commemorative', year: 2021, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '200th Anniversary of the Provincial Museum of Carniola', icon: 'landmark', description: 'Features an illustration of the Situla from Vače, one of the most important archaeological treasures of Slovenia, representing 200 years of the National Museum.' },
+            { id: 'sl-2022-plecnik', type: 'Commemorative', year: 2022, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '150th Anniversary of Jože Plečnik', icon: 'building-2', description: 'Depicts a stunning architectural detail from the grand reading room window of the National and University Library in Ljubljana, honoring architect Jože Plečnik.' },
+            { id: 'sl-2022-erasmus', type: 'Commemorative', year: 2022, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '35 Years of the Erasmus Programme', icon: 'book-open', description: 'A joint European issue showing a portrait of Erasmus of Rotterdam writing, overlaid with lines linking to different points, celebrating 35 years of the student exchange program.' },
+            { id: 'sl-2023-plemelj', type: 'Commemorative', year: 2023, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '150th Anniversary of Josip Plemelj', icon: 'user', description: 'Features an equation and graphic shapes representing the mathematical work of Josip Plemelj, the first Chancellor of the University of Ljubljana.' },
+            { id: 'sl-2024-library', type: 'Commemorative', year: 2024, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '250th anniversary of the National Library', icon: 'book-open', description: 'Commemorates the 250th anniversary of the National and University Library (NUK), a cornerstone of Slovenian knowledge and cultural heritage.' },
+            { id: 'sl-2025-miki', type: 'Commemorative', year: 2025, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '100th Birthday of Miki Muster', icon: 'user', description: 'Celebrates the 100th birthday of Miki Muster, the pioneering Slovenian animator, illustrator, and comic book artist beloved by generations.' },
+            { id: 'sl-2026-cankar', type: 'Commemorative', year: 2026, country: 'Slovenia', inscription: 'SLOVENIJA', flag: '🇸🇮', title: '150th anniversary of the birth of Ivan Cankar', icon: 'book-open', description: 'Honors the 150th anniversary of the birth of Ivan Cankar, a celebrated Slovenian writer, playwright, and political activist who deeply influenced national literature.' }
+        ];
 
-            // Email
-            document.querySelectorAll('.data-email-link').forEach(el => {
-                el.textContent = companyData.email;
-                el.href = `mailto:${companyData.email}`;
-            });
+        // --- 2. STATE MANAGEMENT & LOCAL STORAGE ---
+        let collectedCoins = new Set();
+        let searchQuery = "";
+        let statusFilter = "All";
 
-            // Socialna omrežja
-            setHref('.data-fb', companyData.social.fb);
-            setHref('.data-ig', companyData.social.ig);
-            
-            // Google Forms
-            setHref('.data-form-link', companyData.formsLink);
-
-            // Letnica v nogi
-            document.getElementById('year').textContent = new Date().getFullYear();
-        });
-
-        // Pomožni funkciji
-        function setText(selector, value) {
-            document.querySelectorAll(selector).forEach(el => el.textContent = value);
+        // Load from browser storage
+        const savedData = localStorage.getItem('euro-collection');
+        if (savedData) {
+            try {
+                const parsed = JSON.parse(savedData);
+                collectedCoins = new Set(parsed);
+            } catch (e) { console.error("Could not load data"); }
         }
-        function setHref(selector, value) {
-            document.querySelectorAll(selector).forEach(el => el.href = value);
+
+        // Save to browser storage
+        function saveToLocal() {
+            localStorage.setItem('euro-collection', JSON.stringify(Array.from(collectedCoins)));
         }
 
-        /* ===========================================================
-           C. UI LOGIKA (Navigacija, Modali, Animacije)
-        =========================================================== */
-        
-        // 1. Mobilna Navigacija
-        const hamburger = document.getElementById('hamburger');
-        const navLinks = document.getElementById('navLinks');
-
-        hamburger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-
-        // Zapri meni ob kliku na povezavo
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-            });
-        });
-
-        // 2. Scroll Efekti (Back to top & Animations)
-        const backToTopBtn = document.getElementById('backToTop');
-        const observerOptions = { threshold: 0.1 };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.fade-in-section').forEach(section => {
-            observer.observe(section);
-        });
-
-        window.addEventListener('scroll', () => {
-            // Prikaz gumba "Nazaj na vrh"
-            if (window.scrollY > 300) {
-                backToTopBtn.classList.add('visible');
+        // Toggle coin collected state
+        function toggleCoin(id) {
+            if (collectedCoins.has(id)) {
+                collectedCoins.delete(id);
             } else {
-                backToTopBtn.classList.remove('visible');
+                collectedCoins.add(id);
             }
-        });
+            saveToLocal();
+            renderApp();
+        }
 
-        // 3. Storitve Toggle (Accordion v kartici)
-        function toggleService(btn) {
-            const details = btn.previousElementSibling; // Element .service-details
-            details.classList.toggle('open');
-            btn.classList.toggle('active');
+        // Reset progress
+        function resetCollection() {
+            if (confirm("Are you sure you want to reset your entire collection?")) {
+                collectedCoins.clear();
+                saveToLocal();
+                renderApp();
+            }
+        }
+
+        // --- MODAL LOGIC FOR COIN DESCRIPTIONS ---
+        let currentModalCoinId = null;
+
+        function openModal(id) {
+            currentModalCoinId = id;
+            const coin = COINS.find(c => c.id === id);
+            const isCollected = collectedCoins.has(id);
             
-            if(details.classList.contains('open')) {
-                btn.innerHTML = 'Manj informacij <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;margin-left:5px;transform:rotate(180deg)"><polyline points="6 9 12 15 18 9"></polyline></svg>';
-            } else {
-                btn.innerHTML = 'Več informacij <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;margin-left:5px;"><polyline points="6 9 12 15 18 9"></polyline></svg>';
-            }
+            // Populate Modal Content
+            document.getElementById('modal-title').innerText = coin.title;
+            document.getElementById('modal-country').innerHTML = `<span class="text-xl">${coin.flag}</span> ${coin.country}`;
+            document.getElementById('modal-badge').innerText = coin.type === 'Regular' ? 'Standard Issue' : `Commemorative · ${coin.year}`;
+            document.getElementById('modal-description').innerText = coin.description;
+
+            // Populate Modal Graphic
+            const graphicHTML = coin.imageUrl 
+                ? `<div class="w-full h-full rounded-full overflow-hidden border-[4px] border-[#cbd5e1] shadow-[inset_0_0_15px_rgba(0,0,0,0.4)] relative bg-[#cbd5e1]">
+                     <img src="${coin.imageUrl}" alt="${coin.title}" class="w-full h-full object-cover mix-blend-multiply opacity-90" />
+                     <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-full"></div>
+                   </div>`
+                : getCoinSVG(coin);
+            document.getElementById('modal-graphic').innerHTML = graphicHTML;
+
+            // Sync Button State
+            updateModalButton(isCollected);
+
+            // Trigger Display & Animations
+            const modal = document.getElementById('coin-modal');
+            const content = document.getElementById('coin-modal-content');
+            modal.classList.remove('hidden');
+            
+            lucide.createIcons(); // Process injected icons
+
+            // Wait a micro-tick for the browser to render 'display:block' before animating opacity
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            });
         }
 
-        // 4. Modalna okna logika
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('open');
-            document.body.style.overflow = 'hidden'; // Prepreči scrollanje ozadja
-        }
-
-        function closeModal(event, modalId) {
-            // Zapri če klikneš na X ali na overlay (temno ozadje)
-            if (event === null || event.target.classList.contains('modal-overlay')) {
-                document.getElementById(modalId).classList.remove('open');
-                document.body.style.overflow = 'auto';
-            }
-        }
-
-        // 5. Cookie Banner Logika
-        const cookieBanner = document.getElementById('cookieBanner');
-        
-        if (!localStorage.getItem('cookiesAccepted')) {
-            // Pokaži po kratkem zamiku
+        function closeModal() {
+            const modal = document.getElementById('coin-modal');
+            const content = document.getElementById('coin-modal-content');
+            
+            // Reverse animation
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            
+            // Hide element after animation finishes
             setTimeout(() => {
-                cookieBanner.classList.add('show');
-            }, 1000);
+                modal.classList.add('hidden');
+                currentModalCoinId = null;
+            }, 300);
         }
 
-        function acceptCookies() {
-            localStorage.setItem('cookiesAccepted', 'true');
-            cookieBanner.classList.remove('show');
+        // Handles toggling while inside the detail modal
+        function toggleFromModal() {
+            if (!currentModalCoinId) return;
+            toggleCoin(currentModalCoinId);
+            updateModalButton(collectedCoins.has(currentModalCoinId));
         }
 
-        // 6. Schema.org JSON-LD (SEO)
-        const schemaData = {
-            "@context": "https://schema.org",
-            "@type": "LocalBusiness", // Ali Carpenter/HomeGoodsStore
-            "name": companyData.nameFull,
-            "image": "https://placehold.co/1200x630/0a0a0a/800000?text=Leseni+Dotik+Gothic",
-            "telephone": companyData.phone,
-            "email": companyData.email,
-            "address": {
-                "@type": "PostalAddress",
-                "streetAddress": "Gozdna pot 12",
-                "addressLocality": "Mengeš",
-                "postalCode": "1234",
-                "addressCountry": "SI"
-            },
-            "openingHoursSpecification": [
-                {
-                    "@type": "OpeningHoursSpecification",
-                    "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-                    "opens": "08:00",
-                    "closes": "16:00"
-                }
-            ],
-            "url": "https://www.lesenidotik.si",
-            "priceRange": "$$"
-        };
+        // Visually updates the big button in the modal
+        function updateModalButton(isCollected) {
+            const btn = document.getElementById('modal-toggle-btn');
+            if (isCollected) {
+                btn.className = "w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md text-lg bg-green-100 text-green-700 hover:bg-green-200";
+                btn.innerHTML = `<i data-lucide="check-circle" class="w-6 h-6"></i> Collected`;
+            } else {
+                btn.className = "w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md text-lg bg-slate-900 text-white hover:bg-slate-800 hover:-translate-y-1";
+                btn.innerHTML = `<i data-lucide="plus-circle" class="w-6 h-6"></i> Mark as Collected`;
+            }
+            lucide.createIcons();
+        }
 
-        const script = document.createElement('script');
-        script.type = 'application/ld+json';
-        script.text = JSON.stringify(schemaData);
-        document.head.appendChild(script);
+        // --- 3. RENDERING SVG COIN (Fallback when no image) ---
+        function getCoinSVG(coin) {
+            return `
+                <div class="relative w-full h-full">
+                    <svg viewBox="0 0 100 100" class="absolute inset-0 w-full h-full drop-shadow-md z-0">
+                        <defs>
+                            <radialGradient id="gold-${coin.id}" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#fef08a" />
+                                <stop offset="100%" stop-color="#eab308" />
+                            </radialGradient>
+                            <radialGradient id="silver-${coin.id}" cx="50%" cy="50%" r="50%">
+                                <stop offset="70%" stop-color="#f1f5f9" />
+                                <stop offset="100%" stop-color="#cbd5e1" />
+                            </radialGradient>
+                            <path id="star-${coin.id}" d="M0,-3 L0.9,-0.9 L3,-0.9 L1.3,0.5 L1.9,3 L0,1.5 L-1.9,3 L-1.3,0.5 L-3,-0.9 L-0.9,-0.9 Z" fill="#94a3b8"/>
+                        </defs>
+                        <circle cx="50" cy="50" r="48" fill="url(#silver-${coin.id})" stroke="#94a3b8" stroke-width="1"/>
+                        <circle cx="50" cy="50" r="35" fill="url(#gold-${coin.id})" stroke="#ca8a04" stroke-width="0.5"/>
+                        <g transform="translate(50,50)">
+                            ${[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map(angle => 
+                                `<use href="#star-${coin.id}" transform="rotate(${angle}) translate(0,-41.5)" />`
+                            ).join('')}
+                        </g>
+                        <g transform="translate(50,50)">
+                            <text x="0" y="15" text-anchor="middle" font-size="9" font-weight="bold" fill="#854d0e">${coin.year}</text>
+                            <text x="0" y="25" text-anchor="middle" font-size="${coin.inscription.length > 7 ? 4.5 : 6}" font-weight="bold" fill="#854d0e" letter-spacing="0.5">${coin.inscription}</text>
+                        </g>
+                    </svg>
+                    
+                    <!-- HTML Icon layered securely on top of the SVG -->
+                    <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none" style="padding-bottom: 22%;">
+                        <i data-lucide="${coin.icon}" class="w-[32%] h-[32%] text-yellow-800 opacity-90" stroke-width="1.5"></i>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 4. BUILD COIN CARDS ---
+        function generateCoinHTML(coin) {
+            const isCollected = collectedCoins.has(coin.id);
+            
+            // Build classes based on state
+            const cardClass = isCollected 
+                ? 'bg-gradient-to-br from-white to-green-50 border-green-400 shadow-green-200/50' 
+                : 'bg-white border-slate-100 shadow-md hover:border-blue-300';
+                
+            const imageWrapperClass = isCollected
+                ? 'scale-100 drop-shadow-xl'
+                : 'scale-90 opacity-85 group-hover:scale-100 group-hover:opacity-100 drop-shadow-md';
+
+            // Checkmark or Empty Circle
+            const iconHTML = isCollected
+                ? `<i data-lucide="check-circle" class="text-green-500 fill-green-100 drop-shadow-sm w-7 h-7"></i>`
+                : `<i data-lucide="circle" class="text-slate-200 group-hover:text-blue-300 transition-colors w-7 h-7"></i>`;
+
+            // Inner coin graphic (Real Photo or SVG)
+            const graphicHTML = coin.imageUrl 
+                ? `<div class="w-[92%] h-[92%] rounded-full overflow-hidden border-[4px] border-[#cbd5e1] shadow-[inset_0_0_15px_rgba(0,0,0,0.4)] relative bg-[#cbd5e1]">
+                     <img src="${coin.imageUrl}" alt="${coin.title}" class="w-full h-full object-cover mix-blend-multiply opacity-90" />
+                     <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-full"></div>
+                   </div>`
+                : getCoinSVG(coin);
+
+            const yearLabel = coin.type === 'Regular' ? 'Standard Issue' : coin.year;
+
+            return `
+                <div onclick="openModal('${coin.id}')" class="coin-card group relative rounded-2xl p-4 cursor-pointer border-2 flex flex-col select-none ${cardClass}">
+                    
+                    <!-- Quick Toggle (Uses stopPropagation to prevent modal from opening when you just want to check it off) -->
+                    <div onclick="event.stopPropagation(); toggleCoin('${coin.id}')" class="absolute top-3 right-3 z-10 transition-transform duration-300 active:scale-75 hover:scale-110">
+                        ${iconHTML}
+                    </div>
+
+                    <div class="w-full aspect-square mb-4 transition-all duration-500 pointer-events-none flex items-center justify-center relative ${imageWrapperClass}">
+                        ${graphicHTML}
+                    </div>
+
+                    <div class="mt-auto flex flex-col items-center text-center px-1">
+                        <div class="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-widest">${yearLabel}</div>
+                        <h3 class="text-xs sm:text-sm font-bold text-slate-800 line-clamp-2 leading-tight mb-3 flex-1 min-h-[2rem]" title="${coin.title}">${coin.title}</h3>
+                        
+                        <div class="w-full flex justify-between items-center bg-slate-50 px-2 py-1.5 rounded-lg border border-slate-100 group-hover:bg-blue-50 transition-colors">
+                            <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+                                <span class="text-base">${coin.flag}</span>
+                                <span class="hidden sm:inline">${coin.country}</span>
+                                <span class="sm:hidden">${coin.country.substring(0, 3).toUpperCase()}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 5. RENDER THE WHOLE APP ---
+        function renderApp() {
+            // Filter logic
+            const filteredCoins = COINS.filter(coin => {
+                const matchesSearch = coin.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      coin.country.toLowerCase().includes(searchQuery.toLowerCase());
+                const isCollected = collectedCoins.has(coin.id);
+                const matchesStatus = statusFilter === 'All' ? true : 
+                                      (statusFilter === 'Collected' ? isCollected : !isCollected);
+                return matchesSearch && matchesStatus;
+            });
+
+            const regularFiltered = filteredCoins.filter(c => c.type === 'Regular');
+            const slovenianFiltered = filteredCoins.filter(c => c.type === 'Commemorative');
+
+            // Render Grids
+            document.getElementById('regular-coins-grid').innerHTML = regularFiltered.length > 0 
+                ? regularFiltered.map(generateCoinHTML).join('')
+                : '<div class="col-span-full text-center py-8 text-slate-400 font-medium border border-dashed border-slate-200 rounded-xl">No regular coins found.</div>';
+            
+            document.getElementById('slovenian-coins-grid').innerHTML = slovenianFiltered.length > 0 
+                ? slovenianFiltered.map(generateCoinHTML).join('')
+                : '<div class="col-span-full text-center py-8 text-slate-400 font-medium border border-dashed border-slate-200 rounded-xl">No Slovenian coins found.</div>';
+
+            // Calculate Stats
+            const regTotal = COINS.filter(c => c.type === 'Regular').length;
+            const regCollected = COINS.filter(c => c.type === 'Regular' && collectedCoins.has(c.id)).length;
+            const regPercent = Math.round((regCollected / regTotal) * 100);
+
+            const slTotal = COINS.filter(c => c.type === 'Commemorative').length;
+            const slCollected = COINS.filter(c => c.type === 'Commemorative' && collectedCoins.has(c.id)).length;
+            const slPercent = Math.round((slCollected / slTotal) * 100);
+
+            // Update DOM Stats
+            document.getElementById('reg-collected').innerText = regCollected;
+            document.getElementById('reg-total').innerText = regTotal;
+            document.getElementById('reg-bar').style.width = `${regPercent}%`;
+            
+            document.getElementById('sl-collected').innerText = slCollected;
+            document.getElementById('sl-total').innerText = slTotal;
+            
+            // Update Total Money Value
+            const totalValue = (regCollected + slCollected) * 2;
+            document.getElementById('total-value').innerText = `€${totalValue}.00`;
+
+            // Split Slovenian progress bar into 3 parts (White, Blue, Red)
+            document.getElementById('sl-bar-white').style.width = `${slPercent / 3}%`;
+            document.getElementById('sl-bar-blue').style.width = `${slPercent / 3}%`;
+            document.getElementById('sl-bar-red').style.width = `${slPercent / 3}%`;
+
+            // Trophies and badges
+            document.getElementById('reg-award').classList.toggle('hidden', regPercent !== 100);
+            document.getElementById('reg-complete-badge').classList.toggle('hidden', regPercent !== 100);
+            
+            document.getElementById('sl-award').classList.toggle('hidden', slPercent !== 100);
+            document.getElementById('sl-complete-badge').classList.toggle('hidden', slPercent !== 100);
+
+            // Re-initialize icons since we injected new HTML strings
+            lucide.createIcons();
+        }
+
+        // --- 6. EVENT LISTENERS ---
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderApp();
+        });
+
+        document.getElementById('statusFilter').addEventListener('change', (e) => {
+            statusFilter = e.target.value;
+            renderApp();
+        });
+
+        // Start the app on load
+        window.onload = renderApp;
 
     </script>
+
+    <!-- Modal HTML Structure (Hidden by default) -->
+    <div id="coin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300" onclick="if(event.target === this) closeModal()">
+        <div class="bg-white rounded-[2rem] p-6 sm:p-8 max-w-md w-full mx-4 relative shadow-2xl transform scale-95 transition-transform duration-300" id="coin-modal-content">
+            <!-- Close Button -->
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-full p-2 transition-colors z-10">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <!-- Graphic -->
+            <div id="modal-graphic" class="w-32 h-32 mx-auto mb-6 relative pointer-events-none"></div>
+            
+            <!-- Details -->
+            <div class="text-center">
+                <div id="modal-badge" class="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-bold tracking-widest mb-3 uppercase"></div>
+                <h2 id="modal-title" class="text-2xl font-black text-slate-800 leading-tight mb-2"></h2>
+                <div id="modal-country" class="text-sm font-semibold text-slate-500 mb-6 flex items-center justify-center gap-2"></div>
+                
+                <!-- Description Box -->
+                <div class="bg-slate-50 rounded-2xl p-5 text-left border border-slate-100 mb-6 shadow-inner">
+                    <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-1">
+                        <i data-lucide="info" class="w-3 h-3"></i> Official Description
+                    </h4>
+                    <p id="modal-description" class="text-slate-700 text-sm leading-relaxed font-medium"></p>
+                </div>
+                
+                <!-- Action Button -->
+                <button id="modal-toggle-btn" onclick="toggleFromModal()" class="w-full"></button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
