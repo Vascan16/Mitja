@@ -236,18 +236,15 @@
         // Tukaj lahko prilepiš svoj Firebase config objekt, če želiš aplikacijo 
         // gostovati samostojno. Če pustiš null, bo aplikacija uporabila privzete 
         // nastavitve (zato tukaj v urejevalniku deluje brez težav).
-        const MY_FIREBASE_CONFIG = null;
-        /* Primer:
         const MY_FIREBASE_CONFIG = {
-          apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
-          authDomain: "delo-ae21b.firebaseapp.com",
-          projectId: "delo-ae21b",
-          storageBucket: "delo-ae21b.firebasestorage.app",
-          messagingSenderId: "721173225350",
-          appId: "1:721173225350:web:83926980686c6f4ec11607",
-          measurementId: "G-4STZTWDQ1X"
+            apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
+            authDomain: "delo-ae21b.firebaseapp.com",
+            projectId: "delo-ae21b",
+            storageBucket: "delo-ae21b.firebasestorage.app",
+            messagingSenderId: "721173225350",
+            appId: "1:721173225350:web:83926980686c6f4ec11607",
+            measurementId: "G-4STZTWDQ1X"
         };
-        */
         // =========================================================================
 
         // --- 2. FIREBASE INTEGRACIJA & STATE MANAGEMENT ---
@@ -288,6 +285,10 @@
             // Shrani lokalno za hitrejše delovanje
             try { localStorage.setItem('euro-collection-v4', JSON.stringify(collectedCoins)); } catch (e) {}
             
+            // TAKOJ osveži UI (da ne čakamo na Firebase)
+            renderApp();
+            refreshOpenModal();
+            
             // Shrani v Firebase za sočasno uporabo
             if (!authUser) return;
             try {
@@ -298,8 +299,6 @@
             } catch (err) {
                 console.error("Napaka pri shranjevanju v oblak:", err);
             }
-            renderApp();
-            refreshOpenModal();
         }
 
         function refreshOpenModal() {
