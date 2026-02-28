@@ -11,9 +11,9 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
-        body { 
-            font-family: 'Inter', system-ui, -apple-system, sans-serif; 
-            -webkit-tap-highlight-color: transparent;
+        body {
+             font-family: 'Inter', system-ui, -apple-system, sans-serif;
+             -webkit-tap-highlight-color: transparent;
         }
         
         /* Premium prehodi */
@@ -26,26 +26,6 @@
         /* Skrijemo scrollbar, ohranimo funkcionalnost */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Vertikalna Časovnica za SLO kovance - IZBOLJŠANA */
-        .timeline-container { position: relative; padding-left: 2.5rem; margin-top: 1rem; margin-bottom: 2rem; }
-        .timeline-container::before { 
-            content: ''; position: absolute; left: 1rem; top: 1.5rem; bottom: -1rem; width: 4px; 
-            background: #e2e8f0; border-radius: 4px; z-index: 0; transform: translateX(-50%);
-        }
-        .timeline-node { 
-            position: absolute; left: -1.5rem; top: 2rem; width: 1.25rem; height: 1.25rem; 
-            border-radius: 50%; background: #f8fafc; border: 3px solid #cbd5e1; z-index: 10;
-            transition: all 0.4s ease; display: flex; align-items: center; justify-content: center;
-            transform: translateX(-50%);
-        }
-        .timeline-node.active { 
-            border-color: #60a5fa; background: #eff6ff; 
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); 
-        }
-        .timeline-node.active::after {
-            content: ''; width: 0.5rem; height: 0.5rem; background: #3b82f6; border-radius: 50%;
-        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 pb-24">
@@ -63,6 +43,11 @@
                         <i data-lucide="euro" class="text-blue-400 drop-shadow-md w-8 h-8"></i>
                         Evro Album
                     </h1>
+                    <!-- Indikator oblaka -->
+                    <div id="cloud-indicator" class="mt-1 inline-flex items-center gap-1.5 px-2 py-0.5 bg-green-500/10 border border-green-500/20 rounded-full text-[10px] font-bold text-green-400 uppercase tracking-widest opacity-0 transition-opacity duration-500">
+                        <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                        V oblaku: <span id="header-sync-code" class="font-mono text-white">...</span>
+                    </div>
                 </div>
                 
                 <!-- Značka za skupno vrednost -->
@@ -133,9 +118,14 @@
                     <h3 class="text-xl font-black tracking-tight text-slate-800">SLO Spominski</h3>
                     <p class="text-xs text-slate-500 font-medium">Posebne izdaje po letih</p>
                 </div>
+                <!-- Gumb za kompaktni pogled -->
+                <button onclick="toggleCompactMode()" class="px-3 py-2 bg-slate-200/60 hover:bg-slate-200 rounded-xl text-slate-600 transition-colors flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest shadow-sm active:scale-95">
+                    <i data-lucide="layout-grid" id="compact-icon" class="w-4 h-4"></i>
+                    <span id="compact-text">Zgosti</span>
+                </button>
             </div>
 
-            <div id="slo-timeline" class="timeline-container pb-4">
+            <div id="slo-grid" class="pb-4">
                 <!-- Generirano z JS -->
             </div>
         </section>
@@ -152,62 +142,63 @@
             <div class="bg-transparent p-1.5 rounded-xl"><i data-lucide="clock" class="w-5 h-5"></i></div>
             <span class="text-[10px] uppercase tracking-wider">Slovenija</span>
         </button>
-        <button onclick="resetCollection()" class="flex-1 flex flex-col items-center gap-1 p-2 text-slate-400 font-medium hover:text-red-500 transition-all">
-            <div class="bg-transparent p-1.5 rounded-xl"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
-            <span class="text-[10px] uppercase tracking-wider">Izbriši</span>
+        
+        <!-- NOV ZAVIHEK: OBLAK (Firebase Sync) in Nastavitve -->
+        <button onclick="openSyncModal()" class="flex-1 flex flex-col items-center gap-1 p-2 text-slate-400 font-medium hover:text-blue-500 transition-all group relative">
+            <div class="bg-transparent group-hover:bg-blue-50 p-1.5 rounded-xl transition-colors relative">
+                <i data-lucide="cloud" class="w-5 h-5"></i>
+                <!-- Pika za aktivno povezavo -->
+                <div id="nav-cloud-dot" class="absolute top-1 right-1 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full hidden"></div>
+            </div>
+            <span class="text-[10px] uppercase tracking-wider">Oblak</span>
         </button>
     </nav>
 
-    <!-- JavaScript Logika -->
-    <script>
+    <!-- JavaScript Logika & Firebase Integracija -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
         // --- 1. PODATKOVNA BAZA ---
         const COINS = [
             // REDNI KOVANCI
-            { id: 'reg-ad', type: 'Regular', year: 'Redna izdaja', country: 'Andora', inscription: 'ANDORRA', flag: '🇦🇩', title: 'Redni 2€ - Grb Andore', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Andorra.jpg', description: 'Prikazuje grb Andore z nacionalnim geslom.' },
-            { id: 'reg-at', type: 'Regular', year: 'Redna izdaja', country: 'Avstrija', inscription: 'ÖSTERREICH', flag: '🇦🇹', title: 'Redni 2€ - Bertha von Suttner', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_oes.png', description: 'Prikazuje portret Berthe von Suttner, dobitnice Nobelove nagrade za mir.' },
-            
-            { id: 'reg-be-1', type: 'Regular', year: '1. serija (1999-2007)', country: 'Belgija', inscription: 'BELGIE', flag: '🇧🇪', title: 'Redni 2€ - Kralj Albert II', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_bel.png', description: 'Prikazuje portret kralja Alberta II.' },
-            { id: 'reg-be-2', type: 'Regular', year: '2. serija (2008-2013)', country: 'Belgija', inscription: 'BELGIE', flag: '🇧🇪', title: 'Redni 2€ - Kralj Albert II', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Belgium_2euro_2008.jpg', description: 'Posodobljen portret kralja Alberta II.' },
-            { id: 'reg-be-3', type: 'Regular', year: '3. serija (od 2014)', country: 'Belgija', inscription: 'BELGIE', flag: '🇧🇪', title: 'Redni 2€ - Kralj Filip', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Belgium_2euro_2014ph.jpg', description: 'Prikazuje portret belgijskega kralja Filipa.' },
-            
-            { id: 'reg-bg', type: 'Regular', year: 'Redna izdaja', country: 'Bolgarija', inscription: 'БЪЛГАРИЯ', flag: '🇧🇬', title: 'Redni 2€ - Pajsij Hilendarski', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Bulgaria_2euro.jpg', description: 'Prikazuje Pajsija Hilendarskega.' },
-            { id: 'reg-hr', type: 'Regular', year: 'Redna izdaja', country: 'Hrvaška', inscription: 'HRVATSKA', flag: '🇭🇷', title: 'Redni 2€ - Zemljevid Hrvaške', icon: 'map', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Croatia_2euro.jpg', description: 'Prikazuje geografski zemljevid Republike Hrvaške.' },
-            { id: 'reg-cy', type: 'Regular', year: 'Redna izdaja', country: 'Ciper', inscription: 'KYПPOΣ', flag: '🇨🇾', title: 'Redni 2€ - Idol iz Pomosa', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Cipro.gif', description: 'Prikazuje idol v obliki križa iz bakrene dobe.' },
-            { id: 'reg-ee', type: 'Regular', year: 'Redna izdaja', country: 'Estonija', inscription: 'EESTI', flag: '🇪🇪', title: 'Redni 2€ - Zemljevid Estonije', icon: 'map', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Estonia.jpg', description: 'Prikazuje geografski zemljevid Estonije v obrisu.' },
-            { id: 'reg-fi', type: 'Regular', year: 'Redna izdaja', country: 'Finska', inscription: 'SUOMI', flag: '🇫🇮', title: 'Redni 2€ - Barjevska robida', icon: 'map', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_fin.png', description: 'Prikazuje sadež in liste barjevske robide.' },
-            
-            { id: 'reg-fr-1', type: 'Regular', year: '1. serija (do 2021)', country: 'Francija', inscription: 'RF', flag: '🇫🇷', title: 'Redni 2€ - Drevo življenja', icon: 'map', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_fra.png', description: 'Prikazuje drevo, ujeto v šesterokotnik.' },
-            { id: 'reg-fr-2', type: 'Regular', year: '2. serija (od 2022)', country: 'Francija', inscription: 'RF', flag: '🇫🇷', title: 'Redni 2€ - Hrast in oljka', icon: 'map', imageUrl: 'https://de.wikipedia.org/wiki/Special:FilePath/PFUE2022_-_2_euros_(cropped).jpg', description: 'Prikazuje prepletene veje hrasta in oljke.' },
-            
-            { id: 'reg-de', type: 'Regular', year: 'Redna izdaja', country: 'Nemčija', inscription: 'BUNDESREP.', flag: '🇩🇪', title: 'Redni 2€ - Nemški orel', icon: 'bird', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_ger.png', description: 'Prikazuje tradicionalni simbol nemške suverenosti, heraldičnega orla.' },
-            { id: 'reg-gr', type: 'Regular', year: 'Redna izdaja', country: 'Grčija', inscription: 'ΕΛΛΗΝΙΚΗ', flag: '🇬🇷', title: 'Redni 2€ - Evropa in bik', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Grecia.gif', description: 'Prikazuje prizor iz mitologije, kjer Zevs ugrabi Evropo.' },
-            { id: 'reg-ie', type: 'Regular', year: 'Redna izdaja', country: 'Irska', inscription: 'ÉIRE', flag: '🇮🇪', title: 'Redni 2€ - Keltska harfa', icon: 'music', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_Irlanda.jpg', description: 'Prikazuje keltsko harfo, tradicionalni simbol Irske.' },
-            { id: 'reg-it', type: 'Regular', year: 'Redna izdaja', country: 'Italija', inscription: 'RI', flag: '🇮🇹', title: 'Redni 2€ - Dante Alighieri', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Italia.jpg', description: 'Prikazuje portret slovitega italijanskega pesnika Danteja Alighierija.' },
-            { id: 'reg-lv', type: 'Regular', year: 'Redna izdaja', country: 'Latvija', inscription: 'LATVIJA', flag: '🇱🇻', title: 'Redni 2€ - Latvijska deklica', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_eur_LV.jpg', description: 'Prikazuje profil latvijske deklice, prvotno na srebrniku iz leta 1929.' },
-            { id: 'reg-lt', type: 'Regular', year: 'Redna izdaja', country: 'Litva', inscription: 'LIETUVA', flag: '🇱🇹', title: 'Redni 2€ - Vytis (Vitez)', icon: 'swords', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Lituania_%E2%82%AC2.jpg', description: 'Prikazuje Vytisa, junaškega viteza na konju.' },
-            { id: 'reg-lu', type: 'Regular', year: 'Redna izdaja', country: 'Luksemburg', inscription: 'LËTZEBUERG', flag: '🇱🇺', title: 'Redni 2€ - Veliki vojvoda Henri', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Lussemburgo.jpg', description: 'Prikazuje portret velikega vojvode Henrija.' },
-            { id: 'reg-mt', type: 'Regular', year: 'Redna izdaja', country: 'Malta', inscription: 'MALTA', flag: '🇲🇹', title: 'Redni 2€ - Malteški križ', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_Euro_Malta.jpg', description: 'Prikazuje osemkraki malteški križ.' },
-            
-            { id: 'reg-mc-1', type: 'Regular', year: '1. serija', country: 'Monako', inscription: 'MONACO', flag: '🇲🇨', title: 'Redni 2€ - Knez Rainier III', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Monaco_2001.jpg', description: 'Prikazuje kneza Rainierja III.' },
-            { id: 'reg-mc-2', type: 'Regular', year: '2. serija', country: 'Monako', inscription: 'MONACO', flag: '🇲🇨', title: 'Redni 2€ - Knez Albert II', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Monaco_2006.jpg', description: 'Prikazuje portret kneza Alberta II.' },
-            
-            { id: 'reg-nl-1', type: 'Regular', year: '1. serija', country: 'Nizozemska', inscription: 'NEDERLAND', flag: '🇳🇱', title: 'Redni 2€ - Kraljica Beatrix', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_nl.png', description: 'Prikazuje profil nizozemske kraljice Beatrix.' },
-            { id: 'reg-nl-2', type: 'Regular', year: '2. serija', country: 'Nizozemska', inscription: 'NEDERLAND', flag: '🇳🇱', title: 'Redni 2€ - Kralj Willem-Alexander', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Paesi_Bassi_serie_2014.jpg', description: 'Prikazuje fasetiran portret kralja Willema-Alexandra.' },
-            
-            { id: 'reg-pt', type: 'Regular', year: 'Redna izdaja', country: 'Portugalska', inscription: 'PORTUGAL', flag: '🇵🇹', title: 'Redni 2€ - Kraljevi pečati', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_por.png', description: 'Prikazuje kraljevi pečat iz leta 1144.' },
-            { id: 'reg-sm', type: 'Regular', year: 'Redna izdaja', country: 'San Marino', inscription: 'SAN MARINO', flag: '🇸🇲', title: 'Redni 2€ - Vladna palača', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_San_Marino.gif', description: 'Prikazuje palačo Palazzo Pubblico.' },
-            { id: 'reg-sk', type: 'Regular', year: 'Redna izdaja', country: 'Slovaška', inscription: 'SLOVENSKO', flag: '🇸🇰', title: 'Redni 2€ - Dvojni križ na hribih', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Slovacchia.png', description: 'Prikazuje državni grb - dvojni križ.' },
-            { id: 'reg-si', type: 'Regular', year: 'Redna izdaja', country: 'Slovenija', inscription: 'SLOVENIJA', flag: '🇸🇮', title: 'Redni 2€ - France Prešeren', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Si2.1eur.jpg', description: 'Prikazuje profil največjega slovenskega pesnika Franceta Prešerna.' },
-            
-            { id: 'reg-es-1', type: 'Regular', year: '1. serija', country: 'Španija', inscription: 'ESPAÑA', flag: '🇪🇸', title: 'Redni 2€ - Kralj Juan Carlos I', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Spagna.gif', description: 'Prikazuje portret španskega kralja Juana Carlosa I.' },
-            { id: 'reg-es-2', type: 'Regular', year: '2. serija', country: 'Španija', inscription: 'ESPAÑA', flag: '🇪🇸', title: 'Redni 2€ - Juan Carlos I (posodobljen)', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Spain_2euro_2014.jpg', description: 'Posodobljen portret v skladu z novimi pravili EU.' },
-            { id: 'reg-es-3', type: 'Regular', year: '3. serija', country: 'Španija', inscription: 'ESPAÑA', flag: '🇪🇸', title: 'Redni 2€ - Kralj Filip VI', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Spain_2euro_2015.jpg', description: 'Prikazuje portret kralja Filipa VI.' },
-            
-            { id: 'reg-va-1', type: 'Regular', year: '1. serija', country: 'Vatikan', inscription: 'VATICANO', flag: '🇻🇦', title: 'Redni 2€ - Papež Janez Pavel II', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_1.png', description: 'Prikazuje profil papeža Janeza Pavla II.' },
-            { id: 'reg-va-2', type: 'Regular', year: '2. serija', country: 'Vatikan', inscription: 'VATICANO', flag: '🇻🇦', title: 'Redni 2€ - Sede Vacante', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_2.png', description: 'Izdana v času Sede Vacante (praznega sedeža).' },
-            { id: 'reg-va-3', type: 'Regular', year: '3. serija', country: 'Vatikan', inscription: 'VATICANO', flag: '🇻🇦', title: 'Redni 2€ - Papež Benedikt XVI', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_3a.png', description: 'Prikazuje profil papeža Benedikta XVI.' },
-            { id: 'reg-va-4', type: 'Regular', year: '4. serija', country: 'Vatikan', inscription: 'VATICANO', flag: '🇻🇦', title: 'Redni 2€ - Papež Frančišek', icon: 'user', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Vaticano_2014.png', description: 'Prikazuje profil papeža Frančiška.' },
-            { id: 'reg-va-5', type: 'Regular', year: '5. serija', country: 'Vatikan', inscription: 'VATICANO', flag: '🇻🇦', title: 'Redni 2€ - Papeški grb', icon: 'landmark', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euros_Vatican5.png', description: 'Portret zamenja grb suverena Vatikana.' },
+            { id: 'reg-ad', type: 'Regular', year: 'Redna izdaja', country: 'Andora', flag: '🇦🇩', title: 'Redni 2€ - Grb Andore', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Andorra.jpg', description: 'Prikazuje grb Andore z nacionalnim geslom.' },
+            { id: 'reg-at', type: 'Regular', year: 'Redna izdaja', country: 'Avstrija', flag: '🇦🇹', title: 'Redni 2€ - Bertha von Suttner', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_oes.png', description: 'Prikazuje portret Berthe von Suttner, dobitnice Nobelove nagrade za mir.' },
+            { id: 'reg-be-1', type: 'Regular', year: '1. serija (1999-2007)', country: 'Belgija', flag: '🇧🇪', title: 'Redni 2€ - Kralj Albert II', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_bel.png', description: 'Prikazuje portret kralja Alberta II.' },
+            { id: 'reg-be-2', type: 'Regular', year: '2. serija (2008-2013)', country: 'Belgija', flag: '🇧🇪', title: 'Redni 2€ - Kralj Albert II', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Belgium_2euro_2008.jpg', description: 'Posodobljen portret kralja Alberta II.' },
+            { id: 'reg-be-3', type: 'Regular', year: '3. serija (od 2014)', country: 'Belgija', flag: '🇧🇪', title: 'Redni 2€ - Kralj Filip', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Belgium_2euro_2014ph.jpg', description: 'Prikazuje portret belgijskega kralja Filipa.' },
+            { id: 'reg-bg', type: 'Regular', year: 'Redna izdaja', country: 'Bolgarija', flag: '🇧🇬', title: 'Redni 2€ - Pajsij Hilendarski', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Bulgaria_2euro.jpg', description: 'Prikazuje Pajsija Hilendarskega.' },
+            { id: 'reg-hr', type: 'Regular', year: 'Redna izdaja', country: 'Hrvaška', flag: '🇭🇷', title: 'Redni 2€ - Zemljevid Hrvaške', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Croatia_2euro.jpg', description: 'Prikazuje geografski zemljevid Republike Hrvaške.' },
+            { id: 'reg-cy', type: 'Regular', year: 'Redna izdaja', country: 'Ciper', flag: '🇨🇾', title: 'Redni 2€ - Idol iz Pomosa', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Cipro.gif', description: 'Prikazuje idol v obliki križa iz bakrene dobe.' },
+            { id: 'reg-ee', type: 'Regular', year: 'Redna izdaja', country: 'Estonija', flag: '🇪🇪', title: 'Redni 2€ - Zemljevid Estonije', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Estonia.jpg', description: 'Prikazuje geografski zemljevid Estonije v obrisu.' },
+            { id: 'reg-fi', type: 'Regular', year: 'Redna izdaja', country: 'Finska', flag: '🇫🇮', title: 'Redni 2€ - Barjevska robida', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_fin.png', description: 'Prikazuje sadež in liste barjevske robide.' },
+            { id: 'reg-fr-1', type: 'Regular', year: '1. serija (do 2021)', country: 'Francija', flag: '🇫🇷', title: 'Redni 2€ - Drevo življenja', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_fra.png', description: 'Prikazuje drevo, ujeto v šesterokotnik.' },
+            { id: 'reg-fr-2', type: 'Regular', year: '2. serija (od 2022)', country: 'Francija', flag: '🇫🇷', title: 'Redni 2€ - Hrast in oljka', imageUrl: 'https://de.wikipedia.org/wiki/Special:FilePath/PFUE2022_-_2_euros_(cropped).jpg', description: 'Prikazuje prepletene veje hrasta in oljke.' },
+            { id: 'reg-de', type: 'Regular', year: 'Redna izdaja', country: 'Nemčija', flag: '🇩🇪', title: 'Redni 2€ - Nemški orel', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_ger.png', description: 'Prikazuje tradicionalni simbol nemške suverenosti, heraldičnega orla.' },
+            { id: 'reg-gr', type: 'Regular', year: 'Redna izdaja', country: 'Grčija', flag: '🇬🇷', title: 'Redni 2€ - Evropa in bik', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Grecia.gif', description: 'Prikazuje prizor iz mitologije, kjer Zevs ugrabi Evropo.' },
+            { id: 'reg-ie', type: 'Regular', year: 'Redna izdaja', country: 'Irska', flag: '🇮🇪', title: 'Redni 2€ - Keltska harfa', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_Irlanda.jpg', description: 'Prikazuje keltsko harfo, tradicionalni simbol Irske.' },
+            { id: 'reg-it', type: 'Regular', year: 'Redna izdaja', country: 'Italija', flag: '🇮🇹', title: 'Redni 2€ - Dante Alighieri', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Italia.jpg', description: 'Prikazuje portret slovitega italijanskega pesnika Danteja Alighierija.' },
+            { id: 'reg-lv', type: 'Regular', year: 'Redna izdaja', country: 'Latvija', flag: '🇱🇻', title: 'Redni 2€ - Latvijska deklica', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_eur_LV.jpg', description: 'Prikazuje profil latvijske deklice, prvotno na srebrniku iz leta 1929.' },
+            { id: 'reg-lt', type: 'Regular', year: 'Redna izdaja', country: 'Litva', flag: '🇱🇹', title: 'Redni 2€ - Vytis (Vitez)', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Lituania_%E2%82%AC2.jpg', description: 'Prikazuje Vytisa, junaškega viteza na konju.' },
+            { id: 'reg-lu', type: 'Regular', year: 'Redna izdaja', country: 'Luksemburg', flag: '🇱🇺', title: 'Redni 2€ - Veliki vojvoda Henri', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Lussemburgo.jpg', description: 'Prikazuje portret velikega vojvode Henrija.' },
+            { id: 'reg-mt', type: 'Regular', year: 'Redna izdaja', country: 'Malta', flag: '🇲🇹', title: 'Redni 2€ - Malteški križ', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_Euro_Malta.jpg', description: 'Prikazuje osemkraki malteški križ.' },
+            { id: 'reg-mc-1', type: 'Regular', year: '1. serija', country: 'Monako', flag: '🇲🇨', title: 'Redni 2€ - Knez Rainier III', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Monaco_2001.jpg', description: 'Prikazuje kneza Rainierja III.' },
+            { id: 'reg-mc-2', type: 'Regular', year: '2. serija', country: 'Monako', flag: '🇲🇨', title: 'Redni 2€ - Knez Albert II', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Monaco_2006.jpg', description: 'Prikazuje portret kneza Alberta II.' },
+            { id: 'reg-nl-1', type: 'Regular', year: '1. serija', country: 'Nizozemska', flag: '🇳🇱', title: 'Redni 2€ - Kraljica Beatrix', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_nl.png', description: 'Prikazuje profil nizozemske kraljice Beatrix.' },
+            { id: 'reg-nl-2', type: 'Regular', year: '2. serija', country: 'Nizozemska', flag: '🇳🇱', title: 'Redni 2€ - Kralj Willem-Alexander', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Paesi_Bassi_serie_2014.jpg', description: 'Prikazuje fasetiran portret kralja Willema-Alexandra.' },
+            { id: 'reg-pt', type: 'Regular', year: 'Redna izdaja', country: 'Portugalska', flag: '🇵🇹', title: 'Redni 2€ - Kraljevi pečati', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_por.png', description: 'Prikazuje kraljevi pečat iz leta 1144.' },
+            { id: 'reg-sm', type: 'Regular', year: 'Redna izdaja', country: 'San Marino', flag: '🇸🇲', title: 'Redni 2€ - Vladna palača', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_San_Marino.gif', description: 'Prikazuje palačo Palazzo Pubblico.' },
+            { id: 'reg-sk', type: 'Regular', year: 'Redna izdaja', country: 'Slovaška', flag: '🇸🇰', title: 'Redni 2€ - Dvojni križ na hribih', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Slovacchia.png', description: 'Prikazuje državni grb - dvojni križ.' },
+            { id: 'reg-si', type: 'Regular', year: 'Redna izdaja', country: 'Slovenija', flag: '🇸🇮', title: 'Redni 2€ - France Prešeren', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Si2.1eur.jpg', description: 'Prikazuje profil največjega slovenskega pesnika Franceta Prešerna.' },
+            { id: 'reg-es-1', type: 'Regular', year: '1. serija', country: 'Španija', flag: '🇪🇸', title: 'Redni 2€ - Kralj Juan Carlos I', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Spagna.gif', description: 'Prikazuje portret španskega kralja Juana Carlosa I.' },
+            { id: 'reg-es-2', type: 'Regular', year: '2. serija', country: 'Španija', flag: '🇪🇸', title: 'Redni 2€ - Juan Carlos I (posodobljen)', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Spain_2euro_2014.jpg', description: 'Posodobljen portret v skladu z novimi pravili EU.' },
+            { id: 'reg-es-3', type: 'Regular', year: '3. serija', country: 'Španija', flag: '🇪🇸', title: 'Redni 2€ - Kralj Filip VI', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Spain_2euro_2015.jpg', description: 'Prikazuje portret kralja Filipa VI.' },
+            { id: 'reg-va-1', type: 'Regular', year: '1. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Papež Janez Pavel II', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_1.png', description: 'Prikazuje profil papeža Janeza Pavla II.' },
+            { id: 'reg-va-2', type: 'Regular', year: '2. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Sede Vacante', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_2.png', description: 'Izdana v času Sede Vacante (praznega sedeža).' },
+            { id: 'reg-va-3', type: 'Regular', year: '3. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Papež Benedikt XVI', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_3a.png', description: 'Prikazuje profil papeža Benedikta XVI.' },
+            { id: 'reg-va-4', type: 'Regular', year: '4. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Papež Frančišek', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Vaticano_2014.png', description: 'Prikazuje profil papeža Frančiška.' },
+            { id: 'reg-va-5', type: 'Regular', year: '5. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Papeški grb', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euros_Vatican5.png', description: 'Portret zamenja grb suverena Vatikana.' },
 
             // SLOVENSKI SPOMINSKI KOVANCI
             { id: 'sl-2007-rome', type: 'Commemorative', year: 2007, country: 'Slovenija', flag: '🇸🇮', title: '50. obletnica Rimske pogodbe', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/%E2%82%AC2_commemorative_coin_Slovenia_2007_TOR.jpg', description: 'Skupna evropska izdaja. Dokument pogodbe s podpisi.' },
@@ -234,68 +225,171 @@
             { id: 'sl-2026-cankar', type: 'Commemorative', year: 2026, country: 'Slovenija', flag: '🇸🇮', title: '150 let rojstva Ivana Cankarja', imageUrl: 'https://upload.wikimedia.org/wikipedia/it/7/7e/2_euro_commemorativo_2026_slovenia_cankar.webp', description: 'Pisatelj in dramatik, ki je globoko zaznamoval literaturo.' }
         ];
 
-        // Kategorizacija in Seznam edinstvenih držav
         const regularCoins = COINS.filter(c => c.type === 'Regular');
         const UNIQUE_COUNTRIES = [...new Set(regularCoins.map(c => c.country))];
-
-        // --- 2. UPRAVLJANJE STANJA ---
-        // Preurejeno iz preprostega seznama v Objekt, kjer se hrani tudi OHRANJENOST
+        
         let collectedCoins = {};
 
-        try {
-            const savedData = localStorage.getItem('euro-collection-v4');
-            if (savedData) {
-                collectedCoins = JSON.parse(savedData);
-            } else {
-                // Avtomatska migracija vaših starih podatkov (če obstajajo)! 
-                // Ne boste izgubili nobenega kovanca!
-                const oldData = localStorage.getItem('euro-collection-v3');
-                if (oldData) {
-                    const parsed = JSON.parse(oldData);
-                    parsed.forEach(id => { collectedCoins[id] = 'mint'; }); // Vsi stari so označeni kot 'Odlično'
-                }
-            }
-        } catch (e) { console.warn("Lokalna shramba ni na voljo."); }
+        // --- 2. FIREBASE INTEGRACIJA & STATE MANAGEMENT ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
+            authDomain: "delo-ae21b.firebaseapp.com",
+            projectId: "delo-ae21b",
+            storageBucket: "delo-ae21b.firebasestorage.app",
+            messagingSenderId: "721173225350",
+            appId: "1:721173225350:web:83926980686c6f4ec11607",
+            measurementId: "G-4STZTWDQ1X"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-        function saveToLocal() {
-            try { localStorage.setItem('euro-collection-v4', JSON.stringify(collectedCoins)); } 
-            catch (e) {}
+        let authUser = null;
+        let unsubscribeSnapshot = null;
+
+        // Sinhronizacijska koda
+        let currentSyncCode = localStorage.getItem('euro_sync_code');
+        if (!currentSyncCode) {
+            currentSyncCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+            localStorage.setItem('euro_sync_code', currentSyncCode);
         }
 
-        // Dodajanje / Odstranjevanje kovanca
-        function toggleCoin(id) {
-            if (collectedCoins[id]) {
-                delete collectedCoins[id];
-            } else {
-                collectedCoins[id] = 'mint'; // Ob dodajanju je privzeto "Odlično"
-            }
-            saveToLocal();
-            renderApp();
+        // Prednaloži offline podatke (če ni interneta)
+        try {
+            const localData = localStorage.getItem('euro-collection-v4');
+            if (localData) collectedCoins = JSON.parse(localData);
+        } catch(e) {}
+
+        // Centralna funkcija za shranjevanje baze
+        async function saveData() {
+            // Shrani lokalno za hitrejše delovanje
+            try { localStorage.setItem('euro-collection-v4', JSON.stringify(collectedCoins)); } catch (e) {}
             
-            // Osveži modalno okno, če je odprto
+            // Shrani v Firebase za sočasno uporabo
+            if (!authUser) return;
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'euro_collections', currentSyncCode), {
+                    coins: collectedCoins,
+                    updatedAt: new Date().toISOString()
+                });
+            } catch (err) {
+                console.error("Napaka pri shranjevanju v oblak:", err);
+            }
+            renderApp();
+            refreshOpenModal();
+        }
+
+        function refreshOpenModal() {
             const modalTitle = document.getElementById('modal-title').innerText;
             if (modalTitle && UNIQUE_COUNTRIES.includes(modalTitle) && document.getElementById('coin-modal').classList.contains('opacity-0') === false) {
                 openCountryModal(modalTitle);
             }
         }
 
-        // NOVO: Spreminjanje ohranjenosti (Odlično -> Zamenjaj -> Odlično)
+        function updateCloudUI() {
+            const headerCode = document.getElementById('header-sync-code');
+            const cloudInd = document.getElementById('cloud-indicator');
+            const navDot = document.getElementById('nav-cloud-dot');
+            if (headerCode) headerCode.innerText = currentSyncCode;
+            if (cloudInd) cloudInd.classList.remove('opacity-0');
+            if (navDot) navDot.classList.remove('hidden');
+        }
+
+        function listenToCollection(code) {
+            if (unsubscribeSnapshot) unsubscribeSnapshot();
+
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'euro_collections', code);
+            unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
+                updateCloudUI(); // Pokaže da smo povezani
+                if (docSnap.exists()) {
+                    collectedCoins = docSnap.data().coins || {};
+                    try { localStorage.setItem('euro-collection-v4', JSON.stringify(collectedCoins)); } catch (e) {}
+                    renderApp();
+                    refreshOpenModal();
+                } else {
+                    // Oblak je prazen. Če imamo lokalne podatke, jih naložimo v nov oblak
+                    if (Object.keys(collectedCoins).length > 0) {
+                        saveData();
+                    } else {
+                        collectedCoins = {};
+                        renderApp();
+                        refreshOpenModal();
+                    }
+                }
+            }, (error) => {
+                console.error("Napaka pri branju iz oblaka:", error);
+            });
+        }
+
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (e) {
+                console.error("Napaka pri prijavi:", e);
+            }
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                authUser = user;
+                listenToCollection(currentSyncCode);
+            } else {
+                authUser = null;
+            }
+        });
+
+        // Poženi prijavo
+        initAuth();
+
+        // --- IZPOSTAVITEV FUNKCIJ V WINDOW ZA HTML KLIC ---
+        window.switchView = switchView;
+        window.resetCollection = resetCollection;
+        window.hideResetConfirm = hideResetConfirm;
+        window.executeReset = executeReset;
+        window.openZoom = openZoom;
+        window.closeZoom = closeZoom;
+        window.toggleCoin = toggleCoin;
+        window.toggleCondition = toggleCondition;
+        window.openCountryModal = openCountryModal;
+        window.closeModal = closeModal;
+        window.openSyncModal = openSyncModal;
+        window.closeSyncModal = closeSyncModal;
+        window.loadFromCode = loadFromCode;
+        window.generateRandomCode = generateRandomCode;
+
+        // Stanje za kompaktni pogled
+        let compactMode = localStorage.getItem('euro_compact_mode') === 'true';
+
+        window.toggleCompactMode = function() {
+            compactMode = !compactMode;
+            localStorage.setItem('euro_compact_mode', compactMode);
+            renderSloGrid();
+            lucide.createIcons();
+        }
+
+        function toggleCoin(id) {
+            if (collectedCoins[id]) {
+                delete collectedCoins[id];
+            } else {
+                collectedCoins[id] = 'mint';
+            }
+            saveData();
+        }
+
         function toggleCondition(id, e) {
-            e.stopPropagation(); // Zelo pomembno: prepreči, da bi se kovanec odznačil ob kliku na gumb za stanje!
+            e.stopPropagation(); 
             if (collectedCoins[id]) {
                 collectedCoins[id] = collectedCoins[id] === 'mint' ? 'poor' : 'mint';
-                saveToLocal();
-                renderApp();
-                
-                // Osveži modalno okno, če je odprto
-                const modalTitle = document.getElementById('modal-title').innerText;
-                if (modalTitle && UNIQUE_COUNTRIES.includes(modalTitle) && document.getElementById('coin-modal').classList.contains('opacity-0') === false) {
-                    openCountryModal(modalTitle);
-                }
+                saveData();
             }
         }
 
-        // --- LOGIKA ZA BRISANJE ZBIRKE (MODAL) ---
+        // --- BRISANJE ZBIRKE ---
         function resetCollection() {
             const modal = document.getElementById('confirm-modal');
             const content = document.getElementById('confirm-modal-content');
@@ -317,21 +411,18 @@
         }
 
         function executeReset() {
-            collectedCoins = {}; // Počisti celoten objekt
-            saveToLocal();
-            renderApp();
+            collectedCoins = {}; 
+            saveData();
             hideResetConfirm();
         }
 
-        // --- FUNKCIJE ZA POVEČAVO SLIKE (ZOOM) ---
+        // --- ZOOM SLIKE ---
         function openZoom(imageUrl, title) {
             document.getElementById('zoom-image').src = imageUrl;
             document.getElementById('zoom-title').innerText = title;
             const modal = document.getElementById('zoom-modal');
             modal.classList.remove('hidden');
-            
             lucide.createIcons();
-
             requestAnimationFrame(() => {
                 modal.classList.remove('opacity-0');
             });
@@ -343,7 +434,7 @@
             setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
 
-        // --- 3. TAB NAVIGACIJA ---
+        // --- TAB NAVIGACIJA ---
         function switchView(viewName) {
             document.getElementById('view-countries').style.display = viewName === 'countries' ? 'block' : 'none';
             document.getElementById('view-timeline').style.display = viewName === 'timeline' ? 'block' : 'none';
@@ -364,7 +455,6 @@
             }
         }
 
-        // --- POMOŽNA FUNKCIJA ZA ZASTAVE ---
         function getFlagImg(countryName) {
             const map = {
                 'Andora': 'ad', 'Avstrija': 'at', 'Belgija': 'be', 'Bolgarija': 'bg', 'Hrvaška': 'hr',
@@ -377,7 +467,7 @@
             return `<img src="https://flagcdn.com/${code}.svg" alt="${countryName}" class="w-full h-full object-cover">`;
         }
 
-        // --- 4. RENDER DRŽAV (ZDRUŽENO) ---
+        // --- RENDER DRŽAV ---
         function renderCountries() {
             const grid = document.getElementById('countries-grid');
             let html = '';
@@ -389,29 +479,23 @@
                 
                 const isCovered = collectedCount > 0;
                 const isCompleted = collectedCount === totalCount;
-                
-                // Preveri, če ima katerikoli izmed zbranih kovancev v tej državi status 'poor' (Zamenjaj)
                 const needsReplacement = countryCoins.some(c => collectedCoins[c.id] === 'poor');
-                
                 const firstCoinImg = countryCoins[0].imageUrl;
                 
                 let borderClass = 'border-slate-200 bg-white';
                 let checkBadge = '';
                 let statusTextClass = 'text-slate-400';
                 
-                if (isCompleted) { 
-                    // Prikaz, ko so vsi kovanci zbrani (Zelena)
-                    borderClass = 'border-green-400 bg-green-50/40 shadow-green-100'; 
+                if (isCompleted) {
+                    borderClass = 'border-green-400 bg-green-50/40 shadow-green-100';
                     checkBadge = `<div class="absolute -top-2 -right-2 bg-green-500 text-white rounded-full p-1 shadow-md z-20"><i data-lucide="check" class="w-3 h-3"></i></div>`;
                     statusTextClass = 'text-green-600';
-                } else if (isCovered) { 
-                    // Prikaz, ko je zbran vsaj en kovanec (Modra)
-                    borderClass = 'border-blue-400 bg-blue-50/30 shadow-blue-50'; 
+                } else if (isCovered) {
+                    borderClass = 'border-blue-400 bg-blue-50/30 shadow-blue-50';
                     checkBadge = `<div class="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1 shadow-md z-20"><i data-lucide="check" class="w-3 h-3"></i></div>`;
                     statusTextClass = 'text-blue-600';
                 }
 
-                // Diskreten znakec za zamenjavo (oranžen krogec zgoraj levo), kartica pa ostane modra/zelena
                 let replacementBadge = '';
                 if (needsReplacement) {
                     replacementBadge = `<div class="absolute -top-2 -left-2 bg-orange-500 text-white rounded-full p-1 shadow-md z-20" title="Išče se lepši kovanec"><i data-lucide="refresh-cw" class="w-3 h-3"></i></div>`;
@@ -421,7 +505,6 @@
                 <div onclick="openCountryModal('${country}')" class="card-hover cursor-pointer border-2 rounded-2xl p-3 flex flex-col items-center text-center relative ${borderClass} shadow-sm">
                     ${checkBadge}
                     ${replacementBadge}
-                    
                     <div class="relative w-14 h-14 sm:w-16 sm:h-16 mb-2">
                         <div class="w-full h-full rounded-full overflow-hidden border-[3px] border-[#cbd5e1] shadow-[inset_0_0_8px_rgba(0,0,0,0.3)] relative bg-[#cbd5e1]">
                              <img src="${firstCoinImg}" alt="${country}" class="w-full h-full object-cover mix-blend-multiply opacity-90" loading="lazy" />
@@ -431,100 +514,125 @@
                             ${getFlagImg(country)}
                         </div>
                     </div>
-                    
                     <h3 class="text-xs sm:text-sm font-bold text-slate-800 leading-tight mb-1 truncate w-full px-1">${country}</h3>
                     <div class="text-[9px] sm:text-[10px] font-black ${statusTextClass} bg-white/80 px-2 py-0.5 rounded-lg border border-slate-100 w-full truncate">
                         ${collectedCount} / ${totalCount} serij
                     </div>
-                </div>
-                `;
+                </div>`;
             });
             grid.innerHTML = html;
         }
 
-        // --- 5. RENDER SLO ČASOVNICE Z OHRANJENOSTJO ---
-        function renderTimeline() {
-            const container = document.getElementById('slo-timeline');
-            const sloCoins = COINS.filter(c => c.type === 'Commemorative'); 
+        // --- RENDER MREŽE SLOVENSKIH KOVANCEV ---
+        function renderSloGrid() {
+            const container = document.getElementById('slo-grid');
+            const sloCoins = COINS.filter(c => c.type === 'Commemorative');
             
-            let html = '';
+            // Posodobimo ikono in besedilo gumba glede na stanje
+            const compactIcon = document.getElementById('compact-icon');
+            const compactText = document.getElementById('compact-text');
+            if (compactIcon && compactText) {
+                compactIcon.setAttribute('data-lucide', compactMode ? 'list' : 'layout-grid');
+                compactText.innerText = compactMode ? 'Podrobno' : 'Zgosti';
+            }
+
+            // Dinamična mreža glede na to, ali je pogled kompakten
+            const gridCols = compactMode 
+                ? "grid-cols-3 sm:grid-cols-5 md:grid-cols-7 gap-3" 
+                : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4";
+
+            let html = `<div class="grid ${gridCols}">`;
+            
             sloCoins.forEach((coin) => {
                 const isCollected = !!collectedCoins[coin.id];
-                const state = collectedCoins[coin.id]; // 'mint' ali 'poor'
-                
-                const nodeClass = isCollected ? 'timeline-node active' : 'timeline-node';
+                const state = collectedCoins[coin.id]; 
                 
                 let cardBorder = 'border-slate-200 bg-white hover:border-slate-300';
-                let yearBadge = 'bg-slate-100 text-slate-500';
+                let checkBadge = '';
                 let replacementBadge = '';
                 
                 if (isCollected) {
-                    // Kartica ohrani lepo modro barvo zbrane zbirke
-                    cardBorder = 'border-blue-400 bg-gradient-to-r from-blue-50/60 to-white shadow-blue-50';
-                    yearBadge = 'bg-blue-100 text-blue-700';
-                    
-                    // Samo diskreten znak se prikaže, če kovanec potrebuje zamenjavo
+                    cardBorder = 'border-blue-400 bg-blue-50/30 shadow-blue-50';
+                    checkBadge = `<div class="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1 shadow-md z-20"><i data-lucide="check" class="${compactMode ? 'w-2.5 h-2.5' : 'w-3 h-3'}"></i></div>`;
                     if (state === 'poor') {
-                        replacementBadge = `<div class="absolute -top-2 -left-2 bg-orange-500 text-white rounded-full p-1 shadow-md z-20" title="Išče se lepši kovanec"><i data-lucide="refresh-cw" class="w-3 h-3"></i></div>`;
+                        replacementBadge = `<div class="absolute -top-2 -left-2 bg-orange-500 text-white rounded-full p-1 shadow-md z-20" title="Išče se lepši kovanec"><i data-lucide="refresh-cw" class="${compactMode ? 'w-2.5 h-2.5' : 'w-3 h-3'}"></i></div>`;
                     }
                 }
-                
-                const toggleBtn = isCollected 
-                    ? `<div class="bg-blue-500 text-white rounded-full p-1.5 shadow-sm transform transition-transform active:scale-90"><i data-lucide="check" class="w-5 h-5"></i></div>` 
-                    : `<div class="border-2 border-slate-300 rounded-full w-8 h-8 transition-colors hover:border-blue-400"></div>`;
 
-                // NOVO: Renderiranje značke za ohranjenost
-                let conditionBadge = '';
-                if (isCollected) {
-                    const badgeClass = state === 'poor' 
-                        ? 'bg-orange-100 text-orange-700 border-orange-200 hover:bg-orange-200' 
-                        : 'bg-yellow-100 text-yellow-700 border-yellow-200 hover:bg-yellow-200';
-                    const icon = state === 'poor' ? 'refresh-cw' : 'sparkles';
-                    const text = state === 'poor' ? 'Zamenjaj' : 'Odlično';
-                    
-                    conditionBadge = `
-                        <div onclick="toggleCondition('${coin.id}', event)" class="${badgeClass} border px-2 py-1 rounded-lg text-[9px] sm:text-[10px] font-bold flex items-center gap-1.5 shadow-sm transition-transform active:scale-90 z-20 mt-2 w-max cursor-pointer" title="Spremeni ohranjenost kovanca">
-                            <i data-lucide="${icon}" class="w-3 h-3"></i> ${text}
-                        </div>
-                    `;
-                }
+                if (compactMode) {
+                    // --- KOMPAKTNA KARTICA ---
+                    let compactConditionBadge = '';
+                    if (isCollected) {
+                        const icon = state === 'poor' ? 'refresh-cw' : 'sparkles';
+                        const colorClass = state === 'poor' ? 'text-orange-600 bg-orange-100 border-orange-200' : 'text-yellow-600 bg-yellow-100 border-yellow-200';
+                        compactConditionBadge = `
+                            <div onclick="toggleCondition('${coin.id}', event)" class="absolute -bottom-2.5 left-1/2 transform -translate-x-1/2 ${colorClass} border rounded-full p-1 shadow-sm z-20 cursor-pointer hover:scale-110 transition-transform" title="${state === 'poor' ? 'Zamenjaj' : 'Odlično'}">
+                                <i data-lucide="${icon}" class="w-3 h-3"></i>
+                            </div>`;
+                    }
 
-                html += `
-                <div class="relative mb-5">
-                    <div class="${nodeClass}"></div>
-                    <div onclick="toggleCoin('${coin.id}')" class="card-hover cursor-pointer border-2 rounded-2xl p-3 sm:p-4 flex items-center gap-3 sm:gap-4 ${cardBorder} shadow-sm transition-all duration-300 relative">
+                    html += `
+                    <div onclick="toggleCoin('${coin.id}')" class="h-full card-hover cursor-pointer border-2 rounded-[1rem] p-1.5 pt-4 flex flex-col items-center text-center relative ${cardBorder} shadow-sm transition-all duration-300">
+                        ${checkBadge}
                         ${replacementBadge}
-                        <div class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 relative group" onclick="openZoom('${coin.imageUrl}', '${coin.title}'); event.stopPropagation();">
+                        <div class="absolute top-1 left-1/2 transform -translate-x-1/2 text-[8px] font-black text-slate-400 bg-slate-100/80 backdrop-blur-sm px-1.5 rounded-sm">${coin.year}</div>
+                        ${compactConditionBadge}
+                        
+                        <div class="w-full aspect-square relative group mt-1" onclick="openZoom('${coin.imageUrl}', '${coin.title}'); event.stopPropagation();">
+                            <div class="w-full h-full rounded-full overflow-hidden border-[2px] border-[#cbd5e1] shadow-inner relative bg-[#cbd5e1] transition-transform duration-300 group-hover:scale-105">
+                                 <img src="${coin.imageUrl}" alt="${coin.title}" class="w-full h-full object-cover mix-blend-multiply opacity-90" loading="lazy" />
+                                 <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>`;
+                } else {
+                    // --- PODROBNA KARTICA ---
+                    let conditionBadge = '';
+                    if (isCollected) {
+                        const badgeClass = state === 'poor'
+                             ? 'bg-orange-100 text-orange-700 border-orange-200 hover:bg-orange-200'
+                             : 'bg-yellow-100 text-yellow-700 border-yellow-200 hover:bg-yellow-200';
+                        const icon = state === 'poor' ? 'refresh-cw' : 'sparkles';
+                        const text = state === 'poor' ? 'Zamenjaj' : 'Odlično';
+                        conditionBadge = `
+                            <div onclick="toggleCondition('${coin.id}', event)" class="${badgeClass} border px-2 py-0.5 mt-2 rounded-lg text-[9px] font-bold flex items-center justify-center gap-1 shadow-sm transition-transform active:scale-90 z-20 cursor-pointer w-full max-w-[100px]">
+                                <i data-lucide="${icon}" class="w-3 h-3"></i> ${text}
+                            </div>`;
+                    } else {
+                        conditionBadge = `<div class="h-6 mt-2"></div>`;
+                    }
+
+                    html += `
+                    <div onclick="toggleCoin('${coin.id}')" class="h-full card-hover cursor-pointer border-2 rounded-2xl p-3 flex flex-col items-center text-center relative ${cardBorder} shadow-sm transition-all duration-300">
+                        ${checkBadge}
+                        ${replacementBadge}
+                        <div class="absolute top-2 left-2 text-[9px] font-black text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded shadow-sm">${coin.year}</div>
+                        
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 mb-2 mt-2 relative group flex-shrink-0" onclick="openZoom('${coin.imageUrl}', '${coin.title}'); event.stopPropagation();">
                             <div class="w-full h-full rounded-full overflow-hidden border-[3px] border-[#cbd5e1] shadow-inner relative bg-[#cbd5e1] transition-transform duration-300 group-hover:scale-105">
                                  <img src="${coin.imageUrl}" alt="${coin.title}" class="w-full h-full object-cover mix-blend-multiply opacity-90" loading="lazy" />
                                  <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-full"></div>
                                  <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-full">
-                                     <i data-lucide="zoom-in" class="w-5 h-5 text-white"></i>
+                                     <i data-lucide="zoom-in" class="w-4 h-4 text-white"></i>
                                  </div>
                             </div>
                         </div>
                         
-                        <div class="flex-1 min-w-0 py-1">
-                            <div class="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest mb-1.5 ${yearBadge}">${coin.year}</div>
-                            <h3 class="text-sm sm:text-base font-bold text-slate-800 leading-tight mb-1 truncate">${coin.title}</h3>
-                            <p class="text-[11px] sm:text-xs text-slate-500 line-clamp-2">${coin.description}</p>
+                        <div class="flex-1 flex flex-col items-center justify-end w-full">
+                            <h3 class="text-xs sm:text-[13px] font-bold text-slate-800 leading-tight mb-0 line-clamp-3">${coin.title}</h3>
                             ${conditionBadge}
                         </div>
-                        
-                        <div class="flex-shrink-0 pl-1">
-                            ${toggleBtn}
-                        </div>
-                    </div>
-                </div>
-                `;
+                    </div>`;
+                }
             });
+
+            html += `</div>`;
             container.innerHTML = html;
         }
 
-        // --- 6. MODALNO OKNO DRŽAV Z OHRANJENOSTJO ---
+        // --- MODALNO OKNO DRŽAV ---
         function openCountryModal(countryName) {
             const coinsOfCountry = regularCoins.filter(c => c.country === countryName);
-            
             document.getElementById('modal-title').innerText = countryName;
             document.getElementById('modal-badge').innerText = 'Evrski redni kovanci';
             
@@ -532,36 +640,27 @@
             coinsOfCountry.forEach(coin => {
                 const isCol = !!collectedCoins[coin.id];
                 const state = collectedCoins[coin.id];
-                
                 let itemClass = 'bg-slate-50 border-slate-200 hover:border-blue-300';
                 let checkIcon = `<i data-lucide="circle" class="text-slate-300 w-6 h-6"></i>`;
                 let replacementBadge = '';
-                
-                // NOVO: Renderiranje značke za ohranjenost v modalnem oknu
                 let conditionBadge = '';
                 
                 if (isCol) {
-                    // Kartica serije ostane prijetno zelena
                     itemClass = 'bg-green-50 border-green-400 shadow-sm';
-                    
-                    // Diskreten znak v kotu
                     if (state === 'poor') {
                         replacementBadge = `<div class="absolute -top-2 -left-2 bg-orange-500 text-white rounded-full p-1 shadow-md z-20"><i data-lucide="refresh-cw" class="w-3 h-3"></i></div>`;
                     }
-                    
                     checkIcon = `<i data-lucide="check-circle" class="text-green-600 w-6 h-6 fill-green-200 drop-shadow-sm"></i>`;
                     
-                    const badgeClass = state === 'poor' 
-                        ? 'bg-orange-100 text-orange-700 border-orange-200 hover:bg-orange-200' 
-                        : 'bg-yellow-100 text-yellow-700 border-yellow-200 hover:bg-yellow-200';
+                    const badgeClass = state === 'poor'
+                         ? 'bg-orange-100 text-orange-700 border-orange-200 hover:bg-orange-200'
+                         : 'bg-yellow-100 text-yellow-700 border-yellow-200 hover:bg-yellow-200';
                     const icon = state === 'poor' ? 'refresh-cw' : 'sparkles';
                     const text = state === 'poor' ? 'Zamenjaj' : 'Odlično';
-                    
                     conditionBadge = `
-                        <div onclick="toggleCondition('${coin.id}', event);" class="${badgeClass} border px-2 py-1 rounded-lg text-[9px] font-bold flex items-center gap-1 shadow-sm transition-transform active:scale-90 z-20 mt-1.5 w-max cursor-pointer" title="Spremeni ohranjenost">
+                        <div onclick="toggleCondition('${coin.id}', event);" class="${badgeClass} border px-2 py-1 rounded-lg text-[9px] font-bold flex items-center gap-1 shadow-sm transition-transform active:scale-90 z-20 mt-1.5 w-max cursor-pointer">
                             <i data-lucide="${icon}" class="w-3 h-3"></i> ${text}
-                        </div>
-                    `;
+                        </div>`;
                 }
 
                 listHtml += `
@@ -576,7 +675,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="text-left flex-1 min-w-0">
                         <div class="text-xs font-bold text-slate-800 mb-0.5 truncate">${coin.year}</div>
                         <div class="text-[10px] text-slate-500 leading-tight line-clamp-2">${coin.description}</div>
@@ -588,14 +686,12 @@
                 </div>`;
             });
             listHtml += '</div>';
-            
             document.getElementById('modal-dynamic-content').innerHTML = listHtml;
 
             const modal = document.getElementById('coin-modal');
             const content = document.getElementById('coin-modal-content');
             modal.classList.remove('hidden');
             lucide.createIcons();
-
             requestAnimationFrame(() => {
                 modal.classList.remove('opacity-0');
                 content.classList.remove('scale-95');
@@ -612,12 +708,63 @@
             setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
 
-        // --- 7. GLAVNI RENDER IN STATISTIKA ---
+        // --- OBLAK MODAL IN FUNKCIJE ---
+        function openSyncModal() {
+            document.getElementById('sync-input').value = currentSyncCode;
+            document.getElementById('sync-error').innerText = "";
+            
+            const modal = document.getElementById('sync-modal');
+            const content = document.getElementById('sync-modal-content');
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            });
+        }
+
+        function closeSyncModal() {
+            const modal = document.getElementById('sync-modal');
+            const content = document.getElementById('sync-modal-content');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+
+        function generateRandomCode() {
+            const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('sync-input').value = randomCode;
+        }
+
+        function loadFromCode() {
+            const input = document.getElementById('sync-input').value.trim().toUpperCase();
+            if (input.length < 3) {
+                document.getElementById('sync-error').innerText = "Koda mora imeti vsaj 3 znake!";
+                return;
+            }
+            if (!/^[A-Z0-9]+$/.test(input)) {
+                document.getElementById('sync-error').innerText = "Dovoljene so samo črke in številke!";
+                return;
+            }
+            document.getElementById('sync-error').innerText = "";
+            
+            // Nastavi novo kodo
+            currentSyncCode = input;
+            localStorage.setItem('euro_sync_code', currentSyncCode);
+            
+            // Prisluhni novi zbirki - se naloži avtomatsko preko onSnapshot
+            listenToCollection(currentSyncCode);
+            
+            closeSyncModal();
+        }
+
+        // --- GLAVNI RENDER ---
         function renderApp() {
-            // Števci
             let regCollectedCountries = 0;
-            UNIQUE_COUNTRIES.forEach(country => { 
-                if (regularCoins.filter(c => c.country === country).some(c => !!collectedCoins[c.id])) {
+            UNIQUE_COUNTRIES.forEach(country => {
+                 if (regularCoins.filter(c => c.country === country).some(c => !!collectedCoins[c.id])) {
                     regCollectedCountries++;
                 }
             });
@@ -628,7 +775,6 @@
             const slCollected = sloCoins.filter(c => !!collectedCoins[c.id]).length;
             const slPercent = Math.round((slCollected / slTotal) * 100) || 0;
 
-            // Update DOM statistika
             document.getElementById('reg-collected').innerText = regCollectedCountries;
             document.getElementById('reg-bar').style.width = `${regPercent}%`;
             
@@ -643,16 +789,15 @@
             document.getElementById('sl-bar-red').style.width = `${slPercent / 3}%`;
 
             renderCountries();
-            renderTimeline();
+            renderSloGrid();
             lucide.createIcons();
         }
 
         // --- ZAGON ---
         window.onload = () => {
             renderApp();
-            switchView('countries'); // Privzet pogled ob zagonu
+            switchView('countries');
         };
-
     </script>
 
     <!-- Univerzalno Modalno Okno -->
@@ -661,51 +806,64 @@
             <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-full p-2 transition-colors z-10">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
-            
             <div class="text-center mt-2">
                 <div id="modal-badge" class="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black tracking-widest mb-2 uppercase"></div>
                 <h2 id="modal-title" class="text-2xl font-black text-slate-800 leading-tight mb-4"></h2>
-                
-                <!-- Dinamična vsebina (Seznam serij znotraj modalnega okna) -->
                 <div id="modal-dynamic-content" class="text-left pb-2"></div>
             </div>
         </div>
     </div>
 
-    <!-- Modalno Okno za Potrditev Brisanja -->
-    <div id="confirm-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[60] hidden opacity-0 transition-opacity duration-300" onclick="if(event.target === this) hideResetConfirm()">
-        <div class="bg-white rounded-[2rem] p-6 max-w-xs w-full mx-4 relative shadow-2xl transform scale-95 transition-transform duration-300" id="confirm-modal-content">
-            <div class="text-center">
-                <div class="mx-auto w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-4">
-                    <i data-lucide="alert-triangle" class="w-8 h-8"></i>
-                </div>
-                <h2 class="text-xl font-black text-slate-800 mb-2">Ponastavi zbirko?</h2>
-                <p class="text-sm text-slate-500 mb-6">Ali ste prepričani? Vse vaše kljukice bodo trajno izbrisane. Tega dejanja ni mogoče razveljaviti.</p>
-                <div class="flex gap-3">
-                    <button onclick="hideResetConfirm()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition-colors">Prekliči</button>
-                    <button onclick="executeReset()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-colors shadow-md shadow-red-500/30">Da, izbriši</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modalno Okno za Povečavo Slike (Zoom Viewer) - POPRAVLJENO -->
+    <!-- Modalno Okno za Povečavo Slike (Zoom Viewer) -->
     <div id="zoom-modal" class="fixed inset-0 bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center z-[70] hidden opacity-0 transition-opacity duration-300 cursor-zoom-out" onclick="closeZoom()">
         <div class="absolute top-6 right-6 text-white/70 bg-white/10 rounded-full p-2.5 z-10 pointer-events-none">
             <i data-lucide="x" class="w-6 h-6"></i>
         </div>
         <div class="flex flex-col items-center justify-center p-6 w-full max-w-md mx-auto pointer-events-none">
-            
             <div class="relative w-full aspect-square rounded-full overflow-hidden border-[4px] border-[#e2e8f0] shadow-[0_0_100px_rgba(255,255,255,0.2)] bg-[#cbd5e1] transition-transform duration-500 transform scale-95" id="zoom-image-container">
                 <img id="zoom-image" src="" alt="Povečan kovanec" class="w-full h-full object-cover mix-blend-multiply" />
-                <!-- 3D odsev kovanca -->
                 <div class="absolute inset-0 bg-gradient-to-tr from-white/30 to-transparent pointer-events-none rounded-full"></div>
             </div>
-            
             <h3 id="zoom-title" class="text-white text-2xl font-black mt-8 text-center px-4 tracking-wide drop-shadow-md"></h3>
             <p class="text-white/70 text-xs mt-4 font-bold uppercase tracking-widest bg-white/10 px-5 py-2.5 rounded-full backdrop-blur-sm flex items-center gap-2">
                 <i data-lucide="mouse-pointer-click" class="w-4 h-4"></i> Tapni kjerkoli za izhod
             </p>
+        </div>
+    </div>
+
+    <!-- Modalno Okno za Oblak / Firebase kodo -->
+    <div id="sync-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[60] hidden opacity-0 transition-opacity duration-300" onclick="if(event.target === this) closeSyncModal()">
+        <div class="bg-white rounded-[2rem] p-6 max-w-sm w-full mx-4 relative shadow-2xl transform scale-95 transition-transform duration-300" id="sync-modal-content">
+            <button onclick="closeSyncModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-full p-2 transition-colors z-10">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="text-center mt-2">
+                <div class="mx-auto w-16 h-16 bg-blue-100 text-blue-500 rounded-full flex items-center justify-center mb-4 shadow-inner">
+                    <i data-lucide="cloud" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-xl font-black text-slate-800 mb-2">Oblak in Sinhronizacija</h2>
+                <p class="text-xs text-slate-500 mb-6 px-2">Vnesite poljubno uporabniško ime (kodo) in se povežite. S to kodo lahko do zbirke dostopate na vseh svojih napravah.</p>
+
+                <div class="relative w-full mb-1">
+                    <input type="text" id="sync-input" class="w-full bg-slate-50 border-2 border-slate-200 focus:border-blue-400 focus:ring-0 rounded-xl pl-4 pr-12 py-3 text-center font-mono text-xl tracking-widest font-bold uppercase outline-none transition-colors" placeholder="VNESI KODO" maxlength="15">
+                    <button onclick="generateRandomCode()" class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Zgeneriraj naključno kodo">
+                        <i data-lucide="dices" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div id="sync-error" class="text-red-500 text-[10px] font-bold uppercase tracking-wide h-4 mb-3"></div>
+
+                <button onclick="loadFromCode()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2">
+                    <i data-lucide="cloud-lightning" class="w-5 h-5"></i> Poveži se
+                </button>
+
+                <!-- Skrita nevarna cona za izbris računa -->
+                <div class="mt-6 pt-4 border-t border-red-100">
+                    <button onclick="resetCollection(); closeSyncModal();" class="w-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> Izbriši to zbirko
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
