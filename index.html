@@ -143,7 +143,7 @@
             <span class="text-[10px] uppercase tracking-wider">Slovenija</span>
         </button>
         
-        <!-- NOV ZAVIHEK: OBLAK (Firebase Sync) in Nastavitve -->
+        <!-- ZAVIHEK: OBLAK (Firebase Sync) in Nastavitve -->
         <button onclick="openSyncModal()" class="flex-1 flex flex-col items-center gap-1 p-2 text-slate-400 font-medium hover:text-blue-500 transition-all group relative">
             <div class="bg-transparent group-hover:bg-blue-50 p-1.5 rounded-xl transition-colors relative">
                 <i data-lucide="cloud" class="w-5 h-5"></i>
@@ -162,67 +162,67 @@
 
         // --- 1. PODATKOVNA BAZA ---
         const COINS = [
-            // REDNI KOVANCI
-            { id: 'reg-ad', type: 'Regular', year: 'Redna izdaja', country: 'Andora', flag: '🇦🇩', title: 'Redni 2€ - Grb Andore', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Andorra.jpg', description: 'Prikazuje grb Andore z nacionalnim geslom.' },
-            { id: 'reg-at', type: 'Regular', year: 'Redna izdaja', country: 'Avstrija', flag: '🇦🇹', title: 'Redni 2€ - Bertha von Suttner', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_oes.png', description: 'Prikazuje portret Berthe von Suttner, dobitnice Nobelove nagrade za mir.' },
-            { id: 'reg-be-1', type: 'Regular', year: '1. serija (1999-2007)', country: 'Belgija', flag: '🇧🇪', title: 'Redni 2€ - Kralj Albert II', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_bel.png', description: 'Prikazuje portret kralja Alberta II.' },
-            { id: 'reg-be-2', type: 'Regular', year: '2. serija (2008-2013)', country: 'Belgija', flag: '🇧🇪', title: 'Redni 2€ - Kralj Albert II', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Belgium_2euro_2008.jpg', description: 'Posodobljen portret kralja Alberta II.' },
-            { id: 'reg-be-3', type: 'Regular', year: '3. serija (od 2014)', country: 'Belgija', flag: '🇧🇪', title: 'Redni 2€ - Kralj Filip', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Belgium_2euro_2014ph.jpg', description: 'Prikazuje portret belgijskega kralja Filipa.' },
-            { id: 'reg-bg', type: 'Regular', year: 'Redna izdaja', country: 'Bolgarija', flag: '🇧🇬', title: 'Redni 2€ - Pajsij Hilendarski', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Bulgaria_2euro.jpg', description: 'Prikazuje Pajsija Hilendarskega.' },
-            { id: 'reg-hr', type: 'Regular', year: 'Redna izdaja', country: 'Hrvaška', flag: '🇭🇷', title: 'Redni 2€ - Zemljevid Hrvaške', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Croatia_2euro.jpg', description: 'Prikazuje geografski zemljevid Republike Hrvaške.' },
-            { id: 'reg-cy', type: 'Regular', year: 'Redna izdaja', country: 'Ciper', flag: '🇨🇾', title: 'Redni 2€ - Idol iz Pomosa', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Cipro.gif', description: 'Prikazuje idol v obliki križa iz bakrene dobe.' },
-            { id: 'reg-ee', type: 'Regular', year: 'Redna izdaja', country: 'Estonija', flag: '🇪🇪', title: 'Redni 2€ - Zemljevid Estonije', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Estonia.jpg', description: 'Prikazuje geografski zemljevid Estonije v obrisu.' },
-            { id: 'reg-fi', type: 'Regular', year: 'Redna izdaja', country: 'Finska', flag: '🇫🇮', title: 'Redni 2€ - Barjevska robida', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_fin.png', description: 'Prikazuje sadež in liste barjevske robide.' },
-            { id: 'reg-fr-1', type: 'Regular', year: '1. serija (do 2021)', country: 'Francija', flag: '🇫🇷', title: 'Redni 2€ - Drevo življenja', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_fra.png', description: 'Prikazuje drevo, ujeto v šesterokotnik.' },
-            { id: 'reg-fr-2', type: 'Regular', year: '2. serija (od 2022)', country: 'Francija', flag: '🇫🇷', title: 'Redni 2€ - Hrast in oljka', imageUrl: 'https://de.wikipedia.org/wiki/Special:FilePath/PFUE2022_-_2_euros_(cropped).jpg', description: 'Prikazuje prepletene veje hrasta in oljke.' },
-            { id: 'reg-de', type: 'Regular', year: 'Redna izdaja', country: 'Nemčija', flag: '🇩🇪', title: 'Redni 2€ - Nemški orel', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_ger.png', description: 'Prikazuje tradicionalni simbol nemške suverenosti, heraldičnega orla.' },
-            { id: 'reg-gr', type: 'Regular', year: 'Redna izdaja', country: 'Grčija', flag: '🇬🇷', title: 'Redni 2€ - Evropa in bik', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Grecia.gif', description: 'Prikazuje prizor iz mitologije, kjer Zevs ugrabi Evropo.' },
-            { id: 'reg-ie', type: 'Regular', year: 'Redna izdaja', country: 'Irska', flag: '🇮🇪', title: 'Redni 2€ - Keltska harfa', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_Irlanda.jpg', description: 'Prikazuje keltsko harfo, tradicionalni simbol Irske.' },
-            { id: 'reg-it', type: 'Regular', year: 'Redna izdaja', country: 'Italija', flag: '🇮🇹', title: 'Redni 2€ - Dante Alighieri', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Italia.jpg', description: 'Prikazuje portret slovitega italijanskega pesnika Danteja Alighierija.' },
-            { id: 'reg-lv', type: 'Regular', year: 'Redna izdaja', country: 'Latvija', flag: '🇱🇻', title: 'Redni 2€ - Latvijska deklica', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_eur_LV.jpg', description: 'Prikazuje profil latvijske deklice, prvotno na srebrniku iz leta 1929.' },
-            { id: 'reg-lt', type: 'Regular', year: 'Redna izdaja', country: 'Litva', flag: '🇱🇹', title: 'Redni 2€ - Vytis (Vitez)', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Lituania_%E2%82%AC2.jpg', description: 'Prikazuje Vytisa, junaškega viteza na konju.' },
-            { id: 'reg-lu', type: 'Regular', year: 'Redna izdaja', country: 'Luksemburg', flag: '🇱🇺', title: 'Redni 2€ - Veliki vojvoda Henri', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Lussemburgo.jpg', description: 'Prikazuje portret velikega vojvode Henrija.' },
-            { id: 'reg-mt', type: 'Regular', year: 'Redna izdaja', country: 'Malta', flag: '🇲🇹', title: 'Redni 2€ - Malteški križ', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_Euro_Malta.jpg', description: 'Prikazuje osemkraki malteški križ.' },
-            { id: 'reg-mc-1', type: 'Regular', year: '1. serija', country: 'Monako', flag: '🇲🇨', title: 'Redni 2€ - Knez Rainier III', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Monaco_2001.jpg', description: 'Prikazuje kneza Rainierja III.' },
-            { id: 'reg-mc-2', type: 'Regular', year: '2. serija', country: 'Monako', flag: '🇲🇨', title: 'Redni 2€ - Knez Albert II', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Monaco_2006.jpg', description: 'Prikazuje portret kneza Alberta II.' },
-            { id: 'reg-nl-1', type: 'Regular', year: '1. serija', country: 'Nizozemska', flag: '🇳🇱', title: 'Redni 2€ - Kraljica Beatrix', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_nl.png', description: 'Prikazuje profil nizozemske kraljice Beatrix.' },
-            { id: 'reg-nl-2', type: 'Regular', year: '2. serija', country: 'Nizozemska', flag: '🇳🇱', title: 'Redni 2€ - Kralj Willem-Alexander', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Paesi_Bassi_serie_2014.jpg', description: 'Prikazuje fasetiran portret kralja Willema-Alexandra.' },
-            { id: 'reg-pt', type: 'Regular', year: 'Redna izdaja', country: 'Portugalska', flag: '🇵🇹', title: 'Redni 2€ - Kraljevi pečati', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_por.png', description: 'Prikazuje kraljevi pečat iz leta 1144.' },
-            { id: 'reg-sm', type: 'Regular', year: 'Redna izdaja', country: 'San Marino', flag: '🇸🇲', title: 'Redni 2€ - Vladna palača', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_San_Marino.gif', description: 'Prikazuje palačo Palazzo Pubblico.' },
-            { id: 'reg-sk', type: 'Regular', year: 'Redna izdaja', country: 'Slovaška', flag: '🇸🇰', title: 'Redni 2€ - Dvojni križ na hribih', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Slovacchia.png', description: 'Prikazuje državni grb - dvojni križ.' },
-            { id: 'reg-si', type: 'Regular', year: 'Redna izdaja', country: 'Slovenija', flag: '🇸🇮', title: 'Redni 2€ - France Prešeren', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Si2.1eur.jpg', description: 'Prikazuje profil največjega slovenskega pesnika Franceta Prešerna.' },
-            { id: 'reg-es-1', type: 'Regular', year: '1. serija', country: 'Španija', flag: '🇪🇸', title: 'Redni 2€ - Kralj Juan Carlos I', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Spagna.gif', description: 'Prikazuje portret španskega kralja Juana Carlosa I.' },
-            { id: 'reg-es-2', type: 'Regular', year: '2. serija', country: 'Španija', flag: '🇪🇸', title: 'Redni 2€ - Juan Carlos I (posodobljen)', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Spain_2euro_2014.jpg', description: 'Posodobljen portret v skladu z novimi pravili EU.' },
-            { id: 'reg-es-3', type: 'Regular', year: '3. serija', country: 'Španija', flag: '🇪🇸', title: 'Redni 2€ - Kralj Filip VI', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Spain_2euro_2015.jpg', description: 'Prikazuje portret kralja Filipa VI.' },
-            { id: 'reg-va-1', type: 'Regular', year: '1. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Papež Janez Pavel II', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_1.png', description: 'Prikazuje profil papeža Janeza Pavla II.' },
-            { id: 'reg-va-2', type: 'Regular', year: '2. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Sede Vacante', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_2.png', description: 'Izdana v času Sede Vacante (praznega sedeža).' },
-            { id: 'reg-va-3', type: 'Regular', year: '3. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Papež Benedikt XVI', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_3a.png', description: 'Prikazuje profil papeža Benedikta XVI.' },
-            { id: 'reg-va-4', type: 'Regular', year: '4. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Papež Frančišek', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Vaticano_2014.png', description: 'Prikazuje profil papeža Frančiška.' },
-            { id: 'reg-va-5', type: 'Regular', year: '5. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Papeški grb', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euros_Vatican5.png', description: 'Portret zamenja grb suverena Vatikana.' },
+            // REDNI KOVANCI (Z Natančnimi opisi)
+            { id: 'reg-ad', type: 'Regular', year: 'Redna izdaja', country: 'Andora', flag: '🇦🇩', title: 'Redni 2€ - Grb Andore', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Andorra.jpg', description: 'Prikazuje državni grb Andore z nacionalnim geslom "Virtvs Vnita Fortior" (Vrlina združena je močnejša). Spodaj je letnica izdaje. Motiv odraža globoko suverenost, tradicijo in zgodovino te majhne, a ponosne pirenejske kneževine.' },
+            { id: 'reg-at', type: 'Regular', year: 'Redna izdaja', country: 'Avstrija', flag: '🇦🇹', title: 'Redni 2€ - Bertha von Suttner', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_oes.png', description: 'Upodablja portret Berthe von Suttner, prve ženske, ki je prejela Nobelovo nagrado za mir (leta 1905). Kovanec simbolizira prizadevanja Avstrije za mir in njeno bogato dediščino na področju človekovih pravic in diplomacije.' },
+            { id: 'reg-be-1', type: 'Regular', year: '1. serija (1999-2007)', country: 'Belgija', flag: '🇧🇪', title: 'Redni 2€ - Kralj Albert II', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_bel.png', description: 'Na nacionalni strani je upodobljen profil belgijskega kralja Alberta II. Zunanji krog vsebuje dvanajst zvezd Evropske unije, ob njem pa se nahajata monogram z veliko črko "A" pod krono in letnica izdaje.' },
+            { id: 'reg-be-2', type: 'Regular', year: '2. serija (2008-2013)', country: 'Belgija', flag: '🇧🇪', title: 'Redni 2€ - Kralj Albert II (Nova)', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Belgium_2euro_2008.jpg', description: 'Zaradi sprememb pravil EU o oblikovanju kovancev je Belgija prilagodila svoj dizajn. Monogram kralja Alberta II. in letnica sta bila premaknjena v notranji del kovanca, portret pa je bil rahlo posodobljen in izostren.' },
+            { id: 'reg-be-3', type: 'Regular', year: '3. serija (od 2014)', country: 'Belgija', flag: '🇧🇪', title: 'Redni 2€ - Kralj Filip', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Belgium_2euro_2014ph.jpg', description: 'Po abdikaciji kralja Alberta II. je na prestol stopil kralj Filip. Ta serija prinaša nov monarhov profil v desno stran. Ob portretu se nahaja njegov kraljevi monogram "FP" in letnica kovanja.' },
+            { id: 'reg-bg', type: 'Regular', year: 'Redna izdaja', country: 'Bolgarija', flag: '🇧🇬', title: 'Redni 2€ - Pajsij Hilendarski', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Bulgaria_2euro.jpg', description: 'Prikazuje Pajsija Hilendarskega, bolgarskega duhovnika in ključno osebnost bolgarskega narodnega preporoda. Znan je kot avtor "Zgodovine slavjanskobolgarske", prvega dela sodobnega bolgarskega zgodovinopisja.' },
+            { id: 'reg-hr', type: 'Regular', year: 'Redna izdaja', country: 'Hrvaška', flag: '🇭🇷', title: 'Redni 2€ - Zemljevid Hrvaške', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Croatia_2euro.jpg', description: 'Hrvaški kovanec prikazuje geografski zemljevid Republike Hrvaške z motivom šahovnice v ozadju zemljevida. Napisana sta tudi beseda "HRVATSKA" in letnica izdaje, kar tvori močan nacionalni simbol.' },
+            { id: 'reg-cy', type: 'Regular', year: 'Redna izdaja', country: 'Ciper', flag: '🇨🇾', title: 'Redni 2€ - Idol iz Pomosa', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Cipro.gif', description: 'Prikazuje idola v obliki križa iz bakrene dobe, najdenega v vasi Pomos. Prazgodovinska figura predstavlja plodnost in rojstvo ter služi kot spomenik bogati starodavni zgodovini in civilizaciji otoka Ciper.' },
+            { id: 'reg-ee', type: 'Regular', year: 'Redna izdaja', country: 'Estonija', flag: '🇪🇪', title: 'Redni 2€ - Zemljevid Estonije', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Estonia.jpg', description: 'Minimalističen in eleganten dizajn prikazuje geografski zemljevid Estonije v silhueti, dopolnjen z napisom "EESTI" (Estonija). Poudarja geografsko identiteto in sodobni, prečiščen nordijski duh te baltske države.' },
+            { id: 'reg-fi', type: 'Regular', year: 'Redna izdaja', country: 'Finska', flag: '🇫🇮', title: 'Redni 2€ - Barjevska robida', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_fin.png', description: 'Prikazuje cvetove in sadež barjevske robide (Rubus chamaemorus). Zasnoval ga je Raimo Heino. Rastlina je značilna za arktična območja Finske in simbolizira neokrnjeno naravo in bogastvo severnih gozdov.' },
+            { id: 'reg-fr-1', type: 'Regular', year: '1. serija (do 2021)', country: 'Francija', flag: '🇫🇷', title: 'Redni 2€ - Drevo življenja', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_fra.png', description: 'Prikazuje stilizirano drevo, ujeto v šesterokotnik (simbolizira meje Francije), okoli katerega je vpisano francosko republiško geslo "Liberté, Égalité, Fraternité". Oblikoval ga je umetnik Joaquim Jimenez.' },
+            { id: 'reg-fr-2', type: 'Regular', year: '2. serija (od 2022)', country: 'Francija', flag: '🇫🇷', title: 'Redni 2€ - Hrast in oljka', imageUrl: 'https://de.wikipedia.org/wiki/Special:FilePath/PFUE2022_-_2_euros_(cropped).jpg', description: 'Prenovljen dizajn ob 20-letnici evra prikazuje prepletene veje hrasta (simbol moči in trdnosti) ter oljke (simbol miru), ki izhajajo iz šesterokotnika. Tudi ta ohranja geslo Svoboda, Jednakost, Bratstvo.' },
+            { id: 'reg-de', type: 'Regular', year: 'Redna izdaja', country: 'Nemčija', flag: '🇩🇪', title: 'Redni 2€ - Nemški orel', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_ger.png', description: 'Na kovancu dominira heraldični orel, tradicionalni simbol nemške suverenosti, moči in enotnosti naroda. Orel je obdan z dvanajstimi evropskimi zvezdami. Kovanci imajo oznako ene od petih nemških kovnic (A, D, F, G, J).' },
+            { id: 'reg-gr', type: 'Regular', year: 'Redna izdaja', country: 'Grčija', flag: '🇬🇷', title: 'Redni 2€ - Evropa in bik', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Grecia.gif', description: 'Upodablja prizor iz antične mitologije, kjer bog Zevs, preobražen v bika, ugrabi feničansko princeso Evropo. Slika je prevzeta po špartanskem mozaiku iz 3. stoletja in služi kot izvor imena naše celine.' },
+            { id: 'reg-ie', type: 'Regular', year: 'Redna izdaja', country: 'Irska', flag: '🇮🇪', title: 'Redni 2€ - Keltska harfa', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_Irlanda.jpg', description: 'Vsi irski evrski kovanci prikazujejo isti motiv: tradicionalno keltsko harfo, narodni simbol Irske. Levo od harfe je napis "Éire" (Irska v irščini), desno pa letnica izdaje. Dizajn predstavlja glasbeno in kulturno dediščino.' },
+            { id: 'reg-it', type: 'Regular', year: 'Redna izdaja', country: 'Italija', flag: '🇮🇹', title: 'Redni 2€ - Dante Alighieri', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Italia.jpg', description: 'Prikazuje profil največjega italijanskega pesnika Danteja Alighierija, avtorja "Božanske komedije". Portret temelji na sliki Rafaela, ki se nahaja v Vatikanski palači. Dante simbolizira bogastvo italijanske književnosti in jezika.' },
+            { id: 'reg-lv', type: 'Regular', year: 'Redna izdaja', country: 'Latvija', flag: '🇱🇻', title: 'Redni 2€ - Latvijska deklica', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_eur_LV.jpg', description: 'Znameniti profil latvijske deklice v tradicionalni noši (Zelma Brauere), ki je bil prvotno uporabljen na srebrnem kovancu za 5 latov iz leta 1929. Simbolizira latvijsko samostojnost in ljubezen do domovine.' },
+            { id: 'reg-lt', type: 'Regular', year: 'Redna izdaja', country: 'Litva', flag: '🇱🇹', title: 'Redni 2€ - Vytis (Vitez)', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Lituania_%E2%82%AC2.jpg', description: 'Upodablja Vytisa, junaškega viteza na konju z dvignjenim mečem in ščitom z dvojnim križem. Je zgodovinski državni grb Litve in eden najstarejših grbov v Evropi, ki ponazarja pogum in nepopustljivost države.' },
+            { id: 'reg-lu', type: 'Regular', year: 'Redna izdaja', country: 'Luksemburg', flag: '🇱🇺', title: 'Redni 2€ - Veliki vojvoda Henri', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Lussemburgo.jpg', description: 'Prikazuje portret njegove kraljeve visokosti velikega vojvode Henrija s pogledom usmerjenim v desno stran. Ob strani je napis "Lëtzebuerg" (Luksemburg). Zaradi posebnih zakonov o portretih vladarja obstaja več variacij tega kovanca (hologrami ipd.).' },
+            { id: 'reg-mt', type: 'Regular', year: 'Redna izdaja', country: 'Malta', flag: '🇲🇹', title: 'Redni 2€ - Malteški križ', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_Euro_Malta.jpg', description: 'Prikazuje osemkraki malteški križ, na ozadju iz navpičnih črt. Znak je neločljivo povezan z Malto in zgodovino reda vitezov hospitalcev. Osem krakov tradicionalno simbolizira osem viteških obveznosti in blaženosti.' },
+            { id: 'reg-mc-1', type: 'Regular', year: '1. serija', country: 'Monako', flag: '🇲🇨', title: 'Redni 2€ - Knez Rainier III', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Monaco_2001.jpg', description: 'Prikazuje portret kneza Rainierja III. Kneževina Monako izdaja kovance v zelo majhnih nakladah, zaradi česar so med zbiratelji izjemno redki in iskani.' },
+            { id: 'reg-mc-2', type: 'Regular', year: '2. serija', country: 'Monako', flag: '🇲🇨', title: 'Redni 2€ - Knez Albert II', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Monaco_2006.jpg', description: 'Po smrti Rainierja III. je na prestol stopil knez Albert II. Kovanec od leta 2006 dalje prikazuje njegov portret v profilu z napisom MONACO in dvanajstimi zvezdami.' },
+            { id: 'reg-nl-1', type: 'Regular', year: '1. serija', country: 'Nizozemska', flag: '🇳🇱', title: 'Redni 2€ - Kraljica Beatrix', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_nl.png', description: 'Prikazuje izjemno stiliziran, moderen in točkovan profil nizozemske kraljice Beatrix, skupaj z napisom "Beatrix Koningin der Nederlanden" (Beatrix, kraljica Nizozemske). Oblikovanje je znano po svoji avantgardnosti.' },
+            { id: 'reg-nl-2', type: 'Regular', year: '2. serija', country: 'Nizozemska', flag: '🇳🇱', title: 'Redni 2€ - Kralj Willem-Alexander', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Paesi_Bassi_serie_2014.jpg', description: 'Po prevzemu prestola je izšla serija s fasetiranim (poligonalnim) portretom kralja Willema-Alexandra. Gre za inovativen 3D slog kiparstva, ki predstavlja modernost nizozemske monarhije v 21. stoletju.' },
+            { id: 'reg-pt', type: 'Regular', year: 'Redna izdaja', country: 'Portugalska', flag: '🇵🇹', title: 'Redni 2€ - Kraljevi pečati', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2e_por.png', description: 'Dizajn vključuje osrednji zgodovinski kraljevi pečat (iz leta 1144), obdan s petimi ščiti in sedmimi gradovi, ki tvorijo sodoben portugalski grb, med katerimi so razporejene črke besede PORTUGAL.' },
+            { id: 'reg-sm', type: 'Regular', year: 'Redna izdaja', country: 'San Marino', flag: '🇸🇲', title: 'Redni 2€ - Vladna palača', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_San_Marino.gif', description: 'Upodablja palačo Palazzo Pubblico, glavno vladno in upravno poslopje Republike San Marino. Kot ena najstarejših in najmanjših republik na svetu so njeni kovanci zelo cenjeni zbirateljski primerki.' },
+            { id: 'reg-sk', type: 'Regular', year: 'Redna izdaja', country: 'Slovaška', flag: '🇸🇰', title: 'Redni 2€ - Dvojni križ na hribih', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Slovacchia.png', description: 'Prikazuje slovaški državni grb: lotarinški dvojni križ, postavljen na srednji in najvišji vrh hribovja s tremi vrhovi (Tatra, Fatra in Mátra). Motiv izvira iz slovaške zgodovine in grba.' },
+            { id: 'reg-si', type: 'Regular', year: 'Redna izdaja', country: 'Slovenija', flag: '🇸🇮', title: 'Redni 2€ - France Prešeren', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Si2.1eur.jpg', description: 'Na kovancu je reliefni profil našega največjega pesnika, dr. Franceta Prešerna. V levem robu je vrezan znameniti in srčni prvi verz slovenske himne iz pesmi Zdravljica: "Shivé naj vsi naródi".' },
+            { id: 'reg-es-1', type: 'Regular', year: '1. serija', country: 'Španija', flag: '🇪🇸', title: 'Redni 2€ - Kralj Juan Carlos I', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Spagna.gif', description: 'Zgodnji kovanci za 2 evra (do 2014) nosijo portret španskega kralja Juana Carlosa I. Zunajnji obroč zvezd ima na določeni razdalji prekinitev, kar je bila značilnost španskega oblikovanja prve generacije.' },
+            { id: 'reg-es-2', type: 'Regular', year: '2. serija', country: 'Španija', flag: '🇪🇸', title: 'Redni 2€ - Juan Carlos I (posodobljena)', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Spain_2euro_2014.jpg', description: 'Leta 2010 se je dizajn spremenil, da bi bil v skladu z novimi smernicami Evropske komisije o poenotenju nacionalnih strani. Zvezde na zunanjem krogu so sedaj enakomerno razporejene, spremenjen je logotip kovnice.' },
+            { id: 'reg-es-3', type: 'Regular', year: '3. serija', country: 'Španija', flag: '🇪🇸', title: 'Redni 2€ - Kralj Filip VI', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/Spain_2euro_2015.jpg', description: 'Po menjavi na prestolu Španije leta 2014 (abdikacija Juana Carlosa) se od leta 2015 na vseh novih kovancih uporablja posodobljen portret trenutnega španskega kralja Filipa VI.' },
+            { id: 'reg-va-1', type: 'Regular', year: '1. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Papež Janez Pavel II', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_1.png', description: 'Prva vatikanska serija prikazuje profil priljubljenega papeža Janeza Pavla II. Zaradi omejenih količin so vsi vatikanski evrski kovanci predvsem dragocen zbirateljski material in redko zaidejo v obtok.' },
+            { id: 'reg-va-2', type: 'Regular', year: '2. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Sede Vacante', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_2.png', description: 'Izdana izključno v prehodnem obdobju "Sede Vacante" (praznega prestola) po smrti papeža leta 2005. Prikazuje grb camerlenga in simbole apostolske kamere. Izjemno redka in cenjena izdaja.' },
+            { id: 'reg-va-3', type: 'Regular', year: '3. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Papež Benedikt XVI', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euro_coin_Va_serie_3a.png', description: 'Tretja serija vatikanskih kovancev upodablja profil papeža Benedikta XVI. s pogledom usmerjenim v desno. Obdaja ga napis "Città del Vaticano" in 12 zvezd EU.' },
+            { id: 'reg-va-4', type: 'Regular', year: '4. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Papež Frančišek', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_%E2%82%AC_Vaticano_2014.png', description: 'Prikazuje portret trenutnega poglavarja katoliške cerkve, papeža Frančiška, v treh različnih pozah na različnih apoenih. Na kovancu za 2€ gleda neposredno naprej z nasmeškom.' },
+            { id: 'reg-va-5', type: 'Regular', year: '5. serija', country: 'Vatikan', flag: '🇻🇦', title: 'Redni 2€ - Papeški grb', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2_euros_Vatican5.png', description: 'Papež Frančišek se je iz skromnosti odločil, da na novih izdajah ne želi več svojega portreta. Od leta 2017 naprej so kovanci okrašeni izključno z njegovim uradnim papeškim grbom.' },
 
-            // SLOVENSKI SPOMINSKI KOVANCI
-            { id: 'sl-2007-rome', type: 'Commemorative', year: 2007, country: 'Slovenija', flag: '🇸🇮', title: '50. obletnica Rimske pogodbe', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/%E2%82%AC2_commemorative_coin_Slovenia_2007_TOR.jpg', description: 'Skupna evropska izdaja. Dokument pogodbe s podpisi.' },
-            { id: 'sl-2008-trubar', type: 'Commemorative', year: 2008, country: 'Slovenija', flag: '🇸🇮', title: '500 let rojstva Primoža Trubarja', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Trubar2008.png', description: 'Profil Primoža Trubarja. Vključuje citat "Stati inu obstati".' },
-            { id: 'sl-2009-emu', type: 'Commemorative', year: 2009, country: 'Slovenija', flag: '🇸🇮', title: '10 let EMU', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_EMU2009.png', description: 'Skupna izdaja. Primitivna človeška figura s simbolom €.' },
-            { id: 'sl-2010-botanical', type: 'Commemorative', year: 2010, country: 'Slovenija', flag: '🇸🇮', title: '200 let Botaničnega vrta', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Botani%C4%8Dni_vrt2010.png', description: 'Cvet rastline rebrinčevolistna hladnikovka.' },
-            { id: 'sl-2011-rozman', type: 'Commemorative', year: 2011, country: 'Slovenija', flag: '🇸🇮', title: '100 let rojstva Franca Rozmana', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Stane2011.png', description: 'Stiliziran portret narodnega heroja s petokrako zvezdo.' },
-            { id: 'sl-2012-euro', type: 'Commemorative', year: 2012, country: 'Slovenija', flag: '🇸🇮', title: '10 let evrskih gotovinskih plačil', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_evrogotovina2012.png', description: 'Skupna izdaja ob 10. obletnici evro bankovcev in kovancev.' },
-            { id: 'sl-2013-postojna', type: 'Commemorative', year: 2013, country: 'Slovenija', flag: '🇸🇮', title: '800 let obiska Postojnske jame', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Postojnska2013.png', description: 'Stilizirana spirala, ki predstavlja podzemne prehode.' },
-            { id: 'sl-2014-barbara', type: 'Commemorative', year: 2014, country: 'Slovenija', flag: '🇸🇮', title: '600 let kronanja Barbare Celjske', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Barbara2014.png', description: 'Portret Barbare Celjske z žezlom in tremi zvezdami.' },
-            { id: 'sl-2015-emona', type: 'Commemorative', year: 2015, country: 'Slovenija', flag: '🇸🇮', title: '2000 let Emone (Ljubljane)', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Emona2015.png', description: 'Geometrijski liki in črke, ki tvorijo besedo EMONA.' },
-            { id: 'sl-2015-euflag', type: 'Commemorative', year: 2015, country: 'Slovenija', flag: '🇸🇮', title: '30 let zastave EU', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_zastavaEU2015.png', description: 'Skupna izdaja. Zvezde, ki se preminjajo v ljudi.' },
-            { id: 'sl-2016-independence', type: 'Commemorative', year: 2016, country: 'Slovenija', flag: '🇸🇮', title: '25 let neodvisnosti RS', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_osamosvojitev2016.png', description: 'Diagonalno vrezan verz iz Prešernove Zdravljice.' },
-            { id: 'sl-2017-euro10', type: 'Commemorative', year: 2017, country: 'Slovenija', flag: '🇸🇮', title: '10 let evra v Sloveniji', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_evro2017.png', description: 'Deset letečih lastovk v krogu.' },
-            { id: 'sl-2018-bees', type: 'Commemorative', year: 2018, country: 'Slovenija', flag: '🇸🇮', title: 'Svetovni dan čebel', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_%C4%8Debele2018.png', description: 'Globus v obliki satja. Slovenska iniciativa OZN.' },
-            { id: 'sl-2019-uni', type: 'Commemorative', year: 2019, country: 'Slovenija', flag: '🇸🇮', title: '100 let Univerze v Ljubljani', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Uni-LJ2019.png', description: 'Osrednje pročelje glavne stavbe Univerze.' },
-            { id: 'sl-2020-bohoric', type: 'Commemorative', year: 2020, country: 'Slovenija', flag: '🇸🇮', title: '500 let rojstva Adama Bohoriča', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Bohori%C4%8D2020.png', description: 'Večjezični napis iz njegove slovnice Arcticae horulae.' },
-            { id: 'sl-2021-museum', type: 'Commemorative', year: 2021, country: 'Slovenija', flag: '🇸🇮', title: '200 let Narodnega muzeja', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_muzej2021.png', description: 'Ilustracija znamenite Vaške situle.' },
-            { id: 'sl-2022-plecnik', type: 'Commemorative', year: 2022, country: 'Slovenija', flag: '🇸🇮', title: '150 let rojstva Jožeta Plečnika', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_plecnik2022.png', description: 'Detajl z velikega okna čitalnice NUK v Ljubljani.' },
-            { id: 'sl-2022-erasmus', type: 'Commemorative', year: 2022, country: 'Slovenija', flag: '🇸🇮', title: '35 let programa Erasmus', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_erasmus2022.png', description: 'Skupna izdaja. Portret Erazma Rotterdamskega.' },
-            { id: 'sl-2023-plemelj', type: 'Commemorative', year: 2023, country: 'Slovenija', flag: '🇸🇮', title: '150 let rojstva Josipa Plemlja', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Plemelj2023.png', description: 'Enačba in grafične oblike matematičnega dela.' },
-            { id: 'sl-2024-library', type: 'Commemorative', year: 2024, country: 'Slovenija', flag: '🇸🇮', title: '250 let NUK', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_NUK2024.png', description: 'Obeležitev obletnice Narodne in univerzitetne knjižnice.' },
-            { id: 'sl-2025-miki', type: 'Commemorative', year: 2025, country: 'Slovenija', flag: '🇸🇮', title: '100 let rojstva Mikija Mustra', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Muster2025.png', description: 'Pionir slovenskega stripa, animator in ilustrator.' },
-            { id: 'sl-2026-cankar', type: 'Commemorative', year: 2026, country: 'Slovenija', flag: '🇸🇮', title: '150 let rojstva Ivana Cankarja', imageUrl: 'https://upload.wikimedia.org/wikipedia/it/7/7e/2_euro_commemorativo_2026_slovenia_cankar.webp', description: 'Pisatelj in dramatik, ki je globoko zaznamoval literaturo.' }
+            // SLOVENSKI SPOMINSKI KOVANCI (Z Natančnimi opisi)
+            { id: 'sl-2007-rome', type: 'Commemorative', year: 2007, country: 'Slovenija', flag: '🇸🇮', title: '50. obletnica Rimske pogodbe', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/%E2%82%AC2_commemorative_coin_Slovenia_2007_TOR.jpg', description: 'Skupna evropska izdaja (prva slovenska nasploh). Motiv prikazuje odprto knjigo – dokument zgodovinske Rimske pogodbe z originalnimi podpisi vseh šestih ustanovnih držav ob rojstvu predhodnice Evropske unije. V ozadju se dviga stiliziran Michelangelov mozaik na trgu Campidoglio v Rimu, kjer je bila pogodba leta 1957 dejansko podpisana. Dodan je napis "RIMSKA POGODBA / 50 LET / EVROPA / SLOVENIJA".' },
+            { id: 'sl-2008-trubar', type: 'Commemorative', year: 2008, country: 'Slovenija', flag: '🇸🇮', title: '500 let rojstva Primoža Trubarja', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Trubar2008.png', description: 'Zelo detajlno in natančno graviran stranski profil Primoža Trubarja, utemeljitelja slovenskega knjižnega jezika in avtorja prvih tiskanih slovenskih knjig (Katekizem in Abecednik iz leta 1550). Ob portretu sta ponosno vpisani njegov ikonični citat "STATI INU OBSTATI" in ime. Ta kovanec nosi izjemno domoljubno in kulturno vrednost za vsakega zbiratelja slovenske dediščine.' },
+            { id: 'sl-2009-emu', type: 'Commemorative', year: 2009, country: 'Slovenija', flag: '🇸🇮', title: '10 let EMU', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_EMU2009.png', description: 'Gre za drugo skupno izdajo evro območja ob deseti obletnici Ekonomske in monetarne unije. Zanimiv, namerno preprost in primitiven motiv, ki ga je prek spletnega glasovanja izbrala širša javnost v EU, spominja na prazgodovinsko jamsko risbo človeka, ki se zlije z znakom za evro (€). Motiv ponazarja, da je evro naravni korak v dolgi in bogati zgodovini trgovine in človeške evolucije.' },
+            { id: 'sl-2010-botanical', type: 'Commemorative', year: 2010, country: 'Slovenija', flag: '🇸🇮', title: '200 let Botaničnega vrta v Ljubljani', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Botani%C4%8Dni_vrt2010.png', description: 'Eleganten, botaničen dizajn predstavlja stiliziran in filigransko izrisan obris cvetoče rože "rebrinčevolistne hladnikovke" (Hladnikia pastinacifolia). Gre za redko in strogo zaščiteno endemično rastlino, ki raste le v Sloveniji (predvsem na Trnovskem gozdu). Izdana v čast ljubljanskemu botaničnemu vrtu, najstarejši kulturni, znanstveni in izobraževalni ustanovi v državi, ki neprekinjeno deluje od 1810.' },
+            { id: 'sl-2011-rozman', type: 'Commemorative', year: 2011, country: 'Slovenija', flag: '🇸🇮', title: '100 let rojstva Franca Rozmana - Staneta', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Stane2011.png', description: 'Osrednji motiv tvori stiliziran in sodoben linearen portret komandanta Staneta, generala in enega najbolj prepoznavnih narodnih herojev iz časa NOB v Sloveniji. Na levi strani njegov prsni koš krasi izrazita velika petokraka zvezda. Izdaja je ob 100-letnici rojstva počastila njegov prispevek k boju proti fašizmu in nacizmu med drugo svetovno vojno ter njegov pogum na bojiščih.' },
+            { id: 'sl-2012-euro', type: 'Commemorative', year: 2012, country: 'Slovenija', flag: '🇸🇮', title: '10 let evrskih gotovinskih plačil', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_evrogotovina2012.png', description: 'Tretja skupna priložnostna evro izdaja, izdana ob desetletnici uvedbe evro bankovcev in kovancev v vsakdanji obtok. Globoko simboličen motiv, kjer znak € stoji kot središče sveta in globalnega gospodarstva (prikazano z globusom). Okoli njega so razporejeni ljudje (ki predstavljajo družbo), ladje (trgovina), tovarne (industrija) in vetrne elektrarne (ekologija in trajnostna prihodnost).' },
+            { id: 'sl-2013-postojna', type: 'Commemorative', year: 2013, country: 'Slovenija', flag: '🇸🇮', title: '800 let obiska Postojnske jame', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Postojnska2013.png', description: 'Edinstven in vizualno izredno dinamičen kovanec na katerem prevladuje abstraktna, asimetrična spirala zvezana v vozel. Ta spirala ponazarja globino, nepredvidljivost in mističnost neskončnih podzemnih rovov, siganin in kapnikov slovite Postojnske jame. Kovanec spominja na prve odkritje in začetek turizma ter obiskov v tej kraški lepotici svetovnega formata pred osmimi stoletji.' },
+            { id: 'sl-2014-barbara', type: 'Commemorative', year: 2014, country: 'Slovenija', flag: '🇸🇮', title: '600 let kronanja Barbare Celjske', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Barbara2014.png', description: 'Kovanec nosi strog, raven gotski portret s celjskim grbom Barbare Celjske, ene najbolj vplivnih žensk srednjega veka, klicane tudi "Črna kraljica". Upodobljena je s krono in žezlom z grbom rodbine Celjskih (tri šestkrake zvezde). Barbara, slovenska plemkinja, je postala rimska, nemška, ogrska in češka cesarica, po kronanju leta 1414 v Aachnu. Kovanec odraža srednjeveško moč slovenske dinastije.' },
+            { id: 'sl-2015-emona', type: 'Commemorative', year: 2015, country: 'Slovenija', flag: '🇸🇮', title: '2000 let Emone (Ljubljane)', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Emona2015.png', description: 'Oblikovanje temelji na tlorisu starorimskega mesta Emona, predhodnice današnje slovenske prestolnice Ljubljane. Stilizirane pravokotne in kvadratne oblike geometrijsko in domiselno sestavljajo črke besede "EMONA" in rimsko številko MM (2000). To predstavlja urbanistično mrežo, zgradbe, kardo in dekumanus originalnega tabora, poudarjajoč bogato antično dediščino območja.' },
+            { id: 'sl-2015-euflag', type: 'Commemorative', year: 2015, country: 'Slovenija', flag: '🇸🇮', title: '30 let zastave EU', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_zastavaEU2015.png', description: 'Skupna spominska izdaja vseh držav območja evra v poklon 30-letnici zastave Evropske unije. Vzorec na nacionalni strani prikazuje evrsko zastavo na sredini in množico dvanajstih človeških figur v gibanju oziroma plesu okoli nje. To sporoča združevanje, solidarnost in sožitje med narodi Evrope v objemu skupnih idealov in vizije za boljšo prihodnost kontinenta.' },
+            { id: 'sl-2016-independence', type: 'Commemorative', year: 2016, country: 'Slovenija', flag: '🇸🇮', title: '25 let neodvisnosti RS', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_osamosvojitev2016.png', description: 'Izredno preprost, a sporočilno močan kovanec s tipografskim motivom. Čez celotno ploskev je poševno vrezan zadnji in najbolj znan verz Prešernove "Zdravljice": "dočakat\' dan". To je močno simbolično sporočilo, ki slavi dolgo pričakovani in končno uresničeni sen slovenskega naroda o lastni suvereni državi, ki se je manifestiral z osamosvojitvijo leta 1991.' },
+            { id: 'sl-2017-euro10', type: 'Commemorative', year: 2017, country: 'Slovenija', flag: '🇸🇮', title: '10 let evra v Sloveniji', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_evro2017.png', description: 'Na kovancu je upodobljenih deset ptic (lastovk), ki letijo in krožijo v smeri urinega kazalca, pri čemer na sredini oblikujejo negativno silhueto znaka za evro. Vsaka lastovka predstavlja eno uspešno leto sodelovanja v evrskem območju, prav tako pa te ptice prinašajo sporočilo svobode, napredka, odprtih meja in povezanosti na krilih združene Evrope.' },
+            { id: 'sl-2018-bees', type: 'Commemorative', year: 2018, country: 'Slovenija', flag: '🇸🇮', title: 'Svetovni dan čebel', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_%C4%8Debele2018.png', description: 'Slovenija, kot zibelka čebelarstva in pobudnica Svetovnega dneva čebel pri Združenih narodih (OZN), je to počastila z izjemnim dizajnom. Kovanec tvori vizualni hibrid: podoba zemeljske krogle, sestavljena in spletena izključno iz geometrijskih šesterokotnikov – čebeljega satja. Motiv opozarja na krhkost globalnega ekosistema in kritičen pomen čebel ter drugih opraševalcev za preživetje planeta.' },
+            { id: 'sl-2019-uni', type: 'Commemorative', year: 2019, country: 'Slovenija', flag: '🇸🇮', title: '100 let Univerze v Ljubljani', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Uni-LJ2019.png', description: 'Kovanec prinaša trden in klasičen arhitekturni motiv – detaljno zarisano osrednje pročelje deželnega dvorca (današnje glavne zgradbe rektorata Univerze v Ljubljani na Kongresnem trgu). Slika se močno prepleta s stiliziranim logotipom in napisom »100 LET UNIVERZE V LJUBLJANI«. Univerza je temelj slovenskega akademskega, znanstvenega in raziskovalnega razvoja.' },
+            { id: 'sl-2020-bohoric', type: 'Commemorative', year: 2020, country: 'Slovenija', flag: '🇸🇮', title: '500 let rojstva Adama Bohoriča', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Bohori%C4%8D2020.png', description: 'Zelo estetska in izvirna tipografska rešitev, ki slavi Adama Bohoriča, pisca prve slovenske slovnice (Arcticae horulae). Osrednji del vsebuje citat iz knjige, kjer se besede na ozadju ponavljajo v dveh jezikih: latinskem in starem slovenskem bohoričičnem zapisu (npr. "Vsaki jezik bode Boga spoznal"). Kovanec priča o neizmernem pomenu jezikovne identitete.' },
+            { id: 'sl-2021-museum', type: 'Commemorative', year: 2021, country: 'Slovenija', flag: '🇸🇮', title: '200 let Narodnega muzeja Slovenije', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_muzej2021.png', description: 'Motiv je navdihnila največja dragocenost, ki jo hrani muzej: slovita in neprecenljiva prazgodovinska Vaška situla. Prikazane so zarisane linije reliefnega pasu iz situle, ki s pleteninami in prepletanji tvorijo umetnino halštatske kulture. Obeležuje najstarejšo kulturno institucijo pri nas, ki že dve stoletji uspešno varuje zaklade naše preteklosti.' },
+            { id: 'sl-2022-plecnik', type: 'Commemorative', year: 2022, country: 'Slovenija', flag: '🇸🇮', title: '150 let rojstva Jožeta Plečnika', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_plecnik2022.png', description: 'Poklon največjemu slovenskemu arhitektu in urbanistu, Jožetu Plečniku, ki je preoblikoval podobo Ljubljane (Plečnikova Ljubljana je tudi na seznamu Unesca). Izbrani motiv je povečano, specifično arhitekturno okno iz čitalnice Narodne in univerzitetne knjižnice (NUK) – simbola monumentalnosti, modrosti, detajlne dovršenosti ter mojstrstva svetlobnih vdorov.' },
+            { id: 'sl-2022-erasmus', type: 'Commemorative', year: 2022, country: 'Slovenija', flag: '🇸🇮', title: '35 let programa Erasmus', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_erasmus2022.png', description: 'Peta in trenutno zadnja skupna obeležja držav EU. Motiv, ki je bil izbran prek vseeuropskega glasovanja. Združuje portret slavnega filozofa in humanista Erazma Rotterdamskega v klasičnem stilu slikanja in se igrivo zlije v ozadje, v mrežo digitalnih povezav. Mreža ponazarja intelektualno izmenjavo, potovanja, napredek mladih in študij v mednarodnem okolju.' },
+            { id: 'sl-2023-plemelj', type: 'Commemorative', year: 2023, country: 'Slovenija', flag: '🇸🇮', title: '150 let rojstva Josipa Plemlja', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Plemelj2023.png', description: 'Numizmatično presenečenje za ljubitelje matematike. Kovanec je posvečen prvemu rektorju in svetovno priznanemu slovenskemu matematiku Josipu Plemlju. Oblikovanje zelo tehnično, matematično in linearno prikazuje obliko formule ter kompleksnega integrala, kar pokriva njegovo kapitalno teorijo in življenjsko delo pri reševanju Riemannovega problema v kompleksni analizi.' },
+            { id: 'sl-2024-library', type: 'Commemorative', year: 2024, country: 'Slovenija', flag: '🇸🇮', title: '250 let Narodne in univerzitetne knjižnice', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_NUK2024.png', description: 'Elegantna vizualizacija slavi častitljiv četrt stoletja obstoja osrednje slovenske hrambe znanja (NUK). Na njem je izpisan poševni naziv knjižnice v različnih fontih ter letnica, ki se harmonično prepleta s ploskvijo. Slavi neprekinjeno tradicijo, ki se je začela leta 1774 in se nadaljuje kot nosilec slovenskega knjižničarstva, domoznanstva in intelektualne dediščine.' },
+            { id: 'sl-2025-miki', type: 'Commemorative', year: 2025, country: 'Slovenija', flag: '🇸🇮', title: '100 let rojstva Mikija Mustra', imageUrl: 'https://sl.wikipedia.org/wiki/Special:FilePath/2-eur_Muster2025.png', description: 'Topel in simpatičen kovanec v spomin legendarnemu in oboževanemu akademskemu kiparju, pionirju slovenskega stripa ter prvaku slovenske televizijske in risane animacije, Mikiju Mustru. Motiv, kljub majhni površini kovanca, obuja spomine na otroštva mnogih generacij, njegove inovativne risbe in večno optimistične stripe (Zvitorepec, Trdonja in Lakotnik).' },
+            { id: 'sl-2026-cankar', type: 'Commemorative', year: 2026, country: 'Slovenija', flag: '🇸🇮', title: '150 let rojstva Ivana Cankarja', imageUrl: 'https://upload.wikimedia.org/wikipedia/it/7/7e/2_euro_commemorativo_2026_slovenia_cankar.webp', description: 'Prihajajoči numizmatični vrhunec. Ta kovanec bo obeležil obletnico rojstva verjetno najpomembnejšega slovenskega pisatelja, esejista in dramatika moderne, Ivana Cankarja. Zaznamoval je nešteto src s svojimi črticami in dramami (Skodelica kave, Hlapci...). Motiv pooseblja njegov izjemen pečat pri formiranju nacionalne zavesti in socialne kritike slovenske družbe.' }
         ];
 
         const regularCoins = COINS.filter(c => c.type === 'Regular');
@@ -230,20 +230,42 @@
         
         let collectedCoins = {};
 
-        // --- 2. FIREBASE INTEGRACIJA & STATE MANAGEMENT ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
-            authDomain: "delo-ae21b.firebaseapp.com",
-            projectId: "delo-ae21b",
-            storageBucket: "delo-ae21b.firebasestorage.app",
-            messagingSenderId: "721173225350",
-            appId: "1:721173225350:web:83926980686c6f4ec11607",
-            measurementId: "G-4STZTWDQ1X"
+        // =========================================================================
+        // 🔧 TVOJE FIREBASE NASTAVITVE
+        // =========================================================================
+        // Tukaj lahko prilepiš svoj Firebase config objekt, če želiš aplikacijo 
+        // gostovati samostojno. Če pustiš null, bo aplikacija uporabila privzete 
+        // nastavitve (zato tukaj v urejevalniku deluje brez težav).
+        const MY_FIREBASE_CONFIG = null;
+        /* Primer:
+        const MY_FIREBASE_CONFIG = {
+          apiKey: "AIzaSyC5uqhPfv_q1dx9xMk4VnWu6wq7AOKmjB8",
+          authDomain: "delo-ae21b.firebaseapp.com",
+          projectId: "delo-ae21b",
+          storageBucket: "delo-ae21b.firebasestorage.app",
+          messagingSenderId: "721173225350",
+          appId: "1:721173225350:web:83926980686c6f4ec11607",
+          measurementId: "G-4STZTWDQ1X"
         };
+        */
+        // =========================================================================
+
+        // --- 2. FIREBASE INTEGRACIJA & STATE MANAGEMENT ---
+        let firebaseConfig;
+        if (MY_FIREBASE_CONFIG) {
+            firebaseConfig = MY_FIREBASE_CONFIG;
+        } else if (typeof __firebase_config !== 'undefined') {
+            firebaseConfig = JSON.parse(__firebase_config);
+        } else {
+            firebaseConfig = { apiKey: "demo", projectId: "demo" };
+        }
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        
+        // Določitev ID-ja aplikacije (za pravilno pot v bazi)
+        const appId = MY_FIREBASE_CONFIG ? (MY_FIREBASE_CONFIG.projectId || 'my-euro-app') : (typeof __app_id !== 'undefined' ? __app_id : 'default-app-id');
 
         let authUser = null;
         let unsubscribeSnapshot = null;
@@ -361,6 +383,8 @@
         window.closeSyncModal = closeSyncModal;
         window.loadFromCode = loadFromCode;
         window.generateRandomCode = generateRandomCode;
+        window.openInfoModal = openInfoModal;
+        window.closeInfoModal = closeInfoModal;
 
         // Stanje za kompaktni pogled
         let compactMode = localStorage.getItem('euro_compact_mode') === 'true';
@@ -387,6 +411,36 @@
                 collectedCoins[id] = collectedCoins[id] === 'mint' ? 'poor' : 'mint';
                 saveData();
             }
+        }
+
+        // --- INFO MODAL ---
+        function openInfoModal(coinId) {
+            const coin = COINS.find(c => c.id === coinId);
+            if (!coin) return;
+            
+            document.getElementById('info-image').src = coin.imageUrl;
+            document.getElementById('info-badge').innerText = coin.year;
+            document.getElementById('info-title').innerText = coin.title;
+            document.getElementById('info-description').innerText = coin.description;
+            
+            const modal = document.getElementById('info-modal');
+            const content = document.getElementById('info-modal-content');
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            });
+        }
+
+        function closeInfoModal() {
+            const modal = document.getElementById('info-modal');
+            const content = document.getElementById('info-modal-content');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
         }
 
         // --- BRISANJE ZBIRKE ---
@@ -575,7 +629,13 @@
                     <div onclick="toggleCoin('${coin.id}')" class="h-full card-hover cursor-pointer border-2 rounded-[1rem] p-1.5 pt-4 flex flex-col items-center text-center relative ${cardBorder} shadow-sm transition-all duration-300">
                         ${checkBadge}
                         ${replacementBadge}
-                        <div class="absolute top-1 left-1/2 transform -translate-x-1/2 text-[8px] font-black text-slate-400 bg-slate-100/80 backdrop-blur-sm px-1.5 rounded-sm">${coin.year}</div>
+                        
+                        <!-- INFO GUMB KORAK 1 (Kompaktno) -->
+                        <button onclick="openInfoModal('${coin.id}'); event.stopPropagation();" class="absolute top-1 right-1 text-slate-400 hover:text-blue-500 bg-white/80 rounded-full p-0.5 shadow-[0_2px_4px_rgba(0,0,0,0.05)] transition-colors z-20" title="Več informacij">
+                            <i data-lucide="info" class="w-3 h-3"></i>
+                        </button>
+                        
+                        <div class="absolute top-1 left-1.5 text-[8px] font-black text-slate-400 bg-slate-100/80 backdrop-blur-sm px-1.5 rounded-sm">${coin.year}</div>
                         ${compactConditionBadge}
                         
                         <div class="w-full aspect-square relative group mt-1" onclick="openZoom('${coin.imageUrl}', '${coin.title}'); event.stopPropagation();">
@@ -606,6 +666,12 @@
                     <div onclick="toggleCoin('${coin.id}')" class="h-full card-hover cursor-pointer border-2 rounded-2xl p-3 flex flex-col items-center text-center relative ${cardBorder} shadow-sm transition-all duration-300">
                         ${checkBadge}
                         ${replacementBadge}
+                        
+                        <!-- INFO GUMB KORAK 2 (Podrobno) -->
+                        <button onclick="openInfoModal('${coin.id}'); event.stopPropagation();" class="absolute top-2 right-2 text-slate-400 hover:text-blue-600 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 rounded-full p-1 shadow-sm transition-all z-20" title="Več informacij">
+                            <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                        </button>
+                        
                         <div class="absolute top-2 left-2 text-[9px] font-black text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded shadow-sm">${coin.year}</div>
                         
                         <div class="w-14 h-14 sm:w-16 sm:h-16 mb-2 mt-2 relative group flex-shrink-0" onclick="openZoom('${coin.imageUrl}', '${coin.title}'); event.stopPropagation();">
@@ -618,8 +684,8 @@
                             </div>
                         </div>
                         
-                        <div class="flex-1 flex flex-col items-center justify-end w-full">
-                            <h3 class="text-xs sm:text-[13px] font-bold text-slate-800 leading-tight mb-0 line-clamp-3">${coin.title}</h3>
+                        <div class="flex-1 flex flex-col items-center justify-end w-full px-1">
+                            <h3 class="text-xs sm:text-[13px] font-bold text-slate-800 leading-tight mb-0 line-clamp-2">${coin.title}</h3>
                             ${conditionBadge}
                         </div>
                     </div>`;
@@ -675,12 +741,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="text-left flex-1 min-w-0">
+                    <div class="text-left flex-1 min-w-0 pr-1">
                         <div class="text-xs font-bold text-slate-800 mb-0.5 truncate">${coin.year}</div>
                         <div class="text-[10px] text-slate-500 leading-tight line-clamp-2">${coin.description}</div>
                         ${conditionBadge}
                     </div>
-                    <div class="flex-shrink-0">
+                    
+                    <!-- INFO GUMB KORAK 3 (Mreža držav) -->
+                    <div class="flex-shrink-0 flex flex-col items-center justify-center gap-2">
+                        <button onclick="openInfoModal('${coin.id}'); event.stopPropagation();" class="text-slate-400 hover:text-blue-500 bg-white hover:bg-blue-50 border border-slate-200 rounded-full p-1.5 transition-colors shadow-sm" title="Preberi več">
+                            <i data-lucide="info" class="w-4 h-4"></i>
+                        </button>
                         ${checkIcon}
                     </div>
                 </div>`;
@@ -800,7 +871,7 @@
         };
     </script>
 
-    <!-- Univerzalno Modalno Okno -->
+    <!-- Univerzalno Modalno Okno za pregled države -->
     <div id="coin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300" onclick="if(event.target === this) closeModal()">
         <div class="bg-white rounded-[2rem] p-5 max-w-sm w-full mx-4 relative shadow-2xl transform scale-95 transition-transform duration-300 max-h-[85vh] overflow-y-auto no-scrollbar" id="coin-modal-content">
             <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-full p-2 transition-colors z-10">
@@ -810,6 +881,33 @@
                 <div id="modal-badge" class="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black tracking-widest mb-2 uppercase"></div>
                 <h2 id="modal-title" class="text-2xl font-black text-slate-800 leading-tight mb-4"></h2>
                 <div id="modal-dynamic-content" class="text-left pb-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOV DODATEK: Modalno Okno za Podrobne Informacije (Info Gumb) -->
+    <div id="info-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[90] hidden opacity-0 transition-opacity duration-300" onclick="if(event.target === this) closeInfoModal()">
+        <div class="bg-white rounded-[2rem] p-6 max-w-sm w-full mx-4 relative shadow-2xl transform scale-95 transition-transform duration-300 max-h-[85vh] overflow-y-auto no-scrollbar" id="info-modal-content">
+            <button onclick="closeInfoModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-full p-2 transition-colors z-10">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex flex-col items-center mt-2">
+                <div class="w-28 h-28 mb-5 relative">
+                    <div class="w-full h-full rounded-full overflow-hidden border-[4px] border-[#cbd5e1] shadow-inner relative bg-[#cbd5e1]">
+                        <img id="info-image" src="" alt="Kovanec" class="w-full h-full object-cover mix-blend-multiply opacity-90" />
+                        <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none rounded-full"></div>
+                    </div>
+                </div>
+                <div id="info-badge" class="inline-block px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-[10px] font-black tracking-widest mb-2 uppercase"></div>
+                <h2 id="info-title" class="text-xl font-black text-slate-800 leading-tight mb-4 text-center"></h2>
+                
+                <div class="w-full h-px bg-slate-200 mb-4"></div>
+                
+                <p id="info-description" class="text-sm text-slate-600 text-justify leading-relaxed"></p>
+                
+                <button onclick="closeInfoModal()" class="mt-6 w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl transition-colors shadow-sm active:scale-95 flex items-center justify-center gap-2">
+                    <i data-lucide="check" class="w-5 h-5"></i> Zapri podrobnosti
+                </button>
             </div>
         </div>
     </div>
@@ -857,10 +955,32 @@
                     <i data-lucide="cloud-lightning" class="w-5 h-5"></i> Poveži se
                 </button>
 
-                <!-- Skrita nevarna cona za izbris računa -->
+                <!-- Nevarna cona za izbris računa -->
                 <div class="mt-6 pt-4 border-t border-red-100">
                     <button onclick="resetCollection(); closeSyncModal();" class="w-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm">
                         <i data-lucide="trash-2" class="w-4 h-4"></i> Izbriši to zbirko
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modalno Okno za Potrditev Brisanja -->
+    <div id="confirm-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[80] hidden opacity-0 transition-opacity duration-300" onclick="if(event.target === this) hideResetConfirm()">
+        <div class="bg-white rounded-[2rem] p-6 max-w-sm w-full mx-4 relative shadow-2xl transform scale-95 transition-transform duration-300" id="confirm-modal-content">
+            <div class="text-center mt-2">
+                <div class="mx-auto w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-4 shadow-inner">
+                    <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-xl font-black text-slate-800 mb-2">Izbriši zbirko?</h2>
+                <p class="text-xs text-slate-500 mb-6 px-2">Ali si prepričan, da želiš izbrisati celotno zbirko na tej kodi? Tega dejanja ni mogoče razveljaviti.</p>
+
+                <div class="flex gap-3">
+                    <button onclick="hideResetConfirm()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-xl transition-colors shadow-sm active:scale-95">
+                        Prekliči
+                    </button>
+                    <button onclick="executeReset()" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2">
+                        <i data-lucide="trash-2" class="w-5 h-5"></i> Izbriši
                     </button>
                 </div>
             </div>
